@@ -137,7 +137,7 @@ $app->get('/:apiKey/:id', function ($apiKey, $id) use ($app, $response) {
 /**
  * Add Reporting form record
  *
- * POST: /form/{apiKey}/{taskId}
+ * POST: /form/{apiKey}
  *
  */
 $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
@@ -155,6 +155,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form = new Form();
         $form->title = $request->title;
         $form->description = $request->description;
+        $form->tags = $request->tags;
         $form->date_created = $today;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
@@ -194,6 +195,7 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         $form = Form::find($request->id);
         $form->title = $request->title;
         $form->description = $request->description;
+        $form->tags = $request->tags;
         $form->date_modified = $today;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;

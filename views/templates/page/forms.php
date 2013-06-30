@@ -80,7 +80,7 @@
 			<textarea class=""></textarea>
 			<span></span>
 		</div>
-		<div class="selectorField well" data-rules="required" data-name="" data-type="checkbox">
+		<div class="selectorField well" data-rules="required" data-name="" data-type="checkbox-group">
 			<label class="control-label" style="vertical-align:top">Checkboxes</label>
 			<ul style="display:inline-block;" class="ctrl-checkboxgroup">
 				<li><input type="checkbox" name="checkboxField" value="option1">Option 1</li>
@@ -89,7 +89,7 @@
 			</ul>
 			<span></span>
 		</div>
-		<div class="selectorField well" data-rules="required" data-name="" data-type="radio">
+		<div class="selectorField well" data-rules="required" data-name="" data-type="radio-group">
 			<label class="control-label" style="vertical-align:top">Radio buttons</label>
 			<ul>
 				<li><input type="radio" name="radioField" value="option1">Option 1</li>

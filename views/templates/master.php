@@ -4,10 +4,9 @@
   <?php
     $pageMeta = $this->getData('meta');
     $account = $this->getData('account');
-    //echo var_dump($pageMeta);
   ?>
   <meta charset="utf-8">
-  <title>Open Report</title>
+  <title>OpenReport</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
 
@@ -17,11 +16,9 @@
   <link rel="stylesheet" href="/assets/css/datetimepicker.css">
   <link rel="stylesheet" href="/assets/css/main.css">
 
-  <script src="/assets/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
   <script src="/assets/js/vendor/jquery-1.8.3.min.js"></script>
   <script src="/assets/js/vendor/jquery-ui.min.js"></script>
   <script src="/assets/js/vendor/underscore-min.js"></script>
-  <script src="/assets/js/vendor/handlebars.js"></script>
   <script src="/assets/js/vendor/backbone-min.js"></script>
 
   <script src="/assets/js/vendor/bootstrap.min.js"></script>
@@ -108,33 +105,47 @@ $(function(){ // document ready
 </div>
 
 
-  <div class="container-fluid content">
-    <div class="row-fluid">
-      <div class="span9">
-        <?php $this->partial($childView, $this->getData())?>
-      </div>
-
-      <div class="span3 well sticky"></div>
+<div class="container-fluid content">
+  <div class="row-fluid">
+    <div class="span9">
+      <?php $this->partial($childView, $this->getData())?>
     </div>
 
-  </div> <!--/container-fluid-->
+    <div class="span3 well sticky"></div>
+  </div>
+
+</div> <!--/container-fluid-->
 
 <hr>
 
 <footer align="center">
     <p>Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
 </footer>
-<script>
 
-//<li><a href="/reports">Reports</a></li>
-//<li><a href="/tasks">Reporting Tasks</a></li>
-
-// /api/task/apiKey
-
-  reportLi = '<li><a href="/reports#task/records/{0}">{1}</a></li>';
-
-
+<script id="errorModal" type="text/template">
+<div class="modal" id="errorModal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">✕</button>
+		<h3>ERROR!</h3>
+	</div>
+	<div class="modal-body" style="text-align:left;">
+		<div class="row-fluid">
+          <div class="span12">
+              <div class="" id="errorText">
+                <ul>
+                <li>{{= caption }}</li>
+                {{ errors.forEach(function(value, index) { }}
+                <li>{{= value }}</li>
+                {{ }) }}
+                </ul>
+              </div>
+              <div class="pull-right">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+              </div>
+          </div>
+		</div>
+	</div>
+</div>
 </script>
-
 </body>
 </html>

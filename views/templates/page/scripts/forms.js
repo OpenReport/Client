@@ -99,49 +99,52 @@ window.FormView = Backbone.View.extend({
 
   },
   events:{
-    //"change input":"change",
-    //"click .field-info":"details",
+
     "click #submit":"saveForm",
     "click #close":"cancel"
   },
-  //change:function (event) {
-  //    var target = event.target;
-  //    console.log('changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value);
-  //
-  //},
+
   saveForm:function () {
+
     this.model.set({
         title: $('#formTitle').val(),
         description: $('#formDescription').val(),
+		tags: $('#formTags').val(),
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
 			   fieldset:[{name:'group-1', legend:'',fields:parseFormMeta()}]}
 
     });
+	// validation
+	var errors = this.model.validate();
+	if(typeof(errors) !== 'undefined'){
+		console.log(errors);
+		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+		$('#dialog').html(template).modal();
+		return false;
+	}
+
 
 	// Save It
     if (this.model.isNew()) {
-        var self = this;
+        //var self = this;
         router.formList.create(this.model, {
             success:function () {
                 router.navigate('/', {trigger: true});
             }
         });
     } else {
+
         this.model.save({}, {
             success:function () {
+				console.log('success')
                 router.navigate('/', {trigger: true});
             }
         });
     }
-    this.close();
-    // force refreash
-    //preview = $('#preview').attr('src');
-    //$('#preview').attr('src', '');
-    //setTimeout(function () {
-    //    $('#preview').attr('src', preview);
-    //}, 300);
+
+    window.history.back();
 
     return false;
   },
@@ -168,10 +171,8 @@ window.FormView = Backbone.View.extend({
 	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
 		var ctrlId = 'ctl'+ctrlIndex++;
 		assingDialog(this, ctrlId);
-		console.log($('div#'+ctrlId).find('span'));
 		$('div#'+ctrlId).find('span').text($('div#'+ctrlId).data('rules'));
 	});
-
 
 	// assign add events to selectorField(s)
 	$(".selectorField").each(function(i, e){
@@ -277,7 +278,7 @@ function assingDialog(field, id){
 			options:[]
 		};
 		// build options as needed
-		if(attrb.type == 'checkbox' || attrb.type == 'radio' ){
+		if(attrb.type == 'checkbox-group' || attrb.type == 'radio-group' ){
 			attrb.options = (getOptions($(this).find('ul'), 'li'));
 		}
 		else if(attrb.type == 'dropdown' || attrb.type == 'select' ){
@@ -300,6 +301,7 @@ function delete_ctrl(ctlId){
 }
 
 function update_ctrl(ctlId){
+
 	var ctlType = $(ctlId).data('type');
 	// //*[@id="fieldDisplay"]
 	$(ctlId).find('label').text($('#formModal').find('#fieldDisplay').val());
@@ -320,7 +322,7 @@ function update_ctrl(ctlId){
 	// options
 	if(ctlType == 'checkbox' || ctlType == 'radio' || ctlType == 'dropdown' || ctlType == 'select' ){
 		var options = $('#formModal').find('textarea#options').val().split('\n');
-		if(ctlType == 'checkbox' || ctlType == 'radio'){
+		if(ctlType == 'checkbox-group' || ctlType == 'radio-group'){
 			setOptions($(ctlId), 'ul', ctlType, options);
 		}
 		else if(ctlType == 'dropdown' || ctlType == 'select' ){
@@ -347,8 +349,8 @@ function parseFormMeta(){
             case 'paragraph':
                 field.name = $(this).data('name');
                 break;
-            case 'checkbox':
-            case 'radio':
+            case 'checkbox-group':
+            case 'radio-group':
                 field.name = $(this).data('name');
                 field.values = getOptions($(this).find('ul'), 'li');
                 break;

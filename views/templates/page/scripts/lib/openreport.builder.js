@@ -18,8 +18,8 @@
 ;(function($){
 /**
  *
- * Usage:  		$("#formId").buildForm(formMeta, options);
- * Alt Usage:	$.buildForm('#testForm', formMeta, options)
+ * Usage: $("#formId").buildForm(formMeta, options);
+ * Alt Usage: $.buildForm('#testForm', formMeta, options)
  *
  */
   $.buildForm = function(el, formMeta, options){
@@ -69,11 +69,14 @@
 			case 'paragraph':
 				helper.buildParagraphBox(fieldCtrl, field.name);
 				break;
-			case 'checkbox':
-				helper.buildCheckbox(fieldCtrl, field.name, field.values);
+			case 'checkbox-group':
+				helper.buildCheckboxGroup(fieldCtrl, field.name, field.values);
 				break;
-			case 'radio':
-				helper.buildRadio(fieldCtrl, field.name, field.values);
+			case 'radio-group':
+				helper.buildRadioGroup(fieldCtrl, field.name, field.values);
+				break;
+			case 'dropdown':
+				helper.buildDropdown(fieldCtrl, field.name, field.values);
 				break;
 			case 'select':
 				helper.buildSelect(fieldCtrl, field.name, field.values);
@@ -100,7 +103,7 @@
 		  $(selector).append(createText(name));
 	  },
 
-	  buildCheckbox: function(selector, name, values){
+	  buildCheckboxGroup: function(selector, name, values){
 		  //ul
 		  var ul = document.createElement('ul');
 		  $(selector).append(ul);
@@ -112,7 +115,7 @@
 			  $(ul).append(li);
 		  }
 	  },
-	  buildRadio: function(selector, name, values){
+	  buildRadioGroup: function(selector, name, values){
 		  //ul
 		  var ul = document.createElement('ul');
 		  $(selector).append(ul);
@@ -123,11 +126,22 @@
 			  $(ul).append(li);
 		  }
 	  },
-	  buildSelect: function(selector, name, values){
+	  buildDropdown: function(selector, name, values){
 
 		  var select = createSelect(name);
 		  $(selector).append(select);
 		  $(select).append(createOption("Select One", 0));
+		  // build options for select
+		  for (index in values){
+			  field = values[index];
+			  $(select).append(createOption(field.label, field.value));
+		  }
+	  },
+	  buildSelect: function(selector, name, values){
+
+		  var select = createSelect(name);
+		  $(select).attr('multiple', 'multiple')
+		  $(selector).append(select);
 		  // build options for select
 		  for (index in values){
 			  field = values[index];
@@ -242,14 +256,15 @@
 									$('span',this).text(base.options.messages[rule]);
 								}
 							break;
-							case 'checkbox':
-							case 'radio':
+							case 'checkbox-group':
+							case 'radio-group':
 								var field = $('input[name='+name+']:checked');
 								if((field.length == 0)){
 									$('span',this).text(base.options.messages[rule]);
 									errorCnt++;
 								}
 							break;
+							case 'dropdown':
 							case 'select':
 								if($('select[name='+name+']').val() == 0){
 									$('span',this).text(base.options.messages[rule]);

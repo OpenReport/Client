@@ -34,6 +34,17 @@ window.Form = Backbone.Model.extend({
         meta:{'name':'openreport', "title":"", "desc":"",'fieldset':[{'name':'grp1', 'legend':'',fields:[]}]},
         date_created:'',
         api_key:apiKey
+    },
+    validate: function(attr){
+        attr || (attr = this.attributes);
+        var errors = [];
+        if(!attr.title){
+            errors.push('Report Title is requried');
+        }
+        if(!attr.meta.name){
+            errors.push('Report ID is requried');
+        }
+        if(errors.length !== 0){return errors};
     }
 });
 
