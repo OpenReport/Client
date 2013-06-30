@@ -116,10 +116,11 @@ window.FormView = Backbone.View.extend({
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
-			   fields:parseFormMeta()}
+			   fieldset:[{name:'group-1', legend:'',fields:parseFormMeta()}]}
 
     });
 
+	// Save It
     if (this.model.isNew()) {
         var self = this;
         router.formList.create(this.model, {
@@ -136,11 +137,11 @@ window.FormView = Backbone.View.extend({
     }
     this.close();
     // force refreash
-    preview = $('#preview').attr('src');
-    $('#preview').attr('src', '');
-    setTimeout(function () {
-        $('#preview').attr('src', preview);
-    }, 300);
+    //preview = $('#preview').attr('src');
+    //$('#preview').attr('src', '');
+    //setTimeout(function () {
+    //    $('#preview').attr('src', preview);
+    //}, 300);
 
     return false;
   },
@@ -151,29 +152,42 @@ window.FormView = Backbone.View.extend({
   },
   render: function(){
 	// build content
-    var template = _.template($("#formForm").html(), this.model.toJSON());
+    var template = _.template($("#formForm").html(), this.model.attributes);
     $(this.el).html(template);
     // build form controls
-	console.log(this.model.toJSON());
+	var ctrlIndex = 1, fldIndex = 1;
+	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well', 'fsClass':'droppedFields'});
 
-	buildForm(0, 'buildForm', this.model.toJSON().meta, '#form-ctrl-column');
+    // make sortable
+	$( ".droppedFields" ).sortable({
+		cancel: null, // Cancel the default events on the controls
+		connectWith: ".droppedFields"
+	}).disableSelection();
+
+	// assign dialogs
+	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
+		var ctrlId = 'ctl'+ctrlIndex++;
+		assingDialog(this, ctrlId);
+		console.log($('div#'+ctrlId).find('span'));
+		$('div#'+ctrlId).find('span').text($('div#'+ctrlId).data('rules'));
+	});
+
 
 	// assign add events to selectorField(s)
 	$(".selectorField").each(function(i, e){
 		// append to the form
-		$(this).on('click', function(){
+		$(e).on('click', function(){
 			//clone and add
 			t = $(this).clone();
-			t.removeClass("selectorField");
-			t.appendTo($('.droppedFields'));
-			t.attr('id', 'ctl'+ctrlIndex++);
-			assingDialog(t);
+			$(t).removeClass("selectorField");
+			$(t).appendTo($('fieldset.droppedFields'));
+			$(t).data('name', 'col'+fldIndex++);
+			// assign dialog
+			assingDialog($(t), 'ctl'+ctrlIndex++);
 			$(t).trigger('click');
 		})
-
 	});
 
-	//buildForm(form-ctrl-column, form-ctrl-column, )
     return this;
   },
   cancel:function () {
@@ -216,9 +230,9 @@ window.Routes = Backbone.Router.extend({
      * Add Form
      */
     add: function(){
-		console.log('Add Form');
+
 		var form = new window.Form();
-		console.log(form);
+
         new window.FormView({model: form}).render();
     },
 
@@ -228,7 +242,7 @@ window.Routes = Backbone.Router.extend({
     edit: function(id){
 		//if(typeof(this.formList) == 'undefined') this.formList = new window.Forms({key: apiKey, taskId: 1});
         var form = this.formList.get(id);
-		console.log(this.form);
+
         new window.FormView({model:form}).render();
     },
 
@@ -248,11 +262,12 @@ window.Routes = Backbone.Router.extend({
  *
  */
 
-function assingDialog(field){
+function assingDialog(field, id){
+	$(field).attr('id', id);
 	$(field).on('click', function(){
 
 		ctrl = $(this);
-		// fetch attrb
+		// fetch data attrb from div
 		attrb = {
 			id:ctrl.attr('id'),
 			type:ctrl.data('type'),
@@ -261,7 +276,7 @@ function assingDialog(field){
 			display: ctrl.find('label:first-child').text(),
 			options:[]
 		};
-
+		// build options as needed
 		if(attrb.type == 'checkbox' || attrb.type == 'radio' ){
 			attrb.options = (getOptions($(this).find('ul'), 'li'));
 		}
@@ -272,87 +287,52 @@ function assingDialog(field){
 		var template = _.template($("#fieldDetail").html(), attrb);
 		$('#dialog').html(template).modal();
 
+		// SET RULES IF ANY
+		if(attrb.rules.length == 2) {
+			$('select#rules option[value="|'+attrb.rules[1]+'"]').prop('selected', true);
+			console.log(attrb.rules[1]);
+		}
 	})
 }
 
 function delete_ctrl(ctlId){
 	ctlId.remove();
 }
+
 function update_ctrl(ctlId){
-
-	$(ctlId).find('label').text($('#formModal').find('#display').val());
-
-	$(ctlId).data('name', $('#formModal').find('#name').val());
-
-	if($('#formModal').find('#required').is(':checked')){
-		$(ctlId).data('rules', 'required'+$('#formModal').find('#rules').val());
+	var ctlType = $(ctlId).data('type');
+	// //*[@id="fieldDisplay"]
+	$(ctlId).find('label').text($('#formModal').find('#fieldDisplay').val());
+	// //*[@id="fieldName"]
+	$(ctlId).data('name', $('#formModal').find('#fieldName').val());
+	// validation
+	if($('#formModal').find('input#required').is(':checked')){
+		$(ctlId).data('rules', 'optional');
 	}
 	else{
-		$(ctlId).data('rules', 'optional'+$('#formModal').find('#rules').val());
+		$(ctlId).data('rules', 'required');
 	}
-	$('#formModal').find('#rules').val();
+	if(ctlType == 'text'){
+		$(ctlId).data('rules', $(ctlId).data('rules')+$('#formModal').find('select#rules').val());
 
-}
+	}
+	$(ctlId).find('span').text($(ctlId).data('rules'));
+	// options
+	if(ctlType == 'checkbox' || ctlType == 'radio' || ctlType == 'dropdown' || ctlType == 'select' ){
+		var options = $('#formModal').find('textarea#options').val().split('\n');
+		if(ctlType == 'checkbox' || ctlType == 'radio'){
+			setOptions($(ctlId), 'ul', ctlType, options);
+		}
+		else if(ctlType == 'dropdown' || ctlType == 'select' ){
+			setOptions($(ctlId), 'select', ctlType, options);
+		}
 
-var ctrlIndex = 100;
-//
-//
-function buildForm(taskId, formId, formMeta, div){
+	}
 
-    var newForm = document.createElement('form');
-    newForm.setAttribute('id', formMeta.name);
-    newForm.setAttribute('onSubmit', 'return false;');
-	newForm.setAttribute('class', 'droppedFields'); //
-    $(div).append(newForm);
-    // create error div
-    var error = document.createElement('div');
-    error.setAttribute('id', 'error');
-    $(newForm).append(error);
-    // create form fields
-    for (index in formMeta.fields){
-        field = formMeta.fields[index];
-        fieldSet = document.createElement('div');
-		fieldSet.setAttribute('id', 'ctl'+ctrlIndex++); //
-		fieldSet.setAttribute('class', 'well'); //
-		fieldSet.setAttribute('data-name', field.name); //
-		fieldSet.setAttribute('data-rules', field.rules); //
-		fieldSet.setAttribute('data-type', field.type); //
-		// add to form
-        $(newForm).append(fieldSet);
-		// add info btn
-		//$(fieldSet).append('<div class="pull-right field-info"><i class="icon-edit icon" data-field-type="'+field.type+'">&nbsp</i></div>');
-
-		assingDialog(fieldSet);
-		// Field Label (display)
-        $(fieldSet).append(createLabel(field.display));
-        // Field Input Control
-        switch(field.type){
-            case 'text':
-                buildText(fieldSet, field.name);
-                break;
-            case 'paragraph':
-                buildParagraph(fieldSet, field.name);
-                break;
-            case 'checkbox':
-                buildCheckbox(fieldSet, field.name, field.values);
-                break;
-            case 'radio':
-                buildRadio(fieldSet, field.name, field.values);
-                break;
-            case 'select':
-                buildSelect(fieldSet, field.name, field.values);
-                break;
-        }
-    }
-    // make sortable
-	$( ".droppedFields" ).sortable({
-		cancel: null, // Cancel the default events on the controls
-		connectWith: ".droppedFields"
-	}).disableSelection();
 }
 
 function parseFormMeta(){
-    var frm = $('form.droppedFields').find('div.well');
+    var frm = $('fieldset.droppedFields').find('div.well');
 
     var formFields = [];
     //
@@ -364,29 +344,21 @@ function parseFormMeta(){
         field.type = fieldType = $(this).data('type');
         switch(fieldType){
             case 'text':
-                field.name = $(this).find('input').attr('name');
-                break;
             case 'paragraph':
-                field.name = ($(this).find('textarea').attr('name'));
+                field.name = $(this).data('name');
                 break;
             case 'checkbox':
-                field.name = ($(this).find('ul').data('name'));
-                field.values = getOptions($(this).find('ul'), 'li');
-                break;
             case 'radio':
-                field.name = ($(this).find('ul').data('name'));
+                field.name = $(this).data('name');
                 field.values = getOptions($(this).find('ul'), 'li');
                 break;
             case 'dropdown':
-                field.name = ($(this).find('select').attr('name'));
-                field.values = getOptions($(this).find('select'),'option');
-                break;
             case 'select':
-                field.name = ($(this).find('select').attr('name'));
+                field.name = $(this).data('name');
                 field.values = getOptions($(this).find('select'),'option');
                 break;
         }
-        field.rules = $(this).data('field-rules');
+        field.rules = $(this).data('rules');
         formFields.push(field);
 
     });
@@ -401,7 +373,23 @@ function getOptions(sel, el){
 	return opt;
 
 }
-
+function setOptions(sel, el, typ, opt){
+	// Reset
+	sel.find(el).html('');
+	// Build
+	opt.forEach(function(item){
+		var lv = item.split('=');
+		// only key-value pairs
+		if(lv.length === 2){
+			if(typ == 'checkbox' || typ == 'radio'){
+				sel.find(el).append('<li><input type="'+typ+'" value="'+lv[1]+'">'+lv[0]+'</li>');
+			}
+			else if(typ == 'dropdown' || typ == 'select'){
+				sel.find(el).append('<option value="'+lv[1]+'">'+lv[0]+'</option>');
+			}
+		}
+	});
+}
 /**
  *
  * Start App

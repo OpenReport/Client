@@ -30,7 +30,8 @@ window.Form = Backbone.Model.extend({
         id:null,
         title:'',
         description:'',
-        meta:{'name':'',fields:[]},
+        tags:'',
+        meta:{'name':'openreport', "title":"", "desc":"",'fieldset':[{'name':'grp1', 'legend':'',fields:[]}]},
         date_created:'',
         api_key:apiKey
     }
