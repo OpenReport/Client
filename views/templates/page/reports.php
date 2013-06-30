@@ -3,39 +3,6 @@
 	<div id="reportContext" class="row-fluid well">	</div>
 </div>
 
-<!-- script id="reportingTasks" type="text/x-handlebars-template">
-	<div class="span12">
-	<div>
-		<span class="pull-left"><a id="prevMo" href="#">Prev</a></span>
-		<span class="pull-right"><a id="nextMo" href="#">Next</a></span>
-	</div>
-		<table class="table">
-		<thead>
-		  <tr>
-			<th colspan="5"><h3>Reporting Tasks</h3></th>
-		  </tr>
-		  <tr>
-			<th>Title</th>
-			<th>Description</th>
-			<th>Date</th>
-			<th>&nbsp;</th>
-		  </tr>
-		</thead>
-		<tbody>
-		{{ _(records).each(function(task) { }}
-		  <tr>
-			<td><a class="task" id="{{= task.get('id') }}" href="#tasks/{{= task.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= task.get('title') }}</a></td>
-			<td>{{= task.get('description') }}</td>
-			<td>{{= moment(task.get('date_created').date).format('L') }}</td>
-			<td><span class="pull-right"><a class="" href="#task/edit/{{= task.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
-		  </tr>
-
-		{{ }); }}
-		</tbody>
-		</table>
-	</div>
-
-</script -->
 
 <script id="reportingForms" type="text/template">
 	<div class="span12">
