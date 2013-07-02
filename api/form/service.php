@@ -157,6 +157,8 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form->description = $request->description;
         $form->tags = $request->tags;
         $form->date_created = $today;
+        $form->date_modified = $today;
+        $form->is_published = $request->is_published;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
@@ -197,11 +199,12 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         $form->description = $request->description;
         $form->tags = $request->tags;
         $form->date_modified = $today;
+        $form->is_published = $request->is_published;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
         // package the data
-        $response['data'] = $form->values_for(array('id','title','description','date_created'));
+        $response['data'] = $form->values_for(array('id','title','description','date_created','date_modified'));
         $response['message'] = "form saved";
     }
     else{
@@ -233,6 +236,6 @@ function getColumns($data){
  */
  function formArrayMap($forms){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'description\',\'tags\',\'meta\',\'date_created\'));'),$forms);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_published\'));'),$forms);
 
  }

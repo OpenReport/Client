@@ -34,7 +34,7 @@ window.RecordsView = Backbone.View.extend({
   },
 
   events:{
-    //"click .feed":"detail",
+    //"click #export":"exportRecords",
     //"click #prevMo":"prevMo",
     //"click #nextMo":"nextMo"
   },
@@ -47,11 +47,40 @@ window.RecordsView = Backbone.View.extend({
     $(this.el).html(template);
 	$.bootstrapSortable();
     return this;
+  },
+  exportRecords: function(){
+
   }
 
 });
 
+/**
+ *
+ *
+ *
+ */
+window.RecordDetail = Backbone.View.extend({
+  el: '#reportContext',
+  model: null,
+  initialize: function(options){
+    this.listenTo(this.model,'change', this.render);
+    this.model.fetch();
+  },
 
+  render: function(){
+	var params = { record: this.model.attributes.data.record, columns:this.model.attributes.data.columns};
+	var template = _.template($("#recordDetails").html(), params);
+	$(this.el).html(template);
+	console.log(params);
+	return this;
+  },
+
+});
+/**
+ * List Report Forms
+ *
+ *
+ */
 window.ReportsView = Backbone.View.extend({
   el: '#reportContext',
   collection: null,
@@ -80,35 +109,6 @@ window.ReportsView = Backbone.View.extend({
 
 });
 
-
-//window.TasksView = Backbone.View.extend({
-//  el: '#reportContext',
-//  collection: null,
-//  initialize: function(options){
-//    _.bind(this, 'render');
-//    this.listenTo(this.collection, 'reset', this.render);
-//	this.collection.fetch();
-//  },
-//
-//	render: function(){
-//
-//	var params = { records: this.collection.models};
-//
-//	//console.log(params.records[0].get('title'));
-//	var template = _.template($("#reportingTasks").html(), params);
-//	$(this.el).html(template);
-//	//$.bootstrapSortable();
-//	return this;
-//  },
-//
-//  close:function () {
-//    $('.datetimepicker').remove();
-//    $(this.el).unbind();
-//    $(this.el).empty();
-//  }
-//
-//});
-
 /**
  * Routes
  *
@@ -118,7 +118,8 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view - View Reporting Tasks
-        "records/:id" : "records"           // list report records
+        "records/:id" : "records",          // list report records
+        "details/:id" : "details"           // list report records
 	},
     /*
      * Display Reporting Forms
@@ -136,7 +137,12 @@ window.Routes = Backbone.Router.extend({
         this.recordList = new window.Records({key: apiKey, formId: id});
 		//console.log(this.recordList);
         new window.RecordsView({collection: this.recordList});
-    }
+    },
+	details: function(id){
+
+		this.record = new window.Record({id:id});
+		new window.RecordDetail({model:this.record});
+	}
 });
 
 

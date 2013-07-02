@@ -124,20 +124,6 @@ $app->get('/reports', $authenticate($app), function () use ($app){
 
 });
 
-/**
- * Reporting Tasks Admin - Create and mamage reporting tasks
- *
- */
-//$app->get('/tasks', $authenticate($app), function () use ($app){
-//    require $_SERVER['DOCUMENT_ROOT'].'views/TasksView.php';
-//    $app->view(new TasksView());
-//    // Page Meta
-//    $meta = array();
-//    $data = array('meta'=>$meta);
-//    $app->render('page/tasks.php', $data);
-//
-//});
-
 
 /**
  * Forms - Create and mamage reporting forms
@@ -165,7 +151,7 @@ $app->get('/users', $authenticate($app), function () use ($app){
     // Page Meta
     $meta = array();
     $data = array('meta'=>$meta);
-    $app->render('page/forms.php', $data);
+    $app->render('page/users.php', $data);
 
 });
 

@@ -105,11 +105,12 @@ window.FormView = Backbone.View.extend({
   },
 
   saveForm:function () {
-
+console.log($('#formPublished').is(':checked') );
     this.model.set({
         title: $('#formTitle').val(),
         description: $('#formDescription').val(),
 		tags: $('#formTags').val(),
+		is_published: ($('#formPublished').is(':checked') ? 1:0),
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
@@ -122,9 +123,8 @@ window.FormView = Backbone.View.extend({
 		console.log(errors);
 		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
 		$('#dialog').html(template).modal();
-		return false;
+		return true;
 	}
-
 
 	// Save It
     if (this.model.isNew()) {
@@ -144,7 +144,7 @@ window.FormView = Backbone.View.extend({
         });
     }
 
-    window.history.back();
+    //window.history.back();
 
     return false;
   },

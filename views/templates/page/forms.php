@@ -16,6 +16,8 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Date</th>
+                <th>Published</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -24,6 +26,7 @@
                 <td><a class="form" id="{{= form.get('id') }}" href="#"><i class="icon-folder-open icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
                 <td>{{= form.get('description') }}</td>
                 <td>{{= moment(form.get('date_created').date).format('L') }}</td>
+				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
                 <td><span class="pull-right"><a class="" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
@@ -64,6 +67,14 @@
 		<div class="control-group">
 			<label>Report Id:&nbsp;<small>Enter report control number.</small></label>
 			<input type="text" id="formName" placeholder="Form Id..." value="{{= meta.name }}" class="ctrl-textbox span12">
+		</div>
+		<div class="control-group">
+			<label class="control-label" style="vertical-align:top">Report Options</label>
+			<ul style="display:inline-block;" class="ctrl-checkboxgroup">
+				<li><input type="checkbox" id="formPublished" {{= (is_published === 1) ? 'checked':'' }}>Publish Form</li>
+				<li><input type="checkbox" name="checkboxField" value="option2">Option 2</li>
+				<li><input type="checkbox" name="checkboxField" value="option3">Option 3</li>
+			</ul>
 		</div>
 
 	  </div>

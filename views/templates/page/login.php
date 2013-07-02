@@ -2,7 +2,7 @@
 <html class="no-js">
 <head>
     <meta charset="utf-8">
-    <title>bracketCMS</title>
+    <title>OpenReport</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 

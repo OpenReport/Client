@@ -1,10 +1,17 @@
-<div class="well">
-	<h1>Recent Reports</h1>
-	<ul>
-		<li><a href="http://openreport.local/reports#tasks/2">Health</a></li>
-	</ul>
+<!--
 
-	<p>
-		News:
-	</p>
+
+-->
+<div class="container-fluid">
+	<div id="userContext" class="row-fluid well"></div>
+    <!-- Modals -->
+    <div id="dialog"></div>
 </div>
+
+
+
+
+
+
+<script type="text/javascript" src="/views/templates/page/scripts/dashboard.js"></script>
+

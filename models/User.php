@@ -25,4 +25,7 @@ class User extends ActiveRecord\Model {
   static $table_name = 'users';
   static $belongs_to = array(array('account', 'class_name'=>'Account'));
 
+  public function get_password(){
+    return '****************';
+  }
 }

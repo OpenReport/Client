@@ -24,7 +24,13 @@
  *
  */
 window.Record = Backbone.Model.extend({
-    //urlRoot: '/api/record/'
+   urlRoot: '/api/report/record/'+apiKey,
+    defaults:{
+        id:null,
+        user:'',
+
+        api_key:apiKey
+    },
 });
 
 window.Records = Backbone.Collection.extend({
@@ -55,7 +61,7 @@ window.Records = Backbone.Collection.extend({
         //uri = uri + (this.mo > 0 ? '/'+this.mo:'')+(this.yr > 0 ? '-'+this.yr:'2013');
         // build new uri
         console.log(uri);
-        return "/api/record/report/"+uri;
+        return "/api/report/"+uri;
     },
     parse:function(response){
         console.log(response);
