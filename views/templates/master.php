@@ -111,7 +111,9 @@ $(function(){ // document ready
       <?php $this->partial($childView, $this->getData())?>
     </div>
 
-    <div class="span3 well sticky"></div>
+    <div id="infoBox" class="span3 well sticky">
+
+    </div>
   </div>
 
 </div> <!--/container-fluid-->

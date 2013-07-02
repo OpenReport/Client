@@ -205,8 +205,4 @@ function getColumns($data){
  *
  *
  */
- function arrayMapRecord($events){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\',\'content\',\'post_date\',\'expire_date\'));'),$events);
-
- }

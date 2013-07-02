@@ -258,7 +258,7 @@ function getColumns($data){
  *
  *
  */
- function formArrayMap($forms){
+function formArrayMap($forms){
 
     return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_published\'));'),$forms);
 
