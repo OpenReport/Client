@@ -34,14 +34,12 @@ window.FormsView = Backbone.View.extend({
   },
 
   events:{
-    "click .feed":"detail",
-    "click #prevMo":"prevMo",
-    "click #nextMo":"nextMo"
+    "click .detailBtn":"detail",
+    "click .deleteBtn":"deleteForm"
   },
 
   render: function(){
     var params = { records: this.collection.models};
-
 
     var template = _.template($("#forms").html(), params);
     $(this.el).html(template);
@@ -49,24 +47,24 @@ window.FormsView = Backbone.View.extend({
     return this;
   },
 
-  prevMo: function(){
-
-    if(--curMonth < 1){
-        curMonth = 12;
-        --curYear;
-    }
-	navTime.subtract('M',1)
-    this.collection.fetchMonth({id: 2, mo: 0, yr: 0});
-  },
-
-  nextMo: function(){
-    if(++curMonth > 12){
-        curMonth = 1;
-        ++curYear;
-    }
-	navTime.subtract('M',1)
-    this.collection.fetchMonth({id: 2, mo: curMonth, yr: curYear});
-  },
+//  prevMo: function(){
+//
+//    if(--curMonth < 1){
+//        curMonth = 12;
+//        --curYear;
+//    }
+//	navTime.subtract('M',1)
+//    this.collection.fetchMonth({id: 2, mo: 0, yr: 0});
+//  },
+//
+//  nextMo: function(){
+//    if(++curMonth > 12){
+//        curMonth = 1;
+//        ++curYear;
+//    }
+//	navTime.subtract('M',1)
+//    this.collection.fetchMonth({id: 2, mo: curMonth, yr: curYear});
+//  },
 
   /**
    * Display Form Details in a Modal Dialog
@@ -77,9 +75,19 @@ window.FormsView = Backbone.View.extend({
     console.log('detail called');
     var target = e.target;
     model = this.collection.get(target.id);
-
-    var template = _.template($("#formDetail").html(), model.toJSON());
+	console.log(model.attributes);
+    var template = _.template($("#formDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
+    return this;
+  },
+
+  deleteForm: function(e){
+
+    console.log('delete called');
+    var target = e.target;
+    //model = this.collection.get(target.id);
+	console.log(target.id);
+
     return this;
   }
 
@@ -104,8 +112,8 @@ window.FormView = Backbone.View.extend({
     "click #close":"cancel"
   },
 
-  saveForm:function () {
-console.log($('#formPublished').is(':checked') );
+  saveForm:_.debounce(function() {
+
     this.model.set({
         title: $('#formTitle').val(),
         description: $('#formDescription').val(),
@@ -147,7 +155,7 @@ console.log($('#formPublished').is(':checked') );
     //window.history.back();
 
     return false;
-  },
+  }, 500),
   details:function(e){
     console.log('detail called');
     var target = e.target;
@@ -213,7 +221,6 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view
-        "remove/:id" : "remove",
 		"edit/:id" : "edit",
 		"add" : "add"
 	},
@@ -238,20 +245,13 @@ window.Routes = Backbone.Router.extend({
     },
 
     /*
-     * Edit Events
+     * Edit Form
      */
     edit: function(id){
 		//if(typeof(this.formList) == 'undefined') this.formList = new window.Forms({key: apiKey, taskId: 1});
         var form = this.formList.get(id);
 
         new window.FormView({model:form}).render();
-    },
-
-    /*
-     * Remove Events
-     */
-    remove: function(id){
-
     }
 });
 
@@ -262,6 +262,15 @@ window.Routes = Backbone.Router.extend({
  *
  *
  */
+
+function remove_form(ctlId){
+	model = router.formList.get(ctlId);
+	console.log(router.formList);
+	model.destroy();
+	console.log(router.formList);
+	router.formList.fetch();
+
+}
 
 function assingDialog(field, id){
 	$(field).attr('id', id);

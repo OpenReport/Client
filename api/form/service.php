@@ -87,7 +87,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     // get date
     $today = new DateTime('GMT');
     try {
-        $formData = Form::find('all', array('conditions'=>array('api_key = ?', $apiKey)));
+        $formData = Form::find('all', array('conditions'=>array('api_key = ? AND is_deleted = 0', $apiKey)));
         // package the data
         $response['data'] = formArrayMap($formData);
         $response['count'] = count($response['data']);//$response['data']->count();
@@ -211,6 +211,30 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         $response['status'] = "error";
         $response['message'] = "cancled";
     }
+
+    // confirmation
+    echo json_encode($response);
+
+});
+
+/**
+ * Delete Reporting form record (soft delete)
+ *
+ * DELETE: /form/{apiKey}/{taskId}
+ *
+ */
+$app->delete("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
+
+    // get date
+    $today = new DateTime('GMT');
+    // remove form
+    $form = Form::find($formId);
+    $form->date_modified = $today;
+    $form->is_deleted = 1;
+    $form->save();
+    // package the data
+    $response['data'] = $form->values_for(array('id','title','description','date_created','date_modified'));
+    $response['message'] = "form saved";
 
     // confirmation
     echo json_encode($response);

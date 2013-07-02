@@ -1,0 +1,11 @@
+
+# Turn on URL rewriting
+RewriteEngine On
+
+# service directory
+RewriteBase /api/report/
+
+# Rewrite Service URIs
+RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteRule .* service.php/$0 [QSA,L]

@@ -15,18 +15,18 @@
               <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Date</th>
                 <th>Published</th>
+				<th>Date</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
             {{ _(records).each(function(form) { }}
               <tr>
-                <td><a class="form" id="{{= form.get('id') }}" href="#"><i class="icon-folder-open icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
+                <td><a class="detailBtn" id="{{= form.get('id') }}" href="#"><i class="icon-folder-open icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
                 <td>{{= form.get('description') }}</td>
-                <td>{{= moment(form.get('date_created').date).format('L') }}</td>
 				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
+                <td>{{= moment(form.get('date_modified').date).format('L') }}</td>
                 <td><span class="pull-right"><a class="" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
@@ -204,6 +204,35 @@
 </script>
 
 
+
+<script id="formDetail" type="text/template">
+	<div class="modal" id="formModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">✕</button>
+			<h3>Report Form Details</h3>
+		</div>
+		<div class="modal-body" style="text-align:left;">
+			<div class="row-fluid">
+				<div class="span12">
+					<div>
+						<dl class="dl-horizontal">
+							<dt>Title:</dt><dd>{{= title }}</dd>
+							<dt>Description:</dt><dd>{{= description }}</dd>
+
+							<dt>Tags:&nbsp;</dt><dd>{{= tags }}</dd>
+							<dt>Created On:&nbsp;</dt><dd>{{= moment(date_created.date).format('L') }}</dd>
+							<dt>Last Modified:&nbsp;</dt><dd>{{= moment(date_modified.date).format('L') }}</dd>
+						<dl>
+					</div>
+					<div class="control-group pull-right">
+					<button type="button" onclick='remove_form({{= id }})' class="btn btn-danger" data-dismiss="modal">REMOVE<i class="icon-minus-sign icon-white"></i></button>
+					<button type="button" onclick='router.navigate("/edit/{{= id }}", true);' class="btn btn-primary" data-dismiss="modal">Edit<i class="icon-minus-sign icon-white"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
 <script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.builder.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/forms.js"></script>
