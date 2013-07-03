@@ -230,6 +230,7 @@ $app->delete("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $respons
     // remove form
     $form = Form::find($formId);
     $form->date_modified = $today;
+    $form->is_published = 0;
     $form->is_deleted = 1;
     $form->save();
     // package the data

@@ -87,11 +87,14 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     // get date
     $today = new DateTime('GMT');
     // get stats
+    $join = array('LEFT JOIN users ON(records.user = users.email)',
+                  'LEFT JOIN forms ON(records.form_id = forms.id)');
+    $sel = 'records.*, forms.title AS form_title, users.username AS user';
 
-    $recentRcords = Record::all(array('conditions' =>array('api_key = ?', $apiKey)));
+    $recentRcords = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions' =>array('records.api_key = ?', $apiKey)));
 
     if(!empty($recentRcords)){
-        $recentReports = array('count'=>count($recentRcords), 'reports'=>arrayMapRecord($recentRcords));
+        $recentReports = arrayMapRecord($recentRcords);
     }
     else {
         $recentReports = array('count'=>0);
@@ -144,6 +147,6 @@ function formArrayMap($data){
 
 function arrayMapRecord($data){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'form_id\',\'user\'));'),$data);
+    return array_map(create_function('$m','return $m->values_for(array(\'form_title\',\'form_id\',\'user\',\'lat\',\'lon\',\'record_date\'));'),$data);
 
 }
