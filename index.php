@@ -25,6 +25,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'system/Slim/Slim.php';
 $app = new \Slim\Slim(array('session.handler' => null, 'templates.path'=>$_SERVER['DOCUMENT_ROOT'].'views/templates/'));
 $app->add(new \Slim\Middleware\SessionCookie());
 
+
 /**
  *
  *
@@ -48,9 +49,8 @@ $authenticate = function ($app) {
  *
  */
 $app->get('/', $authenticate($app), function () use($app) {
-
-    require $_SERVER['DOCUMENT_ROOT'].'views/DashboardView.php';
-    $app->view(new DashboardView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
 
     // Page Meta
     $meta = array();
@@ -67,8 +67,9 @@ $app->get('/', $authenticate($app), function () use($app) {
  *
  */
 $app->get('/account/settings', $authenticate($app), function () use($app) {
-    require $_SERVER['DOCUMENT_ROOT'].'views/AccountView.php';
-    $app->view(new AccountView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+
     // Page Meta
     $meta = array();
     $data = array('meta'=>$meta);
@@ -84,8 +85,9 @@ $app->get('/account/settings', $authenticate($app), function () use($app) {
  *
  */
 $app->get('/account/billing', $authenticate($app), function () use($app) {
-    require $_SERVER['DOCUMENT_ROOT'].'views/AccountView.php';
-    $app->view(new AccountView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+
     // Page Meta
     $meta = array();
     $data = array('meta'=>$meta);
@@ -99,8 +101,9 @@ $app->get('/account/billing', $authenticate($app), function () use($app) {
  *
  */
 $app->get('/calendar', $authenticate($app), function () use ($app){
-    require $_SERVER['DOCUMENT_ROOT'].'views/CalendarView.php';
-    $app->view(new CalendarView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+
     // Page Meta
     $meta = array();
     $data = array('meta'=>$meta);
@@ -115,8 +118,9 @@ $app->get('/calendar', $authenticate($app), function () use ($app){
  *
  */
 $app->get('/reports', $authenticate($app), function () use ($app){
-    require $_SERVER['DOCUMENT_ROOT'].'views/ReportsView.php';
-    $app->view(new ReportsView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+
     // Page Meta
     $meta = array();
     $data = array('meta'=>$meta);
@@ -130,8 +134,8 @@ $app->get('/reports', $authenticate($app), function () use ($app){
  *
  */
 $app->get('/forms', $authenticate($app), function () use ($app){
-    require $_SERVER['DOCUMENT_ROOT'].'views/FormsView.php';
-    $app->view(new FormsView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
 
     // Page Meta
     $meta = array();
@@ -145,8 +149,8 @@ $app->get('/forms', $authenticate($app), function () use ($app){
  *
  */
 $app->get('/users', $authenticate($app), function () use ($app){
-    require $_SERVER['DOCUMENT_ROOT'].'views/UsersView.php';
-    $app->view(new UsersView());
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
 
     // Page Meta
     $meta = array();
