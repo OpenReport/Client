@@ -21,10 +21,10 @@
 
 
 /**
- * Record Record Model
+ * Report Record Model
  */
-class Record extends ActiveRecord\Model {
-  static $table_name = 'records';
+class Report extends ActiveRecord\Model {
+  static $table_name = 'reports';
   static $belongs_to = array(array('form', 'class_name'=>'Form'));
   public function get_meta(){
     return json_decode($this->read_attribute('meta'), true);

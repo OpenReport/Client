@@ -107,10 +107,11 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
     // get date
     $today = new DateTime('GMT');
     $record = Record::find($id);
+    $headers = Report::first(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $record->form_id)));
     // package the data
     $columns = array_keys($record->meta);
     $data = $record->values_for(array('id', 'form_id','meta', 'record_date','user', 'lat', 'lon'));
-    $response['data'] = array('columns'=>$columns, 'record'=>$data);
+    $response['data'] = array('headers'=>$headers->meta, 'columns'=>$columns, 'record'=>$data);
     $response['count'] = 1;
     // send the data
     echo json_encode($response);
@@ -118,31 +119,6 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 
 });
 
-//$app->post('/record', function () use ($app, $response) {
-//
-//    // get the data
-//    $request = json_decode($app->request()->getBody());
-//
-//    // Validate calendar id
-//    //if($id == $request->form_id){
-//        // create the event
-//        $record = new Record();
-//        $record->task_id = $request->task_id;
-//        $record->form_id = $request->form_id;
-//        $record->meta = json_encode($request->meta);
-//        //$record->record_date = $request->????;
-//        //$record->user = $request->user;
-//        //$record->lon = $request->lon;
-//        //$record->lat = $request->lat;
-//        $record->save();
-//    //}
-//    // package the data
-//    $response['data'] = json_encode($request->meta);
-//    $response['count'] = 0;
-//
-//    // send the data
-//    echo json_encode($response);
-//});
 
 /**
  * Fetch Report Data for Form
@@ -153,17 +129,20 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
 
     try{
-        // find all event records
-        $eventData = Record::find('all', array('conditions' => array('form_id = ?', $formId)));
+        // find all records
+        $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
 
         // check if empty
-        if(!empty($eventData)){
+        if(!empty($records)){
 
             // normalize data
             $data = array();
-            foreach($eventData as $record){
+            foreach($records as $record){
                 $temp = $record->meta;
                 $temp['id'] = $record->id;
+                $temp['lon'] = $record->lon;
+                $temp['lat'] = $record->lat;
+                $temp['recorded'] = $record->record_date->format('Y-m-d H:i:s');
                 $data[] = $temp;
             }
 
@@ -205,4 +184,3 @@ function getColumns($data){
  *
  *
  */
-

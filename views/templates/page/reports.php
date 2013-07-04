@@ -71,16 +71,17 @@
 	<div class="row-fluid">
 		<div class="span10">
 			<ul class="details">
+				<li><strong>Data Collected: {{= headers.fieldset[0].legend }}</strong></li>
+				<li><dl class="dl-horizontal">
+				{{_(headers.fieldset[0].fields).each(function(col){ if(col !== 'id') }}
+				<dt><strong>{{= col.display }}:</strong></dt><dd> {{= record.meta[col.name] }}</dd>
+				{{ }); }}
+				</dl></li>
 				<li><strong>Submited:</strong> {{= moment(record.record_date.date).format('L') }}</li>
 				<li><strong>User:</strong> {{= record.user }}</li>
 				<li><strong>Lon/Lat:</strong> {{= record.lon }}/{{= record.lat }}</li>
-				<li><strong>Data Collected:</strong></li>
-				<ul>
-				{{_(columns).each(function(col){ if(col !== 'id') }}
-				<li><strong>{{= col }}:</strong> {{= record.meta[col] }}</li>
-				{{ }); }}
-				</ul>
 			</ul>
+			{{ _(headers.fieldset[0].fields).each(function(hrd) {console.log(hrd.name)}) }}
 		</div>
 	</div>
 </script>

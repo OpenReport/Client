@@ -40,9 +40,8 @@ window.RecordsView = Backbone.View.extend({
   },
 
   render: function(){
-    var params = { headers: this.collection.models[0].get('columns'),records: this.collection.models[0].get('rows') };
+    var params = { headers: this.collection.models[0].get('columns'), records: this.collection.models[0].get('rows') };
 
-	console.log(params);
     var template = _.template($("#reportRecords").html(), params);
     $(this.el).html(template);
 	$.bootstrapSortable();
@@ -68,7 +67,7 @@ window.RecordDetail = Backbone.View.extend({
   },
 
   render: function(){
-	var params = { record: this.model.attributes.data.record, columns:this.model.attributes.data.columns};
+	var params = { record: this.model.attributes.data.record, headers:this.model.attributes.data.headers};
 	var template = _.template($("#recordDetails").html(), params);
 	$(this.el).html(template);
 	console.log(params);
