@@ -218,7 +218,6 @@
 						<dl class="dl-horizontal">
 							<dt>Title:</dt><dd>{{= title }}</dd>
 							<dt>Description:</dt><dd>{{= description }}</dd>
-
 							<dt>Tags:&nbsp;</dt><dd>{{= tags }}</dd>
 							<dt>Created On:&nbsp;</dt><dd>{{= moment(date_created.date).format('L') }}</dd>
 							<dt>Last Modified:&nbsp;</dt><dd>{{= moment(date_modified.date).format('L') }}</dd>

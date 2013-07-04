@@ -79,7 +79,7 @@ $app->get('/', function () use($app, $response)  {
 /**
  * Fetch System Stats
  *
- * get: /dashboard/{apiKey}
+ * GET: /api/dashboard/{apiKey}
  *
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {

@@ -65,12 +65,12 @@ $response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
 /**
  * Status Page
  *
- * get: /user/
+ * GET: /api/user
  *
  */
 $app->get('/', function () use($app, $response)  {
 
-    $response['message'] = 'Open Report v1.0';
+    $response['message'] = 'OpenReport Client API v1.0';
     echo json_encode($response);
 
 });
@@ -79,7 +79,9 @@ $app->get('/', function () use($app, $response)  {
 /**
  * Fetch all User records for apiKey
  *
- * get: /user/{apiKey}
+ * GET: /api/user/{apiKey}
+ *
+ * Returns: User Accounts
  *
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
@@ -103,9 +105,6 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
  */
 $app->run();
 
-function getColumns($data){
-    return array_keys($data[0]);
-}
 
 /**
  * Data conversion utilites for copy events

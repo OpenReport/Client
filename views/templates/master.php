@@ -75,11 +75,11 @@ $(function(){ // document ready
                                class="icon-edit icon-black"></i>
                                 Manage <b class="caret"></b></a>
                             <ul class="dropdown-menu">
+                                <li><a href="/assignments">Reporting Assignments</a></li>
                                 <li><a href="/forms">Reporting Forms</a></li>
                                 <li><a href="/users">User Accounts</a></li>
                             </ul>
                         </li>
-
                     </ul>
                     <ul class="nav pull-right settings">
                         <li><a href="/account/settings" class="tip icon logout" data-original-title="Settings"

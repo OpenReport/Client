@@ -159,6 +159,20 @@ $app->get('/users', $authenticate($app), function () use ($app){
 
 });
 
+/**
+ * Assignments - Create and assignments users
+ *
+ */
+$app->get('/assignments', $authenticate($app), function () use ($app){
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+
+    // Page Meta
+    $meta = array();
+    $data = array('meta'=>$meta);
+    $app->render('page/assignments.php', $data);
+
+});
 
 
 /**

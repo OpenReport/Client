@@ -65,12 +65,12 @@ $response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
 /**
  * Status Page
  *
- * get: /form/
+ * get: /api/form/
  *
  */
 $app->get('/', function () use($app, $response)  {
 
-    $response['message'] = 'Open Report Services v1.0';
+    $response['message'] = 'OpenReport Client API Services v1.0';
     echo json_encode($response);
 
 });
@@ -79,7 +79,7 @@ $app->get('/', function () use($app, $response)  {
 /**
  * Fetch Form records for apiKey
  *
- * get: /form/{api}
+ * GET: /api/form/{api}
  *
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
@@ -108,7 +108,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 /**
  * Fetch Form record
  *
- * get: /form/{api}/{id}
+ * GET: /api/form/{api}/{id}
  *
  */
 $app->get('/:apiKey/:id', function ($apiKey, $id) use ($app, $response) {
@@ -137,7 +137,7 @@ $app->get('/:apiKey/:id', function ($apiKey, $id) use ($app, $response) {
 /**
  * Add Reporting form record
  *
- * POST: /form/{apiKey}
+ * POST: /api/form/{apiKey}
  *
  */
 $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
@@ -145,8 +145,6 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
     // get date
     $today = new DateTime('GMT');
     $request = json_decode($app->request()->getBody());
-
-    // TODO: validate task_id with api_key
 
     // Validate account apiKey
     if($apiKey == $request->api_key){
@@ -179,7 +177,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
 /**
  * Update Reporting form record
  *
- * PUT: /form/{apiKey}/{taskId}
+ * PUT: /api/form/{apiKey}/{taskId}
  *
  */
 $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
@@ -220,7 +218,7 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 /**
  * Delete Reporting form record (soft delete)
  *
- * DELETE: /form/{apiKey}/{taskId}
+ * DELETE: /api/form/{apiKey}/{taskId}
  *
  */
 $app->delete("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
@@ -241,6 +239,44 @@ $app->delete("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $respons
     echo json_encode($response);
 
 });
+
+
+/**
+ * Assign Form to User
+ *
+ * POST: /api/form/assign/{apiKey}/{formId}/{userid}
+ *
+ */
+$app->post("/assign/:apiKey/:formId/:userId", function ($apiKey, $formId, $userId) use ($app, $response) {
+
+   // get date
+    $today = new DateTime('GMT');
+    $request = json_decode($app->request()->getBody());
+
+    // Validate account apiKey
+    if($apiKey == $request->api_key){
+
+        // create the event
+        $form = new Assignment();
+        $form->api_key = $apiKey;
+        $form->form_id = $formId;
+        $form->user_id = $userId;
+        $form->date_assigned = $today;
+        $form->is_active = 1;
+        $form->save();
+        // package the data
+        $response['data'] = $form->values_for(array('id','form_id','user_id','date_assigned'));
+        $response['message'] = "form saved";
+    }
+    else{
+        $response['status'] = "error";
+        $response['message'] = "cancled";
+    }
+
+    // confirmation
+    echo json_encode($response);
+});
+
 
 /**
  * Run the Slim application
@@ -263,4 +299,4 @@ function formArrayMap($forms){
 
     return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_published\'));'),$forms);
 
- }
+}

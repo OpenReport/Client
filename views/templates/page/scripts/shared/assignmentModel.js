@@ -18,60 +18,60 @@
  */
 
 
-
 /**
  * Models
  *
  *
  */
-window.Form = Backbone.Model.extend({
-    urlRoot: '/api/form/'+apiKey,
+window.Assignment = Backbone.Model.extend({
+    urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
-        title:'',
-        description:'',
-        tags:'',
-        meta:{'name':'frm', "title":"", "desc":"",'fieldset':[{'name':'grp1', 'legend':'',fields:[]}]},
-        date_created:'',
-        is_published: 0,
+
         api_key:apiKey
-    },
-    validate: function(attr){
-        attr || (attr = this.attributes);
-        var errors = [];
-        if(!attr.title){
-            errors.push('Report Title is requried');
-        }
-        if(!attr.meta.name){
-            errors.push('Report ID is requried');
-        }
-        if(errors.length !== 0){return errors};
     }
 });
 
-window.Forms = Backbone.Collection.extend({
-    model:Form,
+window.Assignments = Backbone.Collection.extend({
+    model:Assignment,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
-
+        this.form_id = 0;
+        this.user_id = 0;
     },
-    fetchReportForms: function(options) {
+    fetchForms: function(options) {
         options || (options = {});
         this.key = options.key;
-        this.fetch();
+        this.form_id = 0;
+        this.user_id = options.user_id;
+        this.fetch(options);
+    },
+    fetchUsers: function(options) {
+        options || (options = {});
+        this.key = options.key;
+        this.form_id = options.form_id;
+        this.user_id = 0;
+        this.fetch(options);
     },
     // override fetch url for addtional uri elements
     url:function() {
-        // fetch records forn an event (get:/record/event/{id})
-        var uri = this.key;
-        // fetch record for task id
-        //uri = uri + (this.taskId > 0 ? '/'+this.taskId:'');
+        var uri = '';
+        if(this.form_id > 0 || this.user_id > 0){
+        // fetch records (get:/api/assignmenst/{scope}/{apiKey}/{user_id | form_id}
+        uri = (this.form_id == 0 ? 'list/':'list/')+this.key;
+        // fetch task records for forms or users
+        uri = uri + (this.form_id == 0 ? '/'+this.user_id:'/'+this.form_id);
+        }
+        else{
+            uri = this.key;
+        }
         // build new uri
         console.log(uri);
-        return "/api/form/"+uri;
+        return "/api/assignment/"+uri;
     },
     parse:function(response){
+        console.log(response);
         return response.data;
     }
 });

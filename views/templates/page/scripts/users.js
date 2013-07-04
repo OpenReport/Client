@@ -34,7 +34,8 @@ window.UsersView = Backbone.View.extend({
   },
 
   events:{
-    "click .user":"detail"
+    "click .user":"detail",
+	"click .assignReport":"assignReport"
   },
 
   render: function(){
@@ -58,9 +59,23 @@ window.UsersView = Backbone.View.extend({
     var target = e.target;
     model = this.collection.get(target.id);
 
-    var template = _.template($("#userDetail").html(), model.toJSON());
+    var template = _.template($("#userDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
+  },
+  assignReport: function(e){
+
+    var target = e.target;
+    var user = this.collection.get(target.id);
+	console.log('before');
+	formList = new window.Assignments().fetchForms({key: apiKey, user_id: user.attributes.id, success: function(data){
+
+		var template = _.template($("#userAssign").html(), { records:data.models });
+		$('#dialog').html(template).modal();
+		return this;
+	  }
+	});
+	console.log('after');
   }
 
 });
