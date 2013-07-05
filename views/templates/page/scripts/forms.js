@@ -47,24 +47,6 @@ window.FormsView = Backbone.View.extend({
     return this;
   },
 
-//  prevMo: function(){
-//
-//    if(--curMonth < 1){
-//        curMonth = 12;
-//        --curYear;
-//    }
-//	navTime.subtract('M',1)
-//    this.collection.fetchMonth({id: 2, mo: 0, yr: 0});
-//  },
-//
-//  nextMo: function(){
-//    if(++curMonth > 12){
-//        curMonth = 1;
-//        ++curYear;
-//    }
-//	navTime.subtract('M',1)
-//    this.collection.fetchMonth({id: 2, mo: curMonth, yr: curYear});
-//  },
 
   /**
    * Display Form Details in a Modal Dialog
@@ -406,10 +388,14 @@ function setOptions(sel, el, typ, opt){
  * Start App
  *
  */
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-    interpolate: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g
-};
-var router = new window.Routes();
-Backbone.history.start({pushstate:false});
+$(document).ready(function(){
+
+	// template pattern (Mustache {{ name }})
+	_.templateSettings = {
+		interpolate: /\{\{\=(.+?)\}\}/g,
+		evaluate: /\{\{(.+?)\}\}/g
+	};
+
+		var router = new window.Routes();
+		Backbone.history.start({pushstate:false});
+});

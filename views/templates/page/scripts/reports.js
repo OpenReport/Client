@@ -101,17 +101,13 @@ window.ReportsView = Backbone.View.extend({
 	this.collection.fetch();
   },
 
-	render: function(){
+  render: function(){
 
 	var params = { records: this.collection.models};
 
 	//console.log(params.records[0].get('title'));
 	var template = _.template($("#reportingForms").html(), params);
 	$(this.el).html(template);
-
-	// info box
-	var template = _.template($("#info").html()	);
-	$("#infoBox").html(template);
 
 	return this;
   },
@@ -142,6 +138,10 @@ window.Routes = Backbone.Router.extend({
     index: function(){
         this.reportList = new window.Forms({key: apiKey});
         new window.ReportsView({collection: this.reportList});
+		// info box
+		console.log('index fired');
+		$("#infoBox").html(_.template($("#info").html()	));
+
     },
     /*
      * Display Report Records
@@ -162,17 +162,19 @@ window.Routes = Backbone.Router.extend({
 		new window.RecordDetail({model:this.record});
 	}
 });
-
-
 /**
  *
  * Start App
  *
  */
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-    interpolate: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g
-};
-var router = new window.Routes();
-Backbone.history.start({pushstate:false});
+$(document).ready(function(){
+
+	// template pattern (Mustache {{ name }})
+	_.templateSettings = {
+		interpolate: /\{\{\=(.+?)\}\}/g,
+		evaluate: /\{\{(.+?)\}\}/g
+	};
+
+		var router = new window.Routes();
+		Backbone.history.start({pushstate:false});
+});

@@ -116,10 +116,14 @@ window.Routes = Backbone.Router.extend({
  * Start App
  *
  */
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-    interpolate: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g
-};
-var router = new window.Routes();
-Backbone.history.start({pushstate:false});
+$(document).ready(function(){
+
+	// template pattern (Mustache {{ name }})
+	_.templateSettings = {
+		interpolate: /\{\{\=(.+?)\}\}/g,
+		evaluate: /\{\{(.+?)\}\}/g
+	};
+
+		var router = new window.Routes();
+		Backbone.history.start({pushstate:false});
+});
