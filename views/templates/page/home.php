@@ -3,7 +3,7 @@
 
 -->
 <div class="container-fluid">
-	<div id="dashboardContext" class=""></div>
+	<div id="dashboardContext" class="row-fluid well"></div>
     <!-- Modals -->
     <div id="dialog"></div>
 </div>

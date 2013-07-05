@@ -10,9 +10,6 @@
             <table class="table">
             <thead>
               <tr>
-                <th colspan="5"><h3>Reporting Forms<small class="pull-right"><a id="" href="#add">Add new reporting form</a></small></h3></th>
-              </tr>
-              <tr>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Published</th>

@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
   <link rel="stylesheet" href="/assets/css/bootstrap-responsive.min.css">
   <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/assets/css/datetimepicker.css">
+  <link rel="stylesheet" href="/assets/css/datepicker.css">
   <link rel="stylesheet" href="/assets/css/main.css">
 
   <script src="/assets/js/vendor/jquery-1.8.3.min.js"></script>
@@ -22,36 +22,27 @@
   <script src="/assets/js/vendor/backbone-min.js"></script>
 
   <script src="/assets/js/vendor/bootstrap.min.js"></script>
-  <script src="/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
+  <script src="/assets/js/vendor/bootstrap-datepicker.js"></script>
   <script src="/assets/js/vendor/moment.min.js"></script>
   <script>
       // enable tooltips
       $(".tip").tooltip();
+      // set filter date windows
+      // default navigation month to month
+      var filters = {
+        'navigate':{'on':'month','index':1},
+        'startDate':moment().startOf('month'),
+        'endDate':moment().endOf('month'),
+        'filter':{}
+      };
+
       var localTime = moment();
       var navTime = localTime;
-      var timeZone = "PDT";
+      var timeZone = "PDT";  // todo: should be GMT
       var curMonth = localTime.format('M');
       var curYear = localTime.format('YYYY');
+      // set account data
       var apiKey = "<?php echo $account['api_key'] ?>";  // this is a global account key
-
-$(function(){ // document ready
-
-  var stickyTop = $('.sticky').offset().top; // returns number
-
-  $(window).scroll(function(){ // scroll event
-
-    var windowTop = $(window).scrollTop(); // returns number
-
-    if (stickyTop < windowTop) {
-      $('.sticky').css({ position: 'fixed', top: 0 });
-    }
-    else {
-      $('.sticky').css('position','static');
-    }
-
-  });
-
-});
   </script>
 
 </head>
@@ -65,6 +56,11 @@ $(function(){ // document ready
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
+
+                <ul class="nav">
+                  <li><a onclick="window.history.back();"><i class="icon-large icon-arrow-left"></i></a></li>
+                  <li class="divider-vertical"></li>
+                </ul>
                 <span class="brand">Open Report</span>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
@@ -111,8 +107,8 @@ $(function(){ // document ready
       <?php $this->partial($childView, $this->getData())?>
     </div>
 
-    <div id="infoBox" class="span3 well sticky">
-
+    <div id="infoBox" class="span3 well">
+      <h3 class="brand">Open Report</h3>
     </div>
   </div>
 
@@ -121,9 +117,9 @@ $(function(){ // document ready
 <hr>
 
 <footer align="center">
-    <p>Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
+    <p>OpenReport v1.0 Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
 </footer>
-
+<!-- Global Templates -->
 <script id="errorModal" type="text/template">
 <div class="modal" id="errorModal">
 	<div class="modal-header">
@@ -149,5 +145,10 @@ $(function(){ // document ready
 	</div>
 </div>
 </script>
+
+
+
+
+
 </body>
 </html>

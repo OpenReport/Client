@@ -109,13 +109,11 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
     $record = Record::find($id);
     $headers = Report::first(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $record->form_id)));
     // package the data
-    $columns = array_keys($record->meta);
     $data = $record->values_for(array('id', 'form_id','meta', 'record_date','user', 'lat', 'lon'));
-    $response['data'] = array('headers'=>$headers->meta, 'columns'=>$columns, 'record'=>$data);
+    $response['data'] = array('headers'=>$headers->meta,  'record'=>$data);
     $response['count'] = 1;
     // send the data
     echo json_encode($response);
-
 
 });
 
@@ -129,9 +127,17 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
 
     try{
-        // find all records
-        $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
 
+        $startDate = $app->request()->params('s');
+        $endDate = $app->request()->params('e');
+
+        if($startDate == null || $endDate == null){
+        // find all records
+            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
+        }
+        else{
+            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ? AND record_date BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate)));
+        }
         // check if empty
         if(!empty($records)){
 

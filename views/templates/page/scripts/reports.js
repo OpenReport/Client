@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *
  */
 
 
 /**
- * Views
+ * Show Records
  *
  *
  */
@@ -35,17 +34,31 @@ window.RecordsView = Backbone.View.extend({
 
   events:{
     //"click #export":"exportRecords",
-    //"click #prevMo":"prevMo",
-    //"click #nextMo":"nextMo"
+    //"click .filters":"refresh",
+    "click #navPrev":"prev",
+    "click #navNext":"next"
   },
-
   render: function(){
     var params = { headers: this.collection.models[0].get('columns'), records: this.collection.models[0].get('rows') };
-
     var template = _.template($("#reportRecords").html(), params);
     $(this.el).html(template);
 	$.bootstrapSortable();
     return this;
+  },
+  next: function(){
+
+	filters.startDate.add(filters.navigate.on,filters.navigate.index);
+	filters.endDate.add(filters.navigate.on,filters.navigate.index);
+	this.refresh()
+  },
+  prev: function(){
+
+	filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
+	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
+	this.refresh()
+  },
+  refresh:function(){
+	this.collection.fetch()
   },
   exportRecords: function(){
 
@@ -54,7 +67,7 @@ window.RecordsView = Backbone.View.extend({
 });
 
 /**
- *
+ * Display Record Details
  *
  *
  */
@@ -70,13 +83,12 @@ window.RecordDetail = Backbone.View.extend({
 	var params = { record: this.model.attributes.data.record, headers:this.model.attributes.data.headers};
 	var template = _.template($("#recordDetails").html(), params);
 	$(this.el).html(template);
-	console.log(params);
 	return this;
   },
 
 });
 /**
- * List Report Forms
+ * List Reports
  *
  *
  */
@@ -96,7 +108,11 @@ window.ReportsView = Backbone.View.extend({
 	//console.log(params.records[0].get('title'));
 	var template = _.template($("#reportingForms").html(), params);
 	$(this.el).html(template);
-	//$.bootstrapSortable();
+
+	// info box
+	var template = _.template($("#info").html()	);
+	$("#infoBox").html(template);
+
 	return this;
   },
 
@@ -126,16 +142,19 @@ window.Routes = Backbone.Router.extend({
     index: function(){
         this.reportList = new window.Forms({key: apiKey});
         new window.ReportsView({collection: this.reportList});
-
     },
     /*
      * Display Report Records
      */
     records: function(id){
-
+		// direct call
         this.recordList = new window.Records({key: apiKey, formId: id});
 		//console.log(this.recordList);
         new window.RecordsView({collection: this.recordList});
+		// info box
+		var template = _.template($("#filters").html());
+		$("#infoBox").html(template);
+
     },
 	details: function(id){
 

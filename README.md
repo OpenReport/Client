@@ -8,7 +8,7 @@ Form designer for OpenReport.
  -- Underscore http://underscorejs.org/
  -- JQuery http://jquery.com/
  -- Slim Framework http://www.slimframework.com/
-
+ -- Datepicker for Bootstrap http://eternicode.github.io/bootstrap-datepicker/
 
 visit: http://companygateways.github.io/OpenReport
 
