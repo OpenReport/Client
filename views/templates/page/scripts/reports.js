@@ -29,7 +29,9 @@ window.RecordsView = Backbone.View.extend({
     _.bind(this, 'render');
     this.listenTo(this.collection, 'reset', this.render);
     this.collection.fetch();
-
+	// Refresh after filter updates
+	var base = this;
+	$('.filters').bind('click', function(){ base.refresh();});
   },
 
   events:{
@@ -45,20 +47,20 @@ window.RecordsView = Backbone.View.extend({
 	$.bootstrapSortable();
     return this;
   },
-  next: function(){
+  next: function(e){
 
 	filters.startDate.add(filters.navigate.on,filters.navigate.index);
 	filters.endDate.add(filters.navigate.on,filters.navigate.index);
-	this.refresh()
+	this.refresh();
   },
-  prev: function(){
+  prev: function(e){
 
 	filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
 	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
-	this.refresh()
+	this.refresh();
   },
   refresh:function(){
-	this.collection.fetch()
+	this.collection.fetch();
   },
   exportRecords: function(){
 
@@ -113,7 +115,6 @@ window.ReportsView = Backbone.View.extend({
   },
 
   close:function () {
-    $('.datetimepicker').remove();
     $(this.el).unbind();
     $(this.el).empty();
   }
@@ -147,13 +148,16 @@ window.Routes = Backbone.Router.extend({
      * Display Report Records
      */
     records: function(id){
-		// direct call
+		// add filters to infoBox
+		var template = _.template($("#filters").html());
+		console.log($("#infoBox").html(template));
+
+		// direct call - donot pull from collection
         this.recordList = new window.Records({key: apiKey, formId: id});
 		//console.log(this.recordList);
-        new window.RecordsView({collection: this.recordList});
-		// info box
-		var template = _.template($("#filters").html());
-		$("#infoBox").html(template);
+        var view = new window.RecordsView({collection: this.recordList});
+
+
 
     },
 	details: function(id){

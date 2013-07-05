@@ -5,11 +5,9 @@
 
 <script id="reportingForms" type="text/template">
 	<div class="span12">
+		<h4>Reports</h4>
 		<table class="table">
 		<thead>
-		  <tr>
-			<th colspan="5"><h3>Reports</h3></th>
-		  </tr>
 		  <tr>
 			<th>Title</th>
 			<th>Description</th>
@@ -19,10 +17,9 @@
 		<tbody>
 		{{ _(records).each(function(form) { if(form.get('is_published') === 1) }}
 		  <tr>
-			<td><a class="form" id="{{= form.get('id') }}" href=""><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
+			<td><a class="form" id="{{= form.get('id') }}" href="#records/{{= form.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
 			<td>{{= form.get('description') }}</td>
 			<td>{{= moment(form.get('date_created').date).format('L') }}</td>
-			<td><span class="pull-right"><a class="" href="#records/{{= form.get('id') }}">View <i class="icon-th-list icon-white"></i></a></span></td>
 		  </tr>
 
 		{{ }); }}
@@ -38,7 +35,7 @@
             <button id="navPrev" class="btn btn-mini">«</button>><button id="navNext" class="btn btn-mini">»</button></li>
 
             </div>
-			<h3>Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h3>
+			<h4>Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h4>
 		<table class="table sortable">
 			<thead>
 			  <!-- columns -->
@@ -111,7 +108,7 @@
     </div>
       <button id="applyRange" class="filters btn btn-mini pull-right">Apply Date Range</button>
   </div>
-
+<!-- Bit of a Hack... but it works! -->
 <script type="text/javascript">
 
   // initialize filter control
@@ -161,7 +158,7 @@
   function resetDates(){
     $('#startDate').val(filters.startDate.format('LL'));
     $('#endDate').val(filters.endDate.format('LL'));
-
+	return true;
   }
 
 </script>
