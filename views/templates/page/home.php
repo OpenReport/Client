@@ -18,26 +18,22 @@
 		<h4>Total Records: {{= stats.recordCount }}
     </div>
     <div class="span4 well">
-		<h4>Date: {{= moment(localTime).format('LL') }}<h4>
+		<h4>Media: {{= stats.mediaCount }}GB<h4>
     </div>
 	</div>
 	<div  class="row-fluid">
 	<div class="span12 well">
+		<h4>Recent Submissions</h4>
 		<table class="table">
 		<thead>
 		  <tr>
-			<th colspan="5"><h3>Recent Reports</h3></th>
-		  </tr>
-		  <tr>
-			<th>Title</th>
-			<th>Submitted By</th>
+			<th>Report</th>
+			<th>By</th>
 			<th>Location</th>
 			<th>Date</th>
 		  </tr>
 		</thead>
 		<tbody>
-
-		{{ console.log(stats) }}
 
 		{{ _(stats.recentReports).each(function(report) { }}
 		  <tr>
@@ -54,6 +50,29 @@
 	</div>
 </script>
 
+<script id="info" type="text/template">
+	<h4>Quick Links</h4>
+	<ul class="nav nav-pills nav-stacked">
+	<li class="active"><a class="" href="/forms#add">New Report Form</a></li>
+	<li class="active"><a href="/users#add">New Report User</a></li>
+	</ul>
+	<ul class="unstyled">
+	<li><strong>Top Users</strong></li>
+	<ol>
+	{{ _(stats.topUsers).each(function(topUser) { }}
+		<li>{{= topUser.user }} <span class="badge badge-info pull-right">{{= topUser.user_count }}</span></li>
+	{{ }); }}
+	</ol>
+	<li><strong>Top Reports</strong></li>
+	{{ console.log(stats.topForms) }}
+
+	<ol>
+	{{ _(stats.topReports).each(function(topReport) { }}
+		<li>{{= topReport.form_title }} <span class="badge badge-info pull-right">{{= topReport.form_count }}</span></li>
+	{{ }); }}
+	</ol>
+	</ul>
+</script>
 
 
 <script type="text/javascript" src="/views/templates/page/scripts/dashboard.js"></script>

@@ -24,8 +24,7 @@
  *
  */
 window.Dashboard = Backbone.Model.extend({
-    urlRoot: '/api/dashboard/'+apiKey
-
+    url: '/api/dashboard/'+apiKey
 });
 
 /**
@@ -45,7 +44,9 @@ window.DashboardView = Backbone.View.extend({
 	var params = { stats: this.model.attributes.data};
 	var template = _.template($("#details").html(), params);
 	$(this.el).html(template);
-	console.log(params);
+
+	var template = _.template($("#info").html(), params);
+	$('#infoBox').html(template);
 	return this;
   },
 
@@ -68,6 +69,8 @@ window.Routes = Backbone.Router.extend({
     index: function(){
         this.dashboard = new window.Dashboard();
         new window.DashboardView({model: this.dashboard});
+
+        //new window.UseStatsView({model: this.dashboard});
 
     }
 

@@ -65,7 +65,7 @@ $response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
 /**
  * Status Page
  *
- * get: /account/
+ * get: /api/dashboard
  *
  */
 $app->get('/', function () use($app, $response)  {
@@ -91,7 +91,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
                   'LEFT JOIN forms ON(records.form_id = forms.id)');
     $sel = 'records.*, forms.title AS form_title, users.username AS user';
 
-    $recentRcords = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions' =>array('records.api_key = ?', $apiKey)));
+    $recentRcords = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions' =>array('records.api_key = ?', $apiKey), 'order' => 'record_date desc', 'limit'=>5));
 
     if(!empty($recentRcords)){
         $recentReports = arrayMapRecord($recentRcords);
@@ -100,25 +100,38 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
         $recentReports = array('count'=>0);
     }
 
-
     $recCount =  Record::count(array('conditions' =>array('api_key = ?', $apiKey)));
     $frmCount =  Form::count(array('conditions' =>array('api_key = ? AND is_deleted = 0', $apiKey)));
 
+    // get date
+    $today = new DateTime('GMT');
+    // get stats
+
+    $conn = ActiveRecord\ConnectionManager::get_connection("development");
+    //$builder = new ActiveRecord\SQLBuilder($conn, "records");
+
+    $sql = 'SELECT users.username AS user, count(records.id) AS user_count FROM records LEFT JOIN users ON(records.user = users.email) LEFT JOIN forms ON(records.form_id = forms.id) WHERE records.api_key = \''.$apiKey.'\' GROUP BY users.username ORDER BY user_count DESC LIMIT 5';
+    //$response['message'] = $sql;
+    $topUsers = $conn->query($sql)->fetchAll();
+
+    $sql = 'SELECT forms.title AS form_title, count(records.id) AS form_count FROM records LEFT JOIN forms ON(records.form_id = forms.id) WHERE forms.api_key = \''.$apiKey.'\' GROUP BY forms.title ORDER BY form_count DESC LIMIT 5';
+    //$response['message'] = $sql;
+    $topForms = $conn->query($sql)->fetchAll();
 
     // package data
     $stats = array(
         "recordCount"=>$recCount,
         "formCount"=>$frmCount,
-        "recentReports"=>$recentReports
+        "mediaCount"=>0,
+        "recentReports"=>$recentReports,
+        "topUsers"=>$topUsers,
+        "topReports"=>$topForms
     );
     $response['data'] = $stats;
     // send the data
     echo json_encode($response);
 
 });
-
-
-
 
 
 
