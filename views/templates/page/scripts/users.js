@@ -19,7 +19,7 @@
 
 
 /**
- * Views
+ * User List
  *
  *
  */
@@ -41,8 +41,6 @@ window.UsersView = Backbone.View.extend({
   render: function(){
     var params = { records: this.collection.models};
 
-	console.log(params);
-
     var template = _.template($("#users").html(), params);
     $(this.el).html(template);
 	//$.bootstrapSortable();
@@ -55,7 +53,6 @@ window.UsersView = Backbone.View.extend({
    */
   detail: function(e){
 
-    console.log('detail called');
     var target = e.target;
     model = this.collection.get(target.id);
 
@@ -67,23 +64,30 @@ window.UsersView = Backbone.View.extend({
 
     var target = e.target;
     var user = this.collection.get(target.id);
-	console.log('before');
-	formList = new window.Assignments().fetchForms({key: apiKey, user_id: user.attributes.id, success: function(data){
 
-		var template = _.template($("#userAssign").html(), { records:data.models });
-		$('#dialog').html(template).modal();
+	formList = new window.Assignments().fetchForms({key: apiKey, user_id: user.attributes.id, success: function(data){
+		var template = _.template($("#userAssign").html(), { records:data.models, user:user.attributes });
+		$('#dialog').html(template)
 		return this;
 	  }
 	});
-	console.log('after');
+
   }
 
 });
 
+/**
+ * User Form
+ *
+ *
+ */
 window.UserFormView = Backbone.View.extend({
   el: '#userContext',
   model: null,
+  assignments: null,
   initialize: function(options){
+	options || (options = {});
+	this.assignments = options.assignments;
     _.bind(this, 'render');
     this.listenTo(this.model, 'change', this.render);
 
@@ -93,11 +97,6 @@ window.UserFormView = Backbone.View.extend({
     "click #submit":"saveUser",
     "click #close":"cancel"
   },
-  //change:function (event) {
-  //    var target = event.target;
-  //    console.log('changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value);
-  //
-  //},
   saveUser:function () {
     this.model.set({
         title: $('#taskTitle').val(),
@@ -131,9 +130,8 @@ window.UserFormView = Backbone.View.extend({
   },
   render: function(){
 	// build content
-
-	console.log(this.model.toJSON());
-	var template = _.template($("#userForm").html(), this.model.toJSON());
+	console.log(this.assignments.models);
+	var template = _.template($("#userForm").html(), {user:this.model.attributes, assignments:this.assignments.models});
     $(this.el).html(template);
     return this;
   },
@@ -184,8 +182,12 @@ window.Routes = Backbone.Router.extend({
      * Edit user
      */
     edit: function(id){
-        var form = this.userList.get(id);
-        new window.UserFormView({model:form}).render();
+	  var user = this.userList.get(id);
+	  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
+		  new window.UserFormView({model:user, assignments:data}).render();
+		}
+	  });
+
     },
     /*
      * Remove User

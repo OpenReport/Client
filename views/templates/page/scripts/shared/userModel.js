@@ -53,11 +53,11 @@ window.Users = Backbone.Collection.extend({
         // fetch task records, optional filter by month-year (get:/api/task/{id}{/m-y})
         //uri = uri + (this.mo > 0 ? '/'+this.mo:'')+(this.yr > 0 ? '-'+this.yr:'');
         // build new uri
-        console.log(uri);
+
         return "/api/user/"+uri;
     },
     parse:function(response){
-        console.log(response);
+
         return response.data;
     }
 });
