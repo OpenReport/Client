@@ -11,6 +11,7 @@
 		  <tr>
 			<th>Title</th>
 			<th>Description</th>
+			<th>Tag</th>
 			<th>Date</th>
 		  </tr>
 		</thead>
@@ -19,7 +20,8 @@
 		  <tr>
 			<td><a class="form" id="{{= form.get('id') }}" href="#records/{{= form.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
 			<td>{{= form.get('description') }}</td>
-			<td>{{= moment(form.get('date_created').date).format('L') }}</td>
+			<td>{{= form.get('tags') }}</td>
+			<td>{{= moment(form.get('date_modified').date).format('L') }}</td>
 		  </tr>
 
 		{{ }); }}
@@ -35,7 +37,7 @@
             <button id="navPrev" class="btn btn-mini">«</button>><button id="navNext" class="btn btn-mini">»</button></li>
 
             </div>
-			<h4>Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h4>
+			<h4>Report for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h4>
 		<table class="table sortable">
 			<thead>
 			  <!-- columns -->
@@ -82,32 +84,47 @@
 
 
 <script id="info" type="text/template">
-	<h5>Info</h5>
+  <div id="form-tags" class="control-group">
+    <h4>Tag Filters</h4>
+	{{ for (var i = 0; i < tags.length; i++) { }}
+		<a href="#tag/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
+	{{ } }}
+	<a href="#" class="label label-important">x</a>
+  </div>
 </script>
-
-<script id="filters" type="text/template">
+<script id="infoDetails" type="text/template">
   <div class="control-group ">
-    <label class="control-label">Date Range</label>
+
+  </div>
+
+</script>
+<script id="filters" type="text/template">
+
+  <div class="control-group ">
+    <h4>Quick Filters</h4>
     <div class="btn-group" style="margin: 9px 0 5px;">
       <button id="monthly" class="filters btn btn-primary btn-mini">Monthly</button>
       <button id="every30" class="filters btn btn-mini">30 Days</button>
       <button id="every60" class="filters btn btn-mini">60 Days</button>
       <button id="every90" class="filters btn btn-mini">90 Days</button>
-      <button id="custom" class="btn btn-mini">Custom</button>
+      <button id="custom" class="filters btn btn-mini">Custom</button>
     </div>
-    <hr/>
+	<h4>Custom Filter</h4>
     <div class="controls">
       <label class="control-label">Start Date</label>
-      <div class="input-append date" data-date-format="dd M yyyy">
+      <div class="input-append date" data-date-format="MM d yyyy">
           <input id="startDate" class="span11" type="text" value="{{= moment(filters.startDate).format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
       </div>
       <label class="control-label">End Date</label>
-      <div class="input-append date" data-date-format="dd M yyyy">
+      <div class="input-append date" data-date-format="MM d yyyy">
           <input id="endDate" class="span11" type="text" value="{{= moment(filters.endDate).format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
       </div>
     </div>
       <button id="applyRange" class="filters btn btn-mini pull-right">Apply Date Range</button>
+	  <hr/>
   </div>
+
+
 <!-- Bit of a Hack... but it works! -->
 <script type="text/javascript">
 
@@ -120,24 +137,29 @@
 
   });
   // assign btn events
-  $('#custom').bind('click', function( event ){
-    filters.navigate.on = 'custom';
+  $('#applyRange').bind('click', function( event ){
+    filters.navigate.on = 'days';
     filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
-    resetDates();
+    resetDates($('#custom'));
+  });
+  $('#custom').bind('click', function( event ){
+    filters.navigate.on = 'days';
+    filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
+    resetDates($('#custom'));
   });
   $('#monthly').bind('click', function( event ){
     filters.startDate = moment().startOf('month');
     filters.endDate = moment().endOf('month');
     filters.navigate.on = 'months';
     filters.navigate.index = 1;
-    resetDates();
+    resetDates($('#monthly'));
   });
   $('#every30').bind('click', function( event ){
     filters.startDate = moment().subtract('days', 30);
     filters.endDate = moment();
     filters.navigate.on = 'days';
     filters.navigate.index = 30;
-    resetDates();
+    resetDates($('#every30'));
     return true;
   });
   $('#every60').bind('click', function( event ){
@@ -145,19 +167,21 @@
     filters.endDate = moment();
     filters.navigate.on = 'days';
     filters.navigate.index = 60;
-    resetDates();
+    resetDates($('#every60'));
   });
   $('#every90').bind('click', function( event ){
     filters.startDate = moment().subtract('days', 90);
     filters.endDate = moment();
     filters.navigate.on = 'days';
     filters.navigate.index = 90;
-    resetDates();
+    resetDates($('#every90'));
   });
 
-  function resetDates(){
+  function resetDates(sel){
+	$('.filters').removeClass('btn-primary');
     $('#startDate').val(filters.startDate.format('LL'));
     $('#endDate').val(filters.endDate.format('LL'));
+	sel.addClass('btn-primary');
 	return true;
   }
 

@@ -203,6 +203,7 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view
+		"tag/:tag" : "index",				// filter by tag
 		"edit/:id" : "edit",
 		"add" : "add"
 	},
@@ -210,11 +211,20 @@ window.Routes = Backbone.Router.extend({
     /*
      * Display Reporting Tasks Forms
      */
-    index: function(){
+    index: function(tag){
 
-        this.formList = new window.Forms({key: apiKey});
+        this.formList = new window.Forms({key: apiKey, tag: tag});
         new window.FormsView({collection: this.formList});
-    },
+		// info box
+		$.ajax({
+			url:'/api/form/tags/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
+			}
+
+		});
+	},
 
     /*
      * Add Form
@@ -230,7 +240,7 @@ window.Routes = Backbone.Router.extend({
      * Edit Form
      */
     edit: function(id){
-		//if(typeof(this.formList) == 'undefined') this.formList = new window.Forms({key: apiKey, taskId: 1});
+		$("#infoBox").html('');
         var form = this.formList.get(id);
 
         new window.FormView({model:form}).render();

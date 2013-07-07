@@ -130,18 +130,26 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view - View Reporting Tasks
+		"tag/:tag" : "index",				// filter by tag
         "records/:id" : "records",          // list report records
         "details/:id" : "details"           // list report records
 	},
     /*
      * Display Reporting Forms
      */
-    index: function(){
-        this.reportList = new window.Forms({key: apiKey});
+    index: function(tag){
+        this.reportList = new window.Forms({key: apiKey, tag: tag});
         new window.ReportsView({collection: this.reportList});
 		// info box
-		console.log('index fired');
-		$("#infoBox").html(_.template($("#info").html()	));
+		$.ajax({
+			url:'/api/form/tags/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
+			}
+
+		});
+
 
     },
     /*
@@ -150,9 +158,9 @@ window.Routes = Backbone.Router.extend({
     records: function(id){
 		// add filters to infoBox
 		var template = _.template($("#filters").html());
-		console.log($("#infoBox").html(template));
+		$("#infoBox").html(template);
 
-		// direct call - donot pull from collection
+		// direct call - do not pull from collection
         this.recordList = new window.Records({key: apiKey, formId: id});
 		//console.log(this.recordList);
         var view = new window.RecordsView({collection: this.recordList});
@@ -164,6 +172,9 @@ window.Routes = Backbone.Router.extend({
 
 		this.record = new window.Record({id:id});
 		new window.RecordDetail({model:this.record});
+
+		var template = _.template($("#infoDetails").html());
+		$("#infoBox").html(template);
 	}
 });
 /**

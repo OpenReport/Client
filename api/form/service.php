@@ -35,6 +35,10 @@ ActiveRecord\Config::initialize(function($cfg) {
 
 $app = new \Slim\Slim();
 
+\Slim\Route::setDefaultConditions(array(
+    'apiKey' => '[a-zA-Z0-9]{32}'
+));
+
 /**
  * Authenticate all requests
  *
@@ -65,7 +69,7 @@ $response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
 /**
  * Status Page
  *
- * get: /api/form/
+ * GET: /api/form/
  *
  */
 $app->get('/', function () use($app, $response)  {
@@ -79,23 +83,24 @@ $app->get('/', function () use($app, $response)  {
 /**
  * Fetch Form records for apiKey
  *
- * GET: /api/form/{api}
+ * GET: /api/form/{apiKey}
  *
  */
-$app->get("/:apiKey", function ($apiKey) use ($app, $response) {
+$app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response) {
 
     // get date
     $today = new DateTime('GMT');
     try {
-        $formData = Form::find('all', array('conditions'=>array('api_key = ? AND is_deleted = 0', $apiKey)));
+        $formData = Form::find('all',
+            array('conditions'=>array('api_key = ? AND is_deleted = 0 AND (tags=? OR ?=\'\')', $apiKey, $tag, $tag), 'order'=>'date_modified DESC'));
         // package the data
         $response['data'] = formArrayMap($formData);
-        $response['count'] = count($response['data']);//$response['data']->count();
+        $response['count'] = count($response['data']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {
         $response['message'] = 'No Records Found';
         $response['data'] = array();;
-        $response['count'] = 0;//$response['data']->count();
+        $response['count'] = 0;
     }
 
     // send the data
@@ -104,6 +109,24 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 
 });
 
+/**
+ * Fetch Forms Tags
+ *
+ * GET: /api/form/tags/{apiKey}
+ *
+ */
+$app->get("/tags/:apiKey", function ($apiKey) use ($app, $response) {
+
+    $conn = ActiveRecord\ConnectionManager::get_connection("development");
+
+    $sql = 'SELECT tags FROM forms WHERE api_key = \''.$apiKey.'\' GROUP BY tags ORDER BY tags ASC';
+    $response['message'] = $sql;
+    $tags = $conn->query($sql)->fetchAll(PDO::FETCH_COLUMN, 0);
+    $response['data'] = $tags;
+    $response['count'] = count($tags);
+    // send the data
+    echo json_encode($response);
+});
 
 /**
  * Fetch Form record
@@ -119,12 +142,12 @@ $app->get('/:apiKey/:id', function ($apiKey, $id) use ($app, $response) {
         $formData = Form::find($id);
         // package the data
         $response['data'] = $formData->values_for(array('id','meta'));
-        $response['count'] = count($formData->meta['fields']);//$response['data']->count();
+        $response['count'] = count($formData->meta['fields']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {
         $response['message'] = 'No Records Found';
         $response['data'] = null;
-        $response['count'] = 0;//$response['data']->count();
+        $response['count'] = 0;
     }
 
     // send the data
@@ -149,7 +172,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
     // Validate account apiKey
     if($apiKey == $request->api_key){
 
-        // create the event
+        // create the form
         $form = new Form();
         $form->title = $request->title;
         $form->description = $request->description;
@@ -160,6 +183,15 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
+
+        // Add a basic report record
+        $report = new Report();
+        $report->api_key = $apiKey;
+        $report->form_id = $form->id;
+        $report->title = $request->title;
+        $report->meta = json_encode($request->meta);    //TODO: Strip unnessary attr from meta
+        $report->save();
+
         // package the data
         $response['data'] = $form->values_for(array('id','title','description','date_created'));
         $response['message'] = "form saved";
@@ -175,9 +207,9 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
 });
 
 /**
- * Update Reporting form record
+ * Update Reporting Form record
  *
- * PUT: /api/form/{apiKey}/{taskId}
+ * PUT: /api/form/{apiKey}/{formId}
  *
  */
 $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
@@ -276,6 +308,8 @@ $app->post("/assign/:apiKey/:formId/:userId", function ($apiKey, $formId, $userI
     // confirmation
     echo json_encode($response);
 });
+
+
 
 
 /**

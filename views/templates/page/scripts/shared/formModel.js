@@ -54,19 +54,19 @@ window.Forms = Backbone.Collection.extend({
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
-
+        this.tag = options.tag;
     },
-    fetchReportForms: function(options) {
-        options || (options = {});
-        this.key = options.key;
-        this.fetch();
-    },
+    //fetchReportForms: function(options) {
+    //    options || (options = {});
+    //    this.key = options.key;
+    //    this.fetch();
+    //},
     // override fetch url for addtional uri elements
     url:function() {
-        // fetch records forn an event (get:/record/event/{id})
+        // fetch records for an event (get:/record/event/{id})
         var uri = this.key;
-        // fetch record for task id
-        //uri = uri + (this.taskId > 0 ? '/'+this.taskId:'');
+        // fetch records based on tags
+        uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
         // build new uri
         console.log(uri);
         return "/api/form/"+uri;

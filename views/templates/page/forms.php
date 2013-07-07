@@ -7,14 +7,16 @@
 <!-- Templates -->
 <script id="forms" type="text/template">
         <div class="span12">
-            <table class="table">
+
+			<h4>Reporting Forms</h4>
+			<table class="table">
             <thead>
               <tr>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Published</th>
 				<th>Date</th>
-                <th></th>
+                <th><a href="#add" class="btn btn-mini pull-right">New Form</a></li></th>
               </tr>
             </thead>
             <tbody>
@@ -24,7 +26,7 @@
                 <td>{{= form.get('description') }}</td>
 				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
                 <td>{{= moment(form.get('date_modified').date).format('L') }}</td>
-                <td><span class="pull-right"><a class="" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
+                <td><span class="pull-right"><a class="btn btn-mini" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
             {{ }); }}
@@ -229,6 +231,20 @@
 		</div>
 	</div>
 </script>
+
+<script id="info" type="text/template">
+
+
+  <div id="form-tags" class="control-group">
+    <h4>Tag Filters</h4>
+	{{ for (var i = 0; i < tags.length; i++) { }}
+		<a href="#tag/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
+	{{ } }}
+	<a href="#" class="label label-important">x</a>
+  </div>
+
+</script>
+
 <script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.builder.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/forms.js"></script>

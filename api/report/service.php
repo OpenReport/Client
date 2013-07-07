@@ -85,12 +85,12 @@ $app->map('/', function() {
 /**
  * Status Page
  *
- * get: /report/
+ * GET: /report/
  *
  */
 $app->get('/', function () use($app, $response)  {
 
-    $response['message'] = 'Open Report Services v1.0';
+    $response['message'] = 'OpenReport Services v1.0';
     echo json_encode($response);
 
 });
@@ -121,7 +121,7 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 /**
  * Fetch Report Data for Form
  *
- * get: /report/{apiKey}/{formId}
+ * get: /report/{apiKey}/{formId}[?s={startDate}e={endDate}[&t={tags}][&l={limit[,start]}]]
  *
  */
 $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
@@ -154,7 +154,7 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 
             // package the data
             $response['data'] = array('columns'=>getColumns($data), 'rows'=>$data);
-            $response['count'] = count($response['data']['columns']);
+            $response['count'] = count($response['data']['rows']);
         }
         else{
             $response['message'] = 'No Records Found';
