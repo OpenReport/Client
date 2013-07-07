@@ -149,7 +149,7 @@ window.FormView = Backbone.View.extend({
     $(this.el).html(template);
     // build form controls
 	var ctrlIndex = 1, fldIndex = 1;
-	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well', 'fsClass':'droppedFields'});
+	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well', 'fsClass':'droppedFields','fldClass':'span12'});
 
     // make sortable
 	$( ".droppedFields" ).sortable({
@@ -161,7 +161,7 @@ window.FormView = Backbone.View.extend({
 	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
 		var ctrlId = 'ctl'+ctrlIndex++;
 		assingDialog(this, ctrlId);
-		$('div#'+ctrlId).find('span').text($('div#'+ctrlId).data('rules'));
+		$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
 	});
 
 	// assign add events to selectorField(s)
@@ -285,7 +285,6 @@ function assingDialog(field, id){
 		else if(attrb.type == 'dropdown' || attrb.type == 'select' ){
 			attrb.options = (getOptions($(this).find('select'),'option'));
 		}
-
 		var template = _.template($("#fieldDetail").html(), attrb);
 		$('#dialog').html(template).modal();
 
@@ -303,6 +302,8 @@ function delete_ctrl(ctlId){
 
 function update_ctrl(ctlId){
 
+
+
 	var ctlType = $(ctlId).data('type');
 	// //*[@id="fieldDisplay"]
 	$(ctlId).find('label').text($('#formModal').find('#fieldDisplay').val());
@@ -319,9 +320,9 @@ function update_ctrl(ctlId){
 		$(ctlId).data('rules', $(ctlId).data('rules')+$('#formModal').find('select#rules').val());
 
 	}
-	$(ctlId).find('span').text($(ctlId).data('rules'));
+	$(ctlId).find('span').text(rulesToString($(ctlId).data('rules')));
 	// options
-	if(ctlType == 'checkbox' || ctlType == 'radio' || ctlType == 'dropdown' || ctlType == 'select' ){
+	if(ctlType == 'checkbox-group' || ctlType == 'radio-group' || ctlType == 'dropdown' || ctlType == 'select' ){
 		var options = $('#formModal').find('textarea#options').val().split('\n');
 		if(ctlType == 'checkbox-group' || ctlType == 'radio-group'){
 			setOptions($(ctlId), 'ul', ctlType, options);
@@ -329,9 +330,7 @@ function update_ctrl(ctlId){
 		else if(ctlType == 'dropdown' || ctlType == 'select' ){
 			setOptions($(ctlId), 'select', ctlType, options);
 		}
-
 	}
-
 }
 
 function parseFormMeta(){
@@ -384,8 +383,8 @@ function setOptions(sel, el, typ, opt){
 		var lv = item.split('=');
 		// only key-value pairs
 		if(lv.length === 2){
-			if(typ == 'checkbox' || typ == 'radio'){
-				sel.find(el).append('<li><input type="'+typ+'" value="'+lv[1]+'">'+lv[0]+'</li>');
+			if(typ == 'checkbox-group' || typ == 'radio-group'){
+				sel.find(el).append('<li><input type="'+typ.split('-')[0]+'" value="'+lv[1]+'">'+lv[0]+'</li>');
 			}
 			else if(typ == 'dropdown' || typ == 'select'){
 				sel.find(el).append('<option value="'+lv[1]+'">'+lv[0]+'</option>');
@@ -394,6 +393,15 @@ function setOptions(sel, el, typ, opt){
 	});
 }
 
+function rulesToString(rules){
+	var ruleStrings = $.validateForm.defaultOptions.messages;
+	var r =rules.split('|');
+	var ret = '';
+	for(i=0; i< r.length; i++){
+		ret = ret+ruleStrings[r[i]];
+	}
+	return ret;
+}
 // template pattern (Mustache {{ name }})
 _.templateSettings = {
 	interpolate: /\{\{\=(.+?)\}\}/g,

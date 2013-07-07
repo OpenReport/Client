@@ -36,6 +36,7 @@
 
 </script>
 
+
 <script id="formForm" type="text/template">
 <div class="tabbable">
 	<!-- List of controls rendered into Bootstrap Tabs -->
@@ -82,17 +83,17 @@
 	  <h3>Report Fields <small>Click to add</small></h3>
 		<div class="selectorField well" data-rules="required" data-name="iText" data-type="text">
 			<label class="control-label">Text Input</label>
-			<input type="text" class="ctrl-textbox">
+			<input type="text" class="ctrl-textbox span12">
 			<span></span>
 		</div>
 		<div class="selectorField well" data-rules="required" data-name="" data-type="paragraph">
 			<label class="control-label">Comments</label>
-			<textarea class=""></textarea>
+			<textarea class="span12"></textarea>
 			<span></span>
 		</div>
 		<div class="selectorField well" data-rules="required" data-name="" data-type="checkbox-group">
 			<label class="control-label" style="vertical-align:top">Checkboxes</label>
-			<ul style="display:inline-block;" class="ctrl-checkboxgroup">
+			<ul class="ctrl-checkboxgroup">
 				<li><input type="checkbox" name="checkboxField" value="option1">Option 1</li>
 				<li><input type="checkbox" name="checkboxField" value="option2">Option 2</li>
 				<li><input type="checkbox" name="checkboxField" value="option3">Option 3</li>
@@ -110,17 +111,18 @@
 		</div>
 		<div class="selectorField well" data-rules="required" data-name="" data-type="dropdown">
 			<label class="control-label">Combobox</label>
-			<select class="ctrl-combobox">
+			<select class="ctrl-combobox span12">
+				<option value="0">Select an Option</option>
 				<option value="option1">Option 1</option>
 				<option value="option2">Option 2</option>
-				<option value="option3">Option 3</option>
 			</select>
 			<span></span>
 		</div>
 		<div class="selectorField well" data-rules="required" data-name="" data-type="select">
 			<label class="control-label" style="vertical-align:top">Select multiple</label>
-			<div style="display:inline-block;">
-				<select multiple="multiple" style="width:150px" class="ctrl-selectmultiplelist">
+			<div>
+				<select multiple="multiple" class="ctrl-selectmultiplelist span12">
+					<option value="0">Select an Option</option>
 					<option value="option1">Option 1</option>
 					<option value="option2">Option 2</option>
 					<option value="option3">Option 3</option>

@@ -130,7 +130,7 @@
 
 		  var select = createSelect(name);
 		  $(selector).append(select);
-		  $(select).append(createOption("Select One", 0));
+		  //$(select).append(createOption("Select One", 0)); DROP
 		  // build options for select
 		  for (index in values){
 			  field = values[index];
@@ -160,6 +160,9 @@
 		field.setAttribute('id',name);
 		field.setAttribute('value',value);
 		field.setAttribute('type',type);
+		if(type == 'text'){
+		  field.setAttribute('class',base.options.fldClass);
+		}
 		return field;
 	}
 	// textarea (paragraph)
@@ -167,6 +170,7 @@
 		var field = document.createElement('textarea');
 		field.setAttribute('name',name);
 		field.setAttribute('id',name);
+		field.setAttribute('class',base.options.fldClass);
 		return field;
 	}
 
@@ -174,6 +178,7 @@
 		var field = document.createElement('select');
 		field.setAttribute('id',name);
 		field.setAttribute('name',name);
+		field.setAttribute('class',base.options.fldClass);
 		return field;
 	}
 	//
@@ -353,20 +358,21 @@
   };
   $.validateForm.defaultOptions = {
 	messages:{
-	  required: 'This field is required.',
-	  valid_email: 'This field must contain a valid email address.',
-	  alpha: 'This field must only contain alphabetical characters.',
-	  alpha_numeric: 'This field must only contain alpha-numeric characters.',
-	  alpha_dash: 'This field must only contain alpha-numeric characters, underscores, and dashes.',
-	  numeric: 'This field must contain only numbers.',
-	  integer: 'This field must contain an integer.',
-	  decimal: 'This field must contain a decimal number.',
-	  is_natural: 'This field must contain only positive numbers.',
-	  is_natural_no_zero: 'This field must contain a number greater than zero.',
-	  valid_ip: 'This field must contain a valid IP.',
-	  valid_base64: 'This field must contain a base64 string.',
+	  optional: 'This field is optional. ',
+	  required: 'This field is required. ',
+	  valid_email: 'This field must contain a valid email address. ',
+	  alpha: 'This field must only contain alphabetical characters. ',
+	  alpha_numeric: 'This field must only contain alpha-numeric characters. ',
+	  alpha_dash: 'This field must only contain alpha-numeric characters, underscores, and dashes. ',
+	  numeric: 'This field must contain only numbers. ',
+	  integer: 'This field must contain an integer. ',
+	  decimal: 'This field must contain a decimal number. ',
+	  is_natural: 'This field must contain only positive numbers. ',
+	  is_natural_no_zero: 'This field must contain a number greater than zero. ',
+	  valid_ip: 'This field must contain a valid IP. ',
+	  valid_base64: 'This field must contain a base64 string. ',
 	  valid_credit_card: 'This field must contain a vaild credit card number',
-	  valid_url: 'This field must contain a valid URL.'
+	  valid_url: 'This field must contain a valid URL. '
     }
   };
   $.fn.validateForm = function(formMeta, options){
