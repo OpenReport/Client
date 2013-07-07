@@ -393,19 +393,19 @@ function setOptions(sel, el, typ, opt){
 		}
 	});
 }
+
+// template pattern (Mustache {{ name }})
+_.templateSettings = {
+	interpolate: /\{\{\=(.+?)\}\}/g,
+	evaluate: /\{\{(.+?)\}\}/g
+};
+
+var router = new window.Routes();
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-
-	// template pattern (Mustache {{ name }})
-	_.templateSettings = {
-		interpolate: /\{\{\=(.+?)\}\}/g,
-		evaluate: /\{\{(.+?)\}\}/g
-	};
-
-		var router = new window.Routes();
 		Backbone.history.start({pushstate:false});
 });
