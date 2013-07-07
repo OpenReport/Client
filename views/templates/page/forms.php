@@ -17,7 +17,7 @@
 				<th>Tag</th>
                 <th>Published</th>
                 <th>Public</th>
-                <th><a href="#add" class="btn btn-mini pull-right">New Form</a></li></th>
+                <th><a href="#add" class="btn btn-mini btn-primary pull-right">New Form</a></li></th>
               </tr>
             </thead>
             <tbody>
@@ -28,7 +28,7 @@
 				<td>{{= form.get('tags') }}</td>
 				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
 				<td>{{= form.get('is_public') === 1 ? 'Yes':'No' }}</td>
-                <td><span class="pull-right"><a class="btn btn-mini" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
+                <td><span class="pull-right"><a class="btn btn-mini btn-info" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
             {{ }); }}
