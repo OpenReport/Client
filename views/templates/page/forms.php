@@ -14,8 +14,9 @@
               <tr>
                 <th>Title</th>
                 <th>Description</th>
+				<th>Tag</th>
                 <th>Published</th>
-				<th>Date</th>
+                <th>Public</th>
                 <th><a href="#add" class="btn btn-mini pull-right">New Form</a></li></th>
               </tr>
             </thead>
@@ -24,8 +25,9 @@
               <tr>
                 <td><a class="detailBtn" id="{{= form.get('id') }}" href="#"><i class="icon-folder-open icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
                 <td>{{= form.get('description') }}</td>
+				<td>{{= form.get('tags') }}</td>
 				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
-                <td>{{= moment(form.get('date_modified').date).format('L') }}</td>
+				<td>{{= form.get('is_public') === 1 ? 'Yes':'No' }}</td>
                 <td><span class="pull-right"><a class="btn btn-mini" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
@@ -37,7 +39,7 @@
 </script>
 
 
-<script id="formForm" type="text/template">
+<script id="formBuilder" type="text/template">
 <div class="tabbable">
 	<!-- List of controls rendered into Bootstrap Tabs -->
 	<ul class="nav nav-tabs">
@@ -70,10 +72,9 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label" style="vertical-align:top">Report Options</label>
-			<ul style="display:inline-block;" class="ctrl-checkboxgroup">
+			<ul style="display:inline-block;" class="unstyled">
 				<li><input type="checkbox" id="formPublished" {{= (is_published === 1) ? 'checked':'' }}>Publish Form</li>
-				<li><input type="checkbox" name="checkboxField" value="option2">Option 2</li>
-				<li><input type="checkbox" name="checkboxField" value="option3">Option 3</li>
+				<li><input type="checkbox" id="formPublic" {{= (is_public === 1) ? 'checked':'' }}>Make Form Public</li>
 			</ul>
 		</div>
 
@@ -93,7 +94,7 @@
 		</div>
 		<div class="selectorField well" data-rules="required" data-name="" data-type="checkbox-group">
 			<label class="control-label" style="vertical-align:top">Checkboxes</label>
-			<ul class="ctrl-checkboxgroup">
+			<ul class="ctrl-checkboxgroup ">
 				<li><input type="checkbox" name="checkboxField" value="option1">Option 1</li>
 				<li><input type="checkbox" name="checkboxField" value="option2">Option 2</li>
 				<li><input type="checkbox" name="checkboxField" value="option3">Option 3</li>

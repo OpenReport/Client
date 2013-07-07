@@ -19,7 +19,7 @@
 
 
 /**
- * Views - Collection of Task Forms
+ * Views - Collection of Reporting Forms
  *
  *
  */
@@ -76,7 +76,7 @@ window.FormsView = Backbone.View.extend({
 });
 
 /**
- * View - Single Task Form
+ * View - Single Reporting Form
  *
  *
  */
@@ -101,6 +101,7 @@ window.FormView = Backbone.View.extend({
         description: $('#formDescription').val(),
 		tags: $('#formTags').val(),
 		is_published: ($('#formPublished').is(':checked') ? 1:0),
+		is_public: ($('#formPublic').is(':checked') ? 1:0),
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
@@ -145,7 +146,7 @@ window.FormView = Backbone.View.extend({
   },
   render: function(){
 	// build content
-    var template = _.template($("#formForm").html(), this.model.attributes);
+    var template = _.template($("#formBuilder").html(), this.model.attributes);
     $(this.el).html(template);
     // build form controls
 	var ctrlIndex = 1, fldIndex = 1;

@@ -34,6 +34,8 @@ window.Form = Backbone.Model.extend({
         meta:{'name':'frm', "title":"", "desc":"",'fieldset':[{'name':'grp1', 'legend':'',fields:[]}]},
         date_created:'',
         is_published: 0,
+        is_public: 0,
+        is_deleted: 0,
         api_key:apiKey
     },
     validate: function(attr){
