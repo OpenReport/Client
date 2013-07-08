@@ -97,6 +97,68 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 
 });
 
+
+$app->post("/:apiKey", function ($apiKey) use ($app, $response) {
+
+    // get date
+    $today = new DateTime('GMT');
+    $request = json_decode($app->request()->getBody());
+
+    // Validate account apiKey
+    if($apiKey == $request->api_key){
+
+       // create the event
+        $user = new User();
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->date_modified = $today;
+        $user->account_id = $request->account_id;
+        $user->is_active = $request->is_active;
+        $user->save();
+        // package the data
+        $response['data'] = $user->values_for(array('id','username','email','is_active'));
+        $response['message'] = "user saved";
+    }
+    else{
+        $response['status'] = "error";
+        $response['message'] = "cancled";
+    }
+
+    // confirmation
+    echo json_encode($response);
+});
+
+
+$app->put("/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) {
+
+    // get date
+    $today = new DateTime('GMT');
+    $request = json_decode($app->request()->getBody());
+
+    // Validate account apiKey
+    if($apiKey == $request->api_key){
+
+       // create the event
+        $user = User::find($userId);
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->password = $request->password == '' ? $user->password:$request->password;
+        $user->date_modified = $today;
+        $user->is_active = $request->is_active;
+        $user->save();
+        // package the data
+        $response['data'] = $user->values_for(array('id','username','email','is_active'));
+        $response['message'] = "user saved";
+    }
+    else{
+        $response['status'] = "error";
+        $response['message'] = "cancled";
+    }
+
+    // confirmation
+    echo json_encode($response);
+});
 /**
  * Run the Slim application
  *

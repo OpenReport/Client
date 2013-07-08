@@ -75,21 +75,17 @@ window.UsersView = Backbone.View.extend({
     var template = _.template($("#userDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
-  }/*,
-  assignReport: function(e){
+  },
 
+  deleteUser: function(e){
+
+    console.log('delete called');
     var target = e.target;
-    var user = this.collection.get(target.id);
+    //model = this.collection.get(target.id);
+	console.log(target.id);
 
-	formList = new window.Assignments().fetchForms({key: apiKey, user_id: user.attributes.id, success: function(data){
-		var template = _.template($("#userAssign").html(), { records:data.models, user:user.attributes });
-		$('#dialog').html(template)
-		return this;
-	  }
-	});
-
-  }*/
-
+    return this;
+  }
 });
 
 /**
@@ -100,10 +96,8 @@ window.UsersView = Backbone.View.extend({
 window.UserFormView = Backbone.View.extend({
   el: '#userContext',
   model: null,
-  assignments: null,
   initialize: function(options){
 	options || (options = {});
-	this.assignments = options.assignments;
     _.bind(this, 'render');
     this.listenTo(this.model, 'change', this.render);
 
@@ -117,15 +111,20 @@ window.UserFormView = Backbone.View.extend({
 
         username: $('#username').val(),
         email: $('#email').val(),
-		password: '',
+		password: $('#password').val()
 
     });
-
-
-
+	// validation
+	var errors = this.model.validate();
+	if(typeof(errors) !== 'undefined'){
+		console.log(errors);
+		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+		$('#dialog').html(template).modal();
+		return true;
+	}
     if (this.model.isNew()) {
         var self = this;
-        this.userList.create(this.model, {
+        router.userList.create(this.model, {
             success:function () {
                 router.navigate('/', {trigger: true});
             }
@@ -134,10 +133,6 @@ window.UserFormView = Backbone.View.extend({
         this.model.save({}, {
             success:function () {
 			  // update assignments
-			  $('input#assign').each(function(){
-				console.log($(this).is(':checked'));
-
-			  });
               router.navigate('/', {trigger: true});
             }
         });
@@ -154,7 +149,7 @@ window.UserFormView = Backbone.View.extend({
   },
   render: function(){
 	// build content
-	var template = _.template($("#userForm").html(), {user:this.model.attributes, assignments:this.assignments.models});
+	var template = _.template($("#userForm").html(), {user:this.model.attributes});
     $(this.el).html(template);
     return this;
   },
@@ -197,10 +192,10 @@ window.Routes = Backbone.Router.extend({
      */
     add: function(){
 	  var user = new window.User();
-	  new window.Assignments().fetchForms({key: apiKey, user_id: 0, success: function(data){
-		  new window.UserFormView({model:user, assignments:data}).render();
-		}
-	  });
+	  new window.UserFormView({model:user}).render();
+
+	  $('#email, #password').prop('disabled', false);
+
     },
     /*
      * Edit user
@@ -208,7 +203,7 @@ window.Routes = Backbone.Router.extend({
     edit: function(id){
 	  var user = this.userList.get(id);
 	  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
-		  new window.UserFormView({model:user, assignments:data}).render();
+		  new window.UserFormView({model:user}).render();
 		}
 	  });
 

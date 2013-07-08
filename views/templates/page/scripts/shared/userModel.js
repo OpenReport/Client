@@ -31,7 +31,25 @@ window.User = Backbone.Model.extend({
         email:'',
         password:'',
         is_active:0,
+        account_id:acctNo,
         api_key:apiKey
+    },
+    validate: function(attr){
+        attr || (attr = this.attributes);
+        var errors = [];
+        if(!attr.username){
+            errors.push('User Name Required');
+        }
+        if(!attr.email){
+            errors.push('Email Required');
+        }
+        //if(!attr.password){
+        //    errors.push('Password Required');
+        //}
+        if(errors.length !== 0){
+            return errors
+        }
+
     }
 });
 
