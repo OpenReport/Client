@@ -1,5 +1,5 @@
 /**
- * Open Report Form Builder and Valdation
+ * OpenReport Form Builder and Valdation
  *
  * Copyright 2013, The Austin Conner Group
  * Licensed under the Apache License, Version 2.0 (the "License");
