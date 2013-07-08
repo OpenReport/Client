@@ -1,6 +1,6 @@
 <?php
 /**
- * Open Report
+ * OpenReport
  *
  * Copyright 2013, The Austin Conner Group
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ $app->hook('slim.after.router', function() use ($app) {
 
     $res = $app->response();
     $res['Content-Type'] = 'application/json';
-    $res['X-Powered-By'] = 'Open Report';
+    $res['X-Powered-By'] = 'OpenReport';
 
 });
 

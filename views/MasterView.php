@@ -1,8 +1,8 @@
 <?php
 /**
- * Open Report
+ * OpenReport
  *
- * An open source application framework for Open Report
+ * An open source application framework for OpenReport
  *
  * NOTICE OF LICENSE
  *
@@ -16,8 +16,8 @@
  * through the world wide web, please send an email to
  * licensing@theaustinconnergroup.info so we can send you a copy immediately.
  *
- * @package		Open Report
- * @author		Open Report Dev Team
+ * @package		OpenReport
+ * @author		OpenReport Dev Team
  * @copyright   Copyright (c) 2013, The Austin Conner Group. (http://theaustinconnergroup.info/)
  * @license		http://creativecommons.org/licenses/by-sa/3.0/
  * @link		https://sites.google.com/site/openfieldreport/
@@ -25,7 +25,7 @@
  * @filesource
  */
 
-header('X-Powered-By: Open Report');
+header('X-Powered-By: OpenReport');
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/ActiveRecord.php';
 ActiveRecord\Config::initialize(function($cfg) {

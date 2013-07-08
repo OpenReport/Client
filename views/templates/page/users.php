@@ -37,11 +37,11 @@
             </table>
         </div>
 
-<div class="btn-group btn-group pull-right">
-              <button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
-			<button class="btn btn-mini">Page</button>
-              <button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
-            </div>
+		<div class="btn-group btn-group pull-right">
+		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+		<button class="btn btn-mini">Page</button>
+		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+		</div>
 </script>
 
 <script id="userForm" type="text/template">

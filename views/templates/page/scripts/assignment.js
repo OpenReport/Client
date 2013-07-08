@@ -40,8 +40,6 @@ window.AssignmentsView = Backbone.View.extend({
   render: function(){
     var params = { records: this.collection.models};
 
-	console.log(params);
-
     var template = _.template($("#assignments").html(), params);
     $(this.el).html(template);
 	//$.bootstrapSortable();
@@ -75,6 +73,7 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view /tasks
+		"tag/:tag" : "index",				// filter by tag
         "add" : "add",						// add a reporting task /tasks#add
         "remove/:id" : "remove",			// remove reporting task /tasks#remove/{task_id}
 		"edit/:id" : "edit"					// edit reporting task /task#edit/{task_id}
@@ -82,11 +81,20 @@ window.Routes = Backbone.Router.extend({
     /*
      * Display Account User List
      */
-    index: function(){
+    index: function(tag){
 
         this.assignmentList = new window.Assignments({key: apiKey});
 		//console.log(this.taskList);
         new window.AssignmentsView({collection: this.assignmentList});
+		// info box
+		$.ajax({
+			url:'/api/form/tags/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
+			}
+
+		});
     },
     /*
      * Add Assignment
