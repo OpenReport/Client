@@ -62,7 +62,6 @@ window.Records = Backbone.Collection.extend({
         return "/api/report/"+uri+"?s="+this.startDate+'&e='+this.endDate;
     },
     parse:function(response){
-        console.log(response);
         return response.data;
     }
 });

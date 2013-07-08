@@ -47,7 +47,9 @@ window.Form = Backbone.Model.extend({
         if(!attr.meta.name){
             errors.push('Report ID is requried');
         }
-        if(errors.length !== 0){return errors};
+        if(errors.length !== 0){
+            return errors
+        }
     }
 });
 

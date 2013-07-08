@@ -94,7 +94,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     $sel = 'assignments.*, forms.title AS form_title, users.username AS user';
 
 
-    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ?', $apiKey)));
+    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND forms.is_published = 1 AND forms.is_deleted = 0', $apiKey)));
     // package the data
     $response['data'] = assignmentArrayMap($data);
     $response['count'] = 1;
@@ -119,7 +119,7 @@ $app->get("/forms/:apiKey/:formId", function ($apiKey, $formId) use ($app, $resp
                   'LEFT JOIN forms ON(assignments.form_id = forms.id)');
     $sel = 'assignments.*, forms.title AS form_title, users.username AS user';
 
-    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND form_id = ?', $apiKey, $formId)));
+    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND form_id = ? AND forms.is_published = 1 AND forms.is_deleted = 0', $apiKey, $formId)));
     // package the data
     $response['data'] = assignmentArrayMap($data);
     $response['count'] = 1;
@@ -146,7 +146,7 @@ $app->get("/users/:apiKey/:userId", function ($apiKey, $userId) use ($app, $resp
     $sel = 'assignments.*, forms.title AS form_title, users.username AS user';
 
 
-    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND user_id = ?', $apiKey, $userId)));
+    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND user_id = ? AND forms.is_published = 1 AND forms.is_deleted = 0', $apiKey, $userId)));
     // package the data
     $response['data'] = assignmentArrayMap($data);
     $response['count'] = 1;

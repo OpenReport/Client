@@ -67,11 +67,9 @@ window.Assignments = Backbone.Collection.extend({
             uri = this.key;
         }
         // build new uri
-        console.log(uri);
         return "/api/assignment/"+uri;
     },
     parse:function(response){
-        console.log(response);
         return response.data;
     }
 });

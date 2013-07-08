@@ -9,6 +9,7 @@ Form designer for OpenReport.
  -- JQuery http://jquery.com/
  -- Slim Framework http://www.slimframework.com/
  -- Datepicker for Bootstrap http://eternicode.github.io/bootstrap-datepicker/
+ -- Backbone Pagination https://github.com/backbone-paginator/backbone.paginator
 
 visit: http://companygateways.github.io/OpenReport
 
