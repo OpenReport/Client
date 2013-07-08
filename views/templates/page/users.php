@@ -61,25 +61,10 @@
             </div>
         </div>
         <div class="control-group">
-			<label class="control-label"><strong>Report Assignments</strong></label>
-			<div class="controls">
-            <table class="table">
-            <thead>
-             <tr>
-                <th>Reporting Form</th>
-                <th>Assigned</th>
-              </tr>
-            </thead>
-            <tbody>
-            {{ _(assignments).each(function(form) {  }}
-              <tr>
-                <td>{{= form.get('form_title') }}</td>
-                <td><input id="assign" name="assign[]" value="{{= form.get('form_id') }}" type="checkbox" {{= form.get('is_assigned')? 'checked' : '' }} ></td>
-              </tr>
-            {{ }); }}
-            </tbody>
-            </table>
-			</div>
+            <label class="control-label">Password</label>
+            <div class="controls">
+				<input type="password" value=""class="span12" id="password" name="password" placeholder="" disabled >
+            </div>
         </div>
         <div class="form-actions">
             <span class="pull-right"><button id="close" class="btn">Cancel</button> <button class="btn btn-primary" id="submit">Save changes</button> </span>
