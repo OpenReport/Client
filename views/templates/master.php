@@ -43,6 +43,7 @@
       var curYear = localTime.format('YYYY');
       // set account data
       var apiKey = "<?php echo $account['api_key'] ?>";  // this is a global account key
+      var acctNo = "<?php echo $account['id'] ?>";  // this is a global account key
   </script>
 
 </head>
@@ -89,6 +90,7 @@
                     </ul>
                     <p class="navbar-text pull-right">
                         Welcome <strong><?php echo $this->user(); ?></strong>
+                        <span class="" id="localDate"><span>
                     </p>
                     <ul class="nav pull-right settings">
                         <li class="divider-vertical"></li>
@@ -107,8 +109,9 @@
       <?php $this->partial($childView, $this->getData())?>
     </div>
 
-    <div id="infoBox" class="span3 well">
-      <h3 class="brand">Open Report</h3>
+    <div class="span3 well well-small">
+
+      <div id="infoBox"></div>
     </div>
   </div>
 
@@ -119,6 +122,8 @@
 <footer align="center">
     <p>OpenReport v1.0 Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
 </footer>
+
+
 <!-- Global Templates -->
 <script id="errorModal" type="text/template">
 <div class="modal" id="errorModal">
@@ -147,7 +152,11 @@
 </script>
 
 
-
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#localDate').append(localTime.format('LL'));
+  });
+</script>
 
 
 </body>
