@@ -20,7 +20,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Password</th>
-				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New User</a></th>
+				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New User&nbsp;<i class="icon icon-user"></i></a></th>
               </tr>
             </thead>
             <tbody>

@@ -72,9 +72,9 @@
                                class="icon-edit icon-black"></i>
                                 Manage <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/assignments">Reporting Assignments</a></li>
-                                <li><a href="/forms">Reporting Forms</a></li>
-                                <li><a href="/users">User Accounts</a></li>
+                                <li><a href="/assignments"><i class="icon icon-check"></i>&nbsp;Reporting Assignments</a></li>
+                                <li><a href="/forms"><i class="icon icon-list-alt"></i>&nbsp;Reporting Forms</a></li>
+                                <li><a href="/users"><i class="icon icon-user"></i>&nbsp;User Accounts</a></li>
                             </ul>
                         </li>
                     </ul>

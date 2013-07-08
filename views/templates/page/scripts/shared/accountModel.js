@@ -29,7 +29,8 @@ window.Account = Backbone.Model.extend({
         id:null,
         name:'',
         api_key:apiKey
+    },
+    parse:function(response){
+        return response.data;
     }
 });
-
-

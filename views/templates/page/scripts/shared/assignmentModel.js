@@ -27,7 +27,8 @@ window.Assignment = Backbone.Model.extend({
     urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
-
+        user_id:0,
+        form_id:0,
         api_key:apiKey
     }
 });
@@ -37,8 +38,10 @@ window.Assignments = Backbone.Collection.extend({
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
+        this.tag = options.tag;
         this.form_id = 0;
         this.user_id = 0;
+
     },
     fetchForms: function(options) {
         options || (options = {});
@@ -64,7 +67,9 @@ window.Assignments = Backbone.Collection.extend({
         uri = uri + (this.form_id == 0 ? '/'+this.user_id:'/'+this.form_id);
         }
         else{
-            uri = this.key;
+        uri = this.key;
+        // fetch records based on tags
+         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
         }
         // build new uri
         return "/api/assignment/"+uri;

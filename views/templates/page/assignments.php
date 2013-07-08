@@ -16,7 +16,7 @@
                 <th>Form</th>
                 <th>User</th>
                 <th>Date Assigned</th>
-				<th><button id="add" class="btn btn-mini btn-primary pull-right">New Assignment</button></li></th>
+				<th><button id="add" class="btn btn-mini btn-primary pull-right">New Assignment&nbsp;<i class="icon icon-check"></i></button></li></th>
               </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
             </tbody>
             </table>
         </div>
-		<div class="btn-group btn-group pull-right">
+		<div class="btn-group btn-group pull-right" style="display: none;">
 		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
 		<button class="btn btn-mini">Page</button>
 		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
@@ -49,6 +49,37 @@
 	{{ } }}
 	<a href="#" class="label label-important">x</a>
   </div>
+
+</script>
+
+<script id="assignDialog" type="text/template">
+	<div class="modal" id="formModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">✕</button>
+			<h3>Report Form Assignment</h3>
+		</div>
+		<div class="modal-body" style="text-align:left;">
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="control-group">
+						<select id="userList" class="span12">
+						<option value="0">Select User</option>
+						</select>
+					</div>
+					<div class="control-group">
+
+					<select id="reportForms" name="reportForms" class="span12" multiple="multiple" size='10'>
+					</select>
+					<span>Double Click to add Form </span>
+
+					</div>
+					<div class="control-group pull-right">
+					<button onclick=';' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </script>
 

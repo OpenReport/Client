@@ -55,7 +55,52 @@ window.AssignmentsView = Backbone.View.extend({
   },
 
   addAssignment: function(e){
+	console.log('dialog');
 
+    var template = _.template($("#assignDialog").html());
+    $('#dialog').html(template).modal();
+	// fill in the blanks
+	$.ajax({
+		url:'/api/user/'+apiKey,
+		dataType: "json",
+		success: function(response){
+			// add users to drop down
+			for (var i = 0; i < response.data.length; i++) {
+			  var item = response.data[i]
+			  $('#userList').append('<option value="'+item.id+'">'+item.username+'</option>');
+			}
+		}
+
+	});
+
+	$.ajax({
+		url:'/api/form/'+apiKey,
+		dataType: "json",
+		success: function(response){
+			// add forms to drop down
+			for (var i = 0; i < response.data.length; i++) {
+			  var item = response.data[i]
+			  $('#reportForms').append('<option value="'+item.id+'">'+item.title+'</option>');
+			}
+		}
+
+	});
+
+	$('#dialog').on('hidden', function(event) {
+
+	  var forms = $('#reportForms').val();
+	  for (var i = 0; i < forms.length; i++) {
+		var assignment = new window.Assignment();
+		assignment.set({
+		  user_id: $('#userList').val(),
+		  form_id: forms[i]
+		});
+		console.log(assignment.save());
+	  }
+	  router.assignmentList.fetch();
+	});
+
+    return this;
   },
   /**
    * Display User Details in a Modal Dialog
@@ -69,6 +114,9 @@ window.AssignmentsView = Backbone.View.extend({
 
     var template = _.template($("#assignmentDetail").html(), model.toJSON());
     $('#dialog').html(template).modal();
+
+
+
     return this;
   }
 
@@ -94,7 +142,7 @@ window.Routes = Backbone.Router.extend({
      */
     index: function(tag){
 
-        this.assignmentList = new window.Assignments({key: apiKey});
+        this.assignmentList = new window.Assignments({key: apiKey, tag:tag});
 		//console.log(this.taskList);
         new window.AssignmentsView({collection: this.assignmentList});
 		// info box

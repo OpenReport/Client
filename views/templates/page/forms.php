@@ -17,7 +17,7 @@
 				<th>Tag</th>
                 <th>Published</th>
                 <th>Public</th>
-                <th><a href="#add" class="btn btn-mini btn-primary pull-right">New Form</a></li></th>
+                <th><a href="#add" class="btn btn-mini btn-primary pull-right">New Form&nbsp;<i class="icon icon-list-alt"></i></a></li></th>
               </tr>
             </thead>
             <tbody>

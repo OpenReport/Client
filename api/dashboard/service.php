@@ -103,6 +103,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     $recCount =  Record::count(array('conditions' =>array('api_key = ?', $apiKey)));
     $frmCount =  Form::count(array('conditions' =>array('api_key = ? AND is_deleted = 0', $apiKey)));
 
+
     // get date
     $today = new DateTime('GMT');
     // get stats

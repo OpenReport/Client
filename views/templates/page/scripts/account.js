@@ -36,40 +36,24 @@ window.AccountFormView = Backbone.View.extend({
   //
   //},
   saveAccount:function () {
-    this.model.set({
-        title: $('#taskTitle').val(),
-        description: $('#taskDescription').val(),
-        //post_date: {date: $('#postDate input').val(),timezone_type:2,timezone:timeZone},
-        //expire_date: {date: $('#expireDate input').val(),timezone_type:2,timezone:timeZone}
-    });
-    if (this.model.isNew()) {
-        var self = this;
-        router.taskList.create(this.model, {
-            success:function () {
-                router.navigate('/', {trigger: true});
-            }
-        });
-    } else {
-        this.model.save({}, {
-            success:function () {
-                router.navigate('/', {trigger: true});
-            }
-        });
-    }
-    this.close();
-    // force refreash
-    preview = $('#preview').attr('src');
-    $('#preview').attr('src', '');
-    setTimeout(function () {
-        $('#preview').attr('src', preview);
-    }, 300);
 
-    return false;
+
+	this.model.save({
+        name: $('#acctname').val()
+	  },
+	  {
+		success:function () {
+		  window.history.back();
+		}
+	  }
+	);
+
+    return this;
   },
   render: function(){
 	// build content
 
-	var template = _.template($("#accountForm").html(), this.model.attributes.data);
+	var template = _.template($("#accountForm").html(), this.model.attributes);
     $(this.el).html(template);
     return this;
   },

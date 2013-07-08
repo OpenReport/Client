@@ -53,8 +53,8 @@
 <script id="info" type="text/template">
 	<h4>Quick Links</h4>
 	<ul class="nav nav-pills nav-stacked">
-	<li class="active"><a class="" href="/forms#add">New Report Form</a></li>
-	<li class="active"><a href="/users#add">New Report User</a></li>
+	<li class="active"><a class="" href="/forms#add"><i class="icon icon-list-alt"></i>&nbsp;New Report Form</a></li>
+	<li class="active"><a href="/users#add"><i class="icon icon-user"></i>&nbsp;New Report User</a></li>
 	</ul>
 	<ul class="unstyled">
 	<li><strong>Top Users</strong></li>

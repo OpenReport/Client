@@ -54,7 +54,6 @@ window.FormsView = Backbone.View.extend({
    */
   detail: function(e){
 
-    console.log('detail called');
     var target = e.target;
     model = this.collection.get(target.id);
 	console.log(model.attributes);
@@ -161,7 +160,7 @@ window.FormView = Backbone.View.extend({
 	// assign dialogs
 	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
 		var ctrlId = 'ctl'+ctrlIndex++;
-		assingDialog(this, ctrlId);
+		assignDialog(this, ctrlId);
 		$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
 	});
 
@@ -175,7 +174,7 @@ window.FormView = Backbone.View.extend({
 			$(t).appendTo($('fieldset.droppedFields'));
 			$(t).data('name', 'col'+fldIndex++);
 			// assign dialog
-			assingDialog($(t), 'ctl'+ctrlIndex++);
+			assignDialog($(t), 'ctl'+ctrlIndex++);
 			$(t).trigger('click');
 		})
 	});
@@ -265,7 +264,7 @@ function remove_form(ctlId){
 
 }
 
-function assingDialog(field, id){
+function assignDialog(field, id){
 	$(field).attr('id', id);
 	$(field).on('click', function(){
 
