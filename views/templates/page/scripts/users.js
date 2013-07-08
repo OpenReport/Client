@@ -26,6 +26,8 @@
 window.UsersView = Backbone.View.extend({
   el: '#userContext',
   collection: null,
+  pageIndex: 0,
+  recordCount: 0,
   initialize: function(options){
     _.bind(this, 'render');
     this.listenTo(this.collection, 'reset', this.render);
@@ -35,16 +37,30 @@ window.UsersView = Backbone.View.extend({
 
   events:{
     "click .user":"detail",
-	"click .assignReport":"assignReport"
+	//"click .assignReport":"assignReport",
+	"click #nextPage":"next",
+	"click #prevPage":"prev"
   },
 
   render: function(){
-    var params = { records: this.collection.models};
+	this.recordCount = (this.collection.models.length);
 
+	var params = { records: this.collection.models.slice(this.pageIndex,10+this.pageIndex)};
     var template = _.template($("#users").html(), params);
     $(this.el).html(template);
-	//$.bootstrapSortable();
+
     return this;
+  },
+
+  next: function(index){
+	this.pageIndex = (this.pageIndex + 10) < this.recordCount ?  this.pageIndex + 10 : this.pageIndex;
+	this.render();
+
+  },
+  prev:function(index){
+	this.pageIndex = this.pageIndex > 10 ? this.pageIndex - 10 : 0;
+	this.render();
+
   },
 
   /**
@@ -59,7 +75,7 @@ window.UsersView = Backbone.View.extend({
     var template = _.template($("#userDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
-  },
+  }/*,
   assignReport: function(e){
 
     var target = e.target;
@@ -72,7 +88,7 @@ window.UsersView = Backbone.View.extend({
 	  }
 	});
 
-  }
+  }*/
 
 });
 
@@ -93,20 +109,23 @@ window.UserFormView = Backbone.View.extend({
 
   },
   events:{
-    //"change input":"change",
     "click #submit":"saveUser",
     "click #close":"cancel"
   },
   saveUser:function () {
     this.model.set({
-        title: $('#taskTitle').val(),
-        description: $('#taskDescription').val(),
-        //post_date: {date: $('#postDate input').val(),timezone_type:2,timezone:timeZone},
-        //expire_date: {date: $('#expireDate input').val(),timezone_type:2,timezone:timeZone}
+
+        username: $('#username').val(),
+        email: $('#email').val(),
+		password: '',
+
     });
+
+
+
     if (this.model.isNew()) {
         var self = this;
-        router.taskList.create(this.model, {
+        this.userList.create(this.model, {
             success:function () {
                 router.navigate('/', {trigger: true});
             }
@@ -114,7 +133,12 @@ window.UserFormView = Backbone.View.extend({
     } else {
         this.model.save({}, {
             success:function () {
-                router.navigate('/', {trigger: true});
+			  // update assignments
+			  $('input#assign').each(function(){
+				console.log($(this).is(':checked'));
+
+			  });
+              router.navigate('/', {trigger: true});
             }
         });
     }
@@ -130,7 +154,6 @@ window.UserFormView = Backbone.View.extend({
   },
   render: function(){
 	// build content
-	console.log(this.assignments.models);
 	var template = _.template($("#userForm").html(), {user:this.model.attributes, assignments:this.assignments.models});
     $(this.el).html(template);
     return this;
@@ -139,7 +162,6 @@ window.UserFormView = Backbone.View.extend({
     this.close();
     window.history.back();
   },
-
   close:function () {
 
     $(this.el).unbind();
@@ -174,9 +196,11 @@ window.Routes = Backbone.Router.extend({
      * Add User
      */
     add: function(){
-
-         new window.UserFormView({model: new window.User()}).render();
-
+	  var user = new window.User();
+	  new window.Assignments().fetchForms({key: apiKey, user_id: 0, success: function(data){
+		  new window.UserFormView({model:user, assignments:data}).render();
+		}
+	  });
     },
     /*
      * Edit user
