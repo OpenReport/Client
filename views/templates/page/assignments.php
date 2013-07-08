@@ -16,7 +16,7 @@
                 <th>Form</th>
                 <th>User</th>
                 <th>Date Assigned</th>
-				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New Assignment</a></li></th>
+				<th><button id="add" class="btn btn-mini btn-primary pull-right">New Assignment</button></li></th>
               </tr>
             </thead>
             <tbody>
@@ -25,7 +25,7 @@
                 <td>{{= assignment.get('form_title') }}</td>
                 <td>{{= assignment.get('user') }}</td>
 				<td>{{= moment(assignment.get('date_assigned').date).format('L') }}</td>
-                <td><span class="pull-right"><a class="" href="#edit/{{= assignment.get('id') }}">Delete <i class="icon-edit icon-white"></i></a></span></td>
+                <td><span class="pull-right"><button class="delete btn btn-mini btn-danger" id="{{= assignment.get('id') }}">Delete <i class="icon-remove icon-white"></i></button></span></td>
               </tr>
 
             {{ }); }}

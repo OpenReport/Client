@@ -34,7 +34,8 @@ window.AssignmentsView = Backbone.View.extend({
   },
 
   events:{
-    "click .user":"detail"
+    "click .delete":"deleteAssigned",
+	"click #add":"addAssignment"
   },
 
   render: function(){
@@ -46,6 +47,16 @@ window.AssignmentsView = Backbone.View.extend({
     return this;
   },
 
+  deleteAssigned: function(e){
+	var target = e.target;
+	//this.collection.remove(this.collection.get(target.id));
+	this.collection.sync('delete', this.collection.get(target.id));
+	this.collection.fetch();
+  },
+
+  addAssignment: function(e){
+
+  },
   /**
    * Display User Details in a Modal Dialog
    *

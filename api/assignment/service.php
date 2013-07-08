@@ -34,6 +34,9 @@ ActiveRecord\Config::initialize(function($cfg) {
 });
 
 $app = new \Slim\Slim();
+\Slim\Route::setDefaultConditions(array(
+    'apiKey' => '[a-zA-Z0-9]{32}'
+));
 
 /**
  * Authenticate all requests
@@ -178,8 +181,43 @@ $app->get("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 });
 
 
+
+$app->delete("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
+
+    $assignment = Assignment::find($id);
+    $assignment->delete();
+});
+
 /**
- * Fetch form records with assignments - Returns all form records
+ * Fetch all assignable reporting forms
+ *
+ *
+ */
+$app->get("/forms/:apiKey", function ($apiKey) use ($app, $response) {
+
+    try {
+        $formData = Form::find('all',
+            array('conditions'=>array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey), 'order'=>'date_modified DESC'));
+        // package the data
+        $response['data'] = formArrayMap($formData);
+        $response['count'] = count($response['data']);
+    }
+    catch (\ActiveRecord\RecordNotFound $e) {
+        $response['message'] = 'No Records Found';
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+
+    // send the data
+    echo json_encode($response);
+
+});
+
+
+
+
+/**
+ * Fetch form records with assignments - Returns all user form assignmets records
  *
  * GET: /api/assignment/list/{apiKey}/{userId}
  *
@@ -214,6 +252,9 @@ $app->get("/list/:apiKey/:userId", function ($apiKey, $userId) use ($app, $respo
 
 });
 
+
+
+
 /**
  * Run the Slim application
  *
@@ -236,6 +277,6 @@ function assignmentArrayMap($data){
 
 function formArrayMap($forms){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'api_key\',\'form_id\',\'title\',\'user_id\',\'user\'));'),$forms);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\'));'),$forms);
 
 }
