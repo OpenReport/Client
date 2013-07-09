@@ -11,13 +11,16 @@
 
 <script id="details" type="text/template">
 	<div class="row-fluid">
-    <div class="span4 well">
+    <div class="span3 well">
 		<h4>Total Reports: {{= stats.formCount }}
     </div>
-    <div class="span4 well">
+    <div class="span3 well">
 		<h4>Total Records: {{= stats.recordCount }}
     </div>
-    <div class="span4 well">
+    <div class="span3 well">
+		<h4>Total Users: {{= stats.totalUsers }}<h4>
+    </div>
+    <div class="span3 well">
 		<h4>Media: {{= stats.mediaCount }}GB<h4>
     </div>
 	</div>

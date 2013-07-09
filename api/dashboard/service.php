@@ -111,6 +111,9 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     $conn = ActiveRecord\ConnectionManager::get_connection("development");
     //$builder = new ActiveRecord\SQLBuilder($conn, "records");
 
+    $sql = 'SELECT count(*) total_users FROM users JOIN accounts on accounts.id = users.account_id WHERE accounts.api_key = \''.$apiKey.'\'';
+    $userCount = $conn->query($sql)->fetch();
+
     $sql = 'SELECT users.username AS user, count(records.id) AS user_count FROM records LEFT JOIN users ON(records.user = users.email) LEFT JOIN forms ON(records.form_id = forms.id) WHERE records.api_key = \''.$apiKey.'\' GROUP BY users.username ORDER BY user_count DESC LIMIT 5';
     //$response['message'] = $sql;
     $topUsers = $conn->query($sql)->fetchAll();
@@ -124,6 +127,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
         "recordCount"=>$recCount,
         "formCount"=>$frmCount,
         "mediaCount"=>0,
+        "totalUsers"=>$userCount['total_users'],
         "recentReports"=>$recentReports,
         "topUsers"=>$topUsers,
         "topReports"=>$topForms
