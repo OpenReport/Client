@@ -18,65 +18,7 @@
  *
  */
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: *");
-
-require_once $_SERVER['DOCUMENT_ROOT'].'system/Slim/Slim.php';
-\Slim\Slim::registerAutoloader();
-
-require $_SERVER['DOCUMENT_ROOT'].'/system/ActiveRecord.php';
-ActiveRecord\Config::initialize(function($cfg) {
-    $cfg->set_model_directory($_SERVER['DOCUMENT_ROOT'].'api/models');
-    $cfg->set_connections(array(
-        'development' => 'mysql://root:acg100199@localhost/meta_forms'
-    ));
-});
-
-$app = new \Slim\Slim();
-\Slim\Route::setDefaultConditions(array(
-    'apiKey' => '[a-zA-Z0-9]{32}'
-));
-
-/**
- * Authenticate all requests
- *
- */
-$app->hook('slim.before.dispatch', function () use ($app) {
-
-    // Provide a better validation here...
-    //if ($app->request()->params('apiKey') !== "65b109869265518f7801f2ce3ba55402") {
-        #$app->halt(403, "Invalid or Missing Key");
-    //}
-});
-
-/**
- * Set the default content type
- *
- */
-$app->hook('slim.after.router', function() use ($app) {
-
-    $res = $app->response();
-    $res['Content-Type'] = 'application/json';
-    $res['X-Powered-By'] = 'OpenReport';
-
-});
-
-// Standardize response
-$response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
-
-/**
- * Status Page
- *
- * GET: /api/assignment/
- *
- */
-$app->get('/', function () use($app, $response)  {
-
-    $response['message'] = 'OpenReport Client API v1.0';
-    echo json_encode($response);
-
-});
+require_once $_SERVER['DOCUMENT_ROOT'].'api/config.php';
 
 
 /**
