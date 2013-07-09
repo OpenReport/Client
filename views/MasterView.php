@@ -27,14 +27,11 @@
 
 header('X-Powered-By: OpenReport');
 
-require $_SERVER['DOCUMENT_ROOT'].'/system/ActiveRecord.php';
-ActiveRecord\Config::initialize(function($cfg) {
-    $cfg->set_model_directory($_SERVER['DOCUMENT_ROOT'].'/models');
-    $cfg->set_connections(array(
-        'development' => 'mysql://root:acg100199@localhost/meta_forms'
-    ));
-});
-
+/**
+ * ActiveRecord Model Config
+ *
+ */
+require_once $_SERVER['DOCUMENT_ROOT'].'models/config.php';
 
 class MasterView extends \Slim\View
 {
