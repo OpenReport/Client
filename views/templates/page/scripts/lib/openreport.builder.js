@@ -31,7 +31,7 @@
 	base.$el = $(el);
 	base.el = el;
 	// Add a reverse reference to the DOM object
-	base.$el.data("buildForm", base);
+	//base.$el.data("buildForm", base);
 	base.init = function(){
 
 	  if( typeof( formMeta ) === "undefined" || formMeta === null ) formMeta = {};
@@ -64,23 +64,26 @@
 		  // render input fields
 		  switch(field.type){
 			case 'text':
-				helper.buildTextBox(fieldCtrl, field.name);
-				break;
+			  helper.buildTextBox(fieldCtrl, field.name);
+			  break;
 			case 'paragraph':
-				helper.buildParagraphBox(fieldCtrl, field.name);
-				break;
+			  helper.buildParagraphBox(fieldCtrl, field.name);
+			  break;
 			case 'checkbox-group':
-				helper.buildCheckboxGroup(fieldCtrl, field.name, field.values);
-				break;
+			  helper.buildCheckboxGroup(fieldCtrl, field.name, field.values);
+			  break;
 			case 'radio-group':
-				helper.buildRadioGroup(fieldCtrl, field.name, field.values);
-				break;
+			  helper.buildRadioGroup(fieldCtrl, field.name, field.values);
+			  break;
 			case 'dropdown':
-				helper.buildDropdown(fieldCtrl, field.name, field.values);
-				break;
+			  helper.buildDropdown(fieldCtrl, field.name, field.values);
+			  break;
 			case 'select':
-				helper.buildSelect(fieldCtrl, field.name, field.values);
-				break;
+			  helper.buildSelect(fieldCtrl, field.name, field.values);
+			  break;
+			case 'media:image':
+			  helper.buildMediaCapture(fieldCtrl, field.name, 'accept','video/*;capture=camera');
+			  break;
 		  }
 		  $(fieldCtrl).append('<span class="error"></span>');
 		}
@@ -106,23 +109,24 @@
 	  buildCheckboxGroup: function(selector, name, values){
 		  //ul
 		  var ul = document.createElement('ul');
+		  ul.setAttribute('class', 'options');
 		  $(selector).append(ul);
-
 		  for (index in values){
 			  var li = document.createElement('li');
 			  field = values[index];
-			  $(li).append(createInput(name, 'checkbox', field.value)).append(field.label);
+			  $(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'checkbox', field.value)));
 			  $(ul).append(li);
 		  }
 	  },
 	  buildRadioGroup: function(selector, name, values){
 		  //ul
 		  var ul = document.createElement('ul');
+		  ul.setAttribute('class', 'options');
 		  $(selector).append(ul);
 		  for (index in values){
 			  var li = document.createElement('li');
 			  field = values[index];
-			  $(li).append(createInput(name, 'radio', field.value)).append(field.label);
+			  $(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'radio', field.value)));
 			  $(ul).append(li);
 		  }
 	  },
@@ -147,6 +151,12 @@
 			  field = values[index];
 			  $(select).append(createOption(field.label, field.value));
 		  }
+	  },
+	  // mobile <input type="file" accept="video/*;capture=camera" />
+	  buildMediaCapture: function(el, name, accept){
+		var field = createInput(name, 'file', '');
+		field.setAttribute(accept);;
+		$(el).append(field);
 	  }
 	}
 	// Run initializer
