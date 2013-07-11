@@ -18,18 +18,19 @@
  *
  */
 
+// define('__ROOT__', dirname(dirname(__FILE__)));
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: *");
 
-require_once $_SERVER['DOCUMENT_ROOT'].'system/Slim/Slim.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/system/Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
 /**
  * ActiveRecord Model Config
  *
  */
-require_once $_SERVER['DOCUMENT_ROOT'].'models/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/config.php';
 
 $app = new \Slim\Slim();
 

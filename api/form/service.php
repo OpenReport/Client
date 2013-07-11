@@ -18,7 +18,7 @@
  *
  */
 
-require_once $_SERVER['DOCUMENT_ROOT'].'api/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 
 
 /**
@@ -118,6 +118,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form->title = $request->title;
         $form->description = $request->description;
         $form->tags = $request->tags;
+        $form->report_version = 1;
         $form->date_created = $today;
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
@@ -130,6 +131,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $report = new Report();
         $report->api_key = $apiKey;
         $report->form_id = $form->id;
+        $report->version = 1;
         $report->title = $request->title;
         $report->meta = json_encode($request->meta);    //TODO: Strip unnessary attr from meta
         $report->save();
@@ -160,16 +162,28 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
     $today = new DateTime('GMT');
     $request = json_decode($app->request()->getBody());
 
-    // TODO: validate task_id with api_key
+    // TODO: validate formId with apiKey
 
     // Validate account apiKey
     if($request->id == $formId){
+
+        $ver = Report::Count(array('conditions'=>array('form_id = ?', $formId)));
+
+        // Add new version of report
+        $report = new Report();
+        $report->api_key = $apiKey;
+        $report->form_id = $formId;
+        $report->version = $ver+1;
+        $report->title = $request->title;
+        $report->meta = json_encode($request->meta);    //TODO: Strip unnessary attr from meta
+        $report->save();
 
         // create the event
         $form = Form::find($request->id);
         $form->title = $request->title;
         $form->description = $request->description;
         $form->tags = $request->tags;
+        $form->report_version = $ver+1;
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
         $form->is_public = $request->is_public;

@@ -19,6 +19,7 @@
  */
 
 
+
 require $_SERVER['DOCUMENT_ROOT'].'/system/ActiveRecord.php';
 ActiveRecord\Config::initialize(function($cfg) {
     $cfg->set_model_directory($_SERVER['DOCUMENT_ROOT'].'/models');

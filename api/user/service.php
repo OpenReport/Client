@@ -18,7 +18,7 @@
  *
  */
 
-require_once $_SERVER['DOCUMENT_ROOT'].'api/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 
 
 /**
@@ -88,7 +88,8 @@ $app->put("/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) 
         $user = User::find($userId);
         $user->username = $request->username;
         $user->email = $request->email;
-        $user->password = $request->password == '' ? $user->password:$request->password;
+        if($request->password !== '')
+            $user->password = $request->password;
         $user->date_modified = $today;
         $user->is_active = $request->is_active;
         $user->save();

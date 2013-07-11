@@ -18,7 +18,7 @@
  *
  */
 
-require_once $_SERVER['DOCUMENT_ROOT'].'api/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 
 
 /**

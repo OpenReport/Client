@@ -18,7 +18,7 @@
  *
  */
 
-require_once $_SERVER['DOCUMENT_ROOT'].'api/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 
 
 /**
@@ -32,7 +32,7 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
     // get date
     $today = new DateTime('GMT');
     $record = Record::find($id);
-    $headers = Report::first(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $record->form_id)));
+    $headers = Report::last(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $record->form_id)));
     // package the data
     $data = $record->values_for(array('id', 'form_id','meta', 'record_date','user', 'lat', 'lon'));
     $response['data'] = array('headers'=>$headers->meta,  'record'=>$data);
