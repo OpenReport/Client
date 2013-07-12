@@ -82,7 +82,7 @@
 			  helper.buildSelect(fieldCtrl, field.name, field.values);
 			  break;
 			case 'media:image':
-			  helper.buildMediaCapture(fieldCtrl, field.name, 'accept','video/*;capture=camera');
+			  helper.buildMediaCapture(fieldCtrl, field.name, 'video/*;capture=camera');
 			  break;
 		  }
 		  $(fieldCtrl).append('<span class="error"></span>');
@@ -155,7 +155,7 @@
 	  // mobile <input type="file" accept="video/*;capture=camera" />
 	  buildMediaCapture: function(el, name, accept){
 		var field = createInput(name, 'file', '');
-		field.setAttribute(accept);;
+		field.setAttribute('accept', accept);;
 		$(el).append(field);
 	  }
 	}
