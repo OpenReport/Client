@@ -23,7 +23,7 @@
  *
  *
  */
-window.Assignment = Backbone.Model.extend({
+app.models.Assignment = Backbone.Model.extend({
     urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
@@ -31,8 +31,8 @@ window.Assignment = Backbone.Model.extend({
     }
 });
 
-window.Assignments = Backbone.Collection.extend({
-    model:Assignment,
+app.collections.Assignments = Backbone.Collection.extend({
+    model:app.models.Assignment,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;

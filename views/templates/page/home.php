@@ -76,5 +76,5 @@
 	</ul>
 </script>
 
-
+<script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/dashboard.js"></script>

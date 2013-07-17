@@ -26,6 +26,6 @@
     </div>
 </script>
 
-
+<script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/accountModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/account.js"></script>

@@ -23,7 +23,7 @@
  *
  *
  */
-window.FormsView = Backbone.View.extend({
+app.views.FormsView = Backbone.View.extend({
   el: '#formContext',
   collection: null,
   initialize: function(options){
@@ -79,7 +79,7 @@ window.FormsView = Backbone.View.extend({
  *
  *
  */
-window.FormView = Backbone.View.extend({
+app.views.FormView = Backbone.View.extend({
   el: '#formContext',
   model: null,
   columns: null,
@@ -202,7 +202,7 @@ window.FormView = Backbone.View.extend({
  *
  *
  */
-window.Routes = Backbone.Router.extend({
+app.controller = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view
@@ -216,8 +216,8 @@ window.Routes = Backbone.Router.extend({
      */
     index: function(tag){
 
-        this.formList = new window.Forms({key: apiKey, tag: tag});
-        new window.FormsView({collection: this.formList});
+        app.data.formList = new app.collections.Forms({key: apiKey, tag: tag});
+        new app.views.FormsView({collection: app.data.formList});
 		// info box
 		$.ajax({
 			url:'/api/form/tags/'+apiKey,
@@ -234,9 +234,9 @@ window.Routes = Backbone.Router.extend({
      */
     add: function(){
 		// if called direct we need this.formList
-		if(typeof this.formList == 'undefined') this.formList = new window.Forms({key: apiKey});
-		var form = new window.Form();
-		new window.FormView({model: form}).render();
+		if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
+		var form = new app.models.Form();
+		new app.views.FormView({model: form}).render();
     },
 
     /*
@@ -244,8 +244,8 @@ window.Routes = Backbone.Router.extend({
      */
     edit: function(id){
 		$("#infoBox").html('');
-        var form = this.formList.get(id);
-        new window.FormView({model:form}).render();
+        var form = app.data.formList.get(id);
+        new app.views.FormView({model:form}).render();
     }
 });
 
@@ -434,18 +434,16 @@ function listNames(fieldset){
 	return names;
 }
 
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-	interpolate: /\{\{\=(.+?)\}\}/g,
-	evaluate: /\{\{(.+?)\}\}/g
-};
-
-var router = new window.Routes();
+/**
+ * initilize app
+ *
+ */
+app.init(new app.controller());
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-		Backbone.history.start({pushstate:false});
+	Backbone.history.start({pushstate:false});
 });

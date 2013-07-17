@@ -23,7 +23,7 @@
  *
  *
  */
-window.User = Backbone.Model.extend({
+app.models.User = Backbone.Model.extend({
     urlRoot: '/api/user/'+apiKey,
     defaults:{
         id:null,
@@ -53,8 +53,8 @@ window.User = Backbone.Model.extend({
     }
 });
 
-window.Users = Backbone.Collection.extend({
-    model:User,
+app.collections.Users = Backbone.Collection.extend({
+    model:app.models.User,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;

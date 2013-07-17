@@ -24,7 +24,7 @@
  *
  *
  */
-window.Form = Backbone.Model.extend({
+app.models.Form = Backbone.Model.extend({
     urlRoot: '/api/form/'+apiKey,
     defaults:{
         id:null,
@@ -53,12 +53,12 @@ window.Form = Backbone.Model.extend({
     }
 });
 
-window.Forms = Backbone.Collection.extend({
+app.collections.Forms = Backbone.Collection.extend({
 
     tag:'',
     startDate:'',   // record month
     endDate:'',   // record year
-    model:Form,
+    model:app.models.Form,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;

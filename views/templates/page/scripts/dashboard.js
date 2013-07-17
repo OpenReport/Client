@@ -23,16 +23,16 @@
  *
  *
  */
-window.Dashboard = Backbone.Model.extend({
+app.models.Dashboard = Backbone.Model.extend({
     url: '/api/dashboard/'+apiKey
 });
 
 /**
- *
+ * Views
  *
  *
  */
-window.DashboardView = Backbone.View.extend({
+app.views.DashboardView = Backbone.View.extend({
   el: '#dashboardContext',
   model: null,
   initialize: function(options){
@@ -58,7 +58,7 @@ window.DashboardView = Backbone.View.extend({
  *
  *
  */
-window.Routes = Backbone.Router.extend({
+app.controller = Backbone.Router.extend({
 
 	routes: {
         "" : "index"
@@ -67,28 +67,22 @@ window.Routes = Backbone.Router.extend({
      * Display Reporting Forms
      */
     index: function(){
-        this.dashboard = new window.Dashboard();
-        new window.DashboardView({model: this.dashboard});
-
-        //new window.UseStatsView({model: this.dashboard});
+        app.data.dashboard = new app.models.Dashboard();
+        new app.views.DashboardView({model: app.data.dashboard});
 
     }
 
 });
-
-
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-	interpolate: /\{\{\=(.+?)\}\}/g,
-	evaluate: /\{\{(.+?)\}\}/g
-};
-
-var router = new window.Routes();
+/**
+ * initilize app
+ *
+ */
+app.init(new app.controller());
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-		Backbone.history.start({pushstate:false});
+	Backbone.history.start({pushstate:false});
 });

@@ -1,5 +1,5 @@
 /**
- * Open Report
+ * OpenReport
  *
  * Copyright 2013, The Austin Conner Group
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,19 +18,21 @@
  */
 
 
-/**
- * Models
- *
- *
- */
-app.models.Account = Backbone.Model.extend({
-    urlRoot: '/api/account/'+apiKey,
-    defaults:{
-        id:null,
-        name:'',
-        api_key:apiKey
-    },
-    parse:function(response){
-        return response.data;
-    }
-});
+var app = {
+    config: {},
+    views: {},
+    models: {},
+    collections: {},
+    router: {},
+    utility: {},
+    pageView: null,
+    data: {},
+    init:(function(router) {
+        // use mastasch pattern
+        _.templateSettings = {
+            interpolate: /\{\{\=(.+?)\}\}/g,
+            evaluate: /\{\{(.+?)\}\}/g
+		};
+        app.router = router;
+    })
+}

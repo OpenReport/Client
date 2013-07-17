@@ -306,5 +306,6 @@ span.error{
 </script>
 
 <script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.builder.js"></script>
+<script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/forms.js"></script>

@@ -23,7 +23,7 @@
  *
  *
  */
-window.UsersView = Backbone.View.extend({
+app.views.UsersView = Backbone.View.extend({
   el: '#userContext',
   collection: null,
   pageIndex: 0,
@@ -93,7 +93,7 @@ window.UsersView = Backbone.View.extend({
  *
  *
  */
-window.UserFormView = Backbone.View.extend({
+app.views.UserFormView = Backbone.View.extend({
   el: '#userContext',
   model: null,
   initialize: function(options){
@@ -172,7 +172,7 @@ window.UserFormView = Backbone.View.extend({
  *
  *
  */
-window.Routes = Backbone.Router.extend({
+app.controller = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view /tasks
@@ -186,9 +186,9 @@ window.Routes = Backbone.Router.extend({
      */
     index: function(role){
 
-        this.userList = new window.Users({key: apiKey, role:role});
+        this.userList = new app.collections.Users({key: apiKey, role:role});
 		//console.log(this.taskList);
-        new window.UsersView({collection: this.userList});
+        new app.views.UsersView({collection: this.userList});
 		// info box
 		$.ajax({
 			url:'/api/user/roles/'+apiKey,
@@ -205,9 +205,9 @@ window.Routes = Backbone.Router.extend({
      */
     add: function(){
 	  // if called direct the need this.userList
-	  if(typeof this.userList == 'undefined') this.userList = new window.Users({key: apiKey});
-	  var user = new window.User({is_active:1});
-	  new window.UserFormView({model:user}).render();
+	  if(typeof this.userList == 'undefined') this.userList = new app.collections.Users({key: apiKey});
+	  var user = new app.models.User({is_active:1});
+	  new app.views.UserFormView({model:user}).render();
 
 	  $('#email, #password').prop('disabled', false);
 
@@ -217,7 +217,7 @@ window.Routes = Backbone.Router.extend({
      */
     edit: function(id){
 	  var user = this.userList.get(id);
-	  new window.UserFormView({model:user}).render();
+	  new app.views.UserFormView({model:user}).render();
 	//  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
 	//
 	//	}
@@ -232,19 +232,16 @@ window.Routes = Backbone.Router.extend({
     }
 });
 
-
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-	interpolate: /\{\{\=(.+?)\}\}/g,
-	evaluate: /\{\{(.+?)\}\}/g
-};
-
-var router = new window.Routes();
+/**
+ * initilize app
+ *
+ */
+app.init(new app.controller());
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-		Backbone.history.start({pushstate:false});
+	Backbone.history.start({pushstate:false});
 });

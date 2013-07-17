@@ -23,7 +23,7 @@
  *
  *
  */
-window.AssignmentsView = Backbone.View.extend({
+app.views.AssignmentsView = Backbone.View.extend({
   el: '#assignmentContext',
   collection: null,
   initialize: function(options){
@@ -132,7 +132,7 @@ window.AssignmentsView = Backbone.View.extend({
  *
  *
  */
-window.Routes = Backbone.Router.extend({
+app.controller = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view /tasks
@@ -146,9 +146,9 @@ window.Routes = Backbone.Router.extend({
      */
     index: function(tag){
 
-        this.assignmentList = new window.Assignments({key: apiKey, tag:tag});
+        this.assignmentList = new app.collections.Assignments({key: apiKey, tag:tag});
 		//console.log(this.taskList);
-        new window.AssignmentsView({collection: this.assignmentList});
+        new app.views.AssignmentsView({collection: this.assignmentList});
 		// info box
 		$.ajax({
 			url:'/api/form/tags/'+apiKey,
@@ -181,18 +181,16 @@ window.Routes = Backbone.Router.extend({
 });
 
 
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-	interpolate: /\{\{\=(.+?)\}\}/g,
-	evaluate: /\{\{(.+?)\}\}/g
-};
-
-var router = new window.Routes();
+/**
+ * initilize app
+ *
+ */
+app.init(new app.controller());
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-		Backbone.history.start({pushstate:false});
+	Backbone.history.start({pushstate:false});
 });

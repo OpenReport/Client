@@ -79,6 +79,6 @@
 	</div>
 
 </script>
-
+<script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/assignmentModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/assignment.js"></script>

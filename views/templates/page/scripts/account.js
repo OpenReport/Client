@@ -17,7 +17,7 @@
  *
  */
 
-window.AccountFormView = Backbone.View.extend({
+app.views.AccountFormView = Backbone.View.extend({
   el: '#userContext',
   model: null,
   initialize: function(options){
@@ -74,7 +74,7 @@ window.AccountFormView = Backbone.View.extend({
  *
  *
  */
-window.Routes = Backbone.Router.extend({
+app.controller = Backbone.Router.extend({
 
 	routes: {
         "" : "index"                       // initial view
@@ -84,26 +84,24 @@ window.Routes = Backbone.Router.extend({
      */
     index: function(){
 
-        this.account = new window.Account({key: apiKey});
+        this.account = new app.models.Account({key: apiKey});
 		//console.log(this.taskList);
-        new window.AccountFormView({model: this.account});
+        new app.views.AccountFormView({model: this.account});
     },
 
 });
 
 
-// template pattern (Mustache {{ name }})
-_.templateSettings = {
-	interpolate: /\{\{\=(.+?)\}\}/g,
-	evaluate: /\{\{(.+?)\}\}/g
-};
-
-var router = new window.Routes();
+/**
+ * initilize app
+ *
+ */
+app.init(new app.controller());
 /**
  *
  * Start App
  *
  */
 $(document).ready(function(){
-		Backbone.history.start({pushstate:false});
+	Backbone.history.start({pushstate:false});
 });

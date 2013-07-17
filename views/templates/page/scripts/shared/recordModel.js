@@ -23,7 +23,7 @@
  *
  *
  */
-window.Record = Backbone.Model.extend({
+app.models.Record = Backbone.Model.extend({
    urlRoot: '/api/report/record/'+apiKey,
     defaults:{
         id:null,
@@ -33,8 +33,8 @@ window.Record = Backbone.Model.extend({
     },
 });
 
-window.Records = Backbone.Collection.extend({
-    model:Record,
+app.collections.Records = Backbone.Collection.extend({
+    model:app.models.Record,
     id:0,   // record id
     formId:0,
     identity:'',
