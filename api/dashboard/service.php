@@ -40,10 +40,10 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
                   'LEFT JOIN forms ON(records.form_id = forms.id)');
     $sel = 'records.*, forms.title AS form_title, users.username AS user';
 
-    $recentRcords = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions' =>array('records.api_key = ?', $apiKey), 'order' => 'record_date desc', 'limit'=>5));
+    $recentRecords = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions' =>array('records.api_key = ?', $apiKey), 'order' => 'record_date desc', 'limit'=>10));
 
-    if(!empty($recentRcords)){
-        $recentReports = arrayMapRecord($recentRcords);
+    if(!empty($recentRecords)){
+        $recentReports = arrayMapRecord($recentRecords);
     }
     else {
         $recentReports = array('count'=>0);
@@ -67,7 +67,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     //$response['message'] = $sql;
     $topUsers = $conn->query($sql)->fetchAll();
 
-    $sql = 'SELECT forms.title AS form_title, count(records.id) AS form_count FROM records LEFT JOIN forms ON(records.form_id = forms.id) WHERE forms.api_key = \''.$apiKey.'\' GROUP BY forms.title ORDER BY form_count DESC LIMIT 5';
+    $sql = 'SELECT forms.title AS form_title, forms.id AS form_id, count(records.id) AS form_count FROM records LEFT JOIN forms ON(records.form_id = forms.id) WHERE forms.api_key = \''.$apiKey.'\' GROUP BY forms.title ORDER BY form_count DESC LIMIT 5';
     //$response['message'] = $sql;
     $topForms = $conn->query($sql)->fetchAll();
 
@@ -114,6 +114,6 @@ function formArrayMap($data){
 
 function arrayMapRecord($data){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'form_title\',\'form_id\',\'user\',\'lat\',\'lon\',\'record_date\'));'),$data);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'form_title\',\'form_id\',\'user\',\'lat\',\'lon\',\'record_date\'));'),$data);
 
 }

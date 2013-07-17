@@ -10,21 +10,21 @@
 <!-- Templates -->
 <script id="assignments" type="text/template">
         <div class="span12">
-            <table class="table">
+            <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Form</th>
-                <th>User</th>
-                <th>Date Assigned</th>
+                <th>Forms</th>
+                <th>Roles</th>
+
 				<th><button id="add" class="btn btn-mini btn-primary pull-right">New Assignment&nbsp;<i class="icon icon-check"></i></button></li></th>
               </tr>
             </thead>
             <tbody>
             {{ _(records).each(function(assignment) { }}
               <tr>
-                <td>{{= assignment.get('form_title') }}</td>
-                <td>{{= assignment.get('user') }}</td>
-				<td>{{= moment(assignment.get('date_assigned').date).format('L') }}</td>
+                <td>{{= assignment.get('form_tag') }}</td>
+                <td>{{= assignment.get('user_role') }}</td>
+
                 <td><span class="pull-right"><button class="delete btn btn-mini btn-danger" id="{{= assignment.get('id') }}">Delete <i class="icon-remove icon-white"></i></button></span></td>
               </tr>
 
@@ -43,7 +43,7 @@
 
 
   <div id="form-tags" class="control-group">
-    <h4>Tag Filters</h4>
+    <h4>Filter by Form Tag</h4>
 	{{ for (var i = 0; i < tags.length; i++) { }}
 		<a href="#tag/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
 	{{ } }}
@@ -63,18 +63,15 @@
 				<div class="span12">
 					<div class="control-group">
 						<select id="userList" class="span12">
-						<option value="0">Select User</option>
+						<option value="">Select User</option>
 						</select>
 					</div>
 					<div class="control-group">
-
 					<select id="reportForms" name="reportForms" class="span12" multiple="multiple" size='10'>
 					</select>
-					<span>Double Click to add Form </span>
-
 					</div>
 					<div class="control-group pull-right">
-					<button onclick=';' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+					<button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
 					</div>
 				</div>
 			</div>

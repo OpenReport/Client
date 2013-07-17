@@ -18,11 +18,14 @@
  *
  */
 
-// define('__ROOT__', dirname(dirname(__FILE__)));
+// HTTP Headers;
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: *");
+
+// SET DEFAULT TIME ZONE
+date_default_timezone_set('GMT');
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/system/Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
@@ -38,7 +41,10 @@ $app = new \Slim\Slim();
  *
  */
 \Slim\Route::setDefaultConditions(array(
-    'apiKey' => '[a-zA-Z0-9]{32}'
+    'apiKey' => '[a-zA-Z0-9]{32}',
+    'tag' => '[a-z\-]*',
+    'role' => '[a-z\-]*',
+    'id' =>'[0-9]*'
 ));
 
 

@@ -56,7 +56,7 @@ window.FormsView = Backbone.View.extend({
 
     var target = e.target;
     model = this.collection.get(target.id);
-	console.log(model.attributes);
+
     var template = _.template($("#formDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
@@ -64,10 +64,10 @@ window.FormsView = Backbone.View.extend({
 
   deleteForm: function(e){
 
-    console.log('delete called');
+
     var target = e.target;
     //model = this.collection.get(target.id);
-	console.log(target.id);
+
 
     return this;
   }
@@ -82,6 +82,7 @@ window.FormsView = Backbone.View.extend({
 window.FormView = Backbone.View.extend({
   el: '#formContext',
   model: null,
+  columns: null,
   initialize: function(options){
     _.bind(this, 'render');
     //this.listenTo(this.model, 'change', this.render);
@@ -99,8 +100,10 @@ window.FormView = Backbone.View.extend({
         title: $('#formTitle').val(),
         description: $('#formDescription').val(),
 		tags: $('#formTags').val(),
-		is_published: ($('#formPublished').is(':checked') ? 1:0),
-		is_public: ($('#formPublic').is(':checked') ? 1:0),
+		is_published: ($('#is_published').is(':checked') ? 1:0),
+		is_public: ($('#is_public').is(':checked') ? 1:0),
+		new_report: ($('#new_report').is(':checked') ? 1:0),
+		identity: $('#identity').val(),
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
@@ -110,7 +113,7 @@ window.FormView = Backbone.View.extend({
 	// validation
 	var errors = this.model.validate();
 	if(typeof(errors) !== 'undefined'){
-		console.log(errors);
+
 		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
 		$('#dialog').html(template).modal();
 		return true;
@@ -128,7 +131,7 @@ window.FormView = Backbone.View.extend({
 
         this.model.save({}, {
             success:function () {
-				console.log('success')
+
                 router.navigate('/', {trigger: true});
             }
         });
@@ -138,18 +141,14 @@ window.FormView = Backbone.View.extend({
 
     return false;
   }, 500),
-  details:function(e){
-    console.log('detail called');
-    var target = e.target;
-	console.log(target);
-  },
+
   render: function(){
 	// build content
     var template = _.template($("#formBuilder").html(), this.model.attributes);
     $(this.el).html(template);
     // build form controls
 	var ctrlIndex = 1, fldIndex = 1;
-	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well', 'fsClass':'droppedFields','fldClass':'span12'});
+	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
 
     // make sortable
 	$( ".droppedFields" ).sortable({
@@ -178,6 +177,10 @@ window.FormView = Backbone.View.extend({
 			$(t).trigger('click');
 		})
 	});
+	// capture column names
+	console.log(this.model.attributes);
+	this.columns = listNames(this.model.attributes.meta.fieldset);
+	$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity:this.model.attributes.identity}));
 
     return this;
   },
@@ -230,10 +233,10 @@ window.Routes = Backbone.Router.extend({
      * Add Form
      */
     add: function(){
-
+		// if called direct we need this.formList
+		if(typeof this.formList == 'undefined') this.formList = new window.Forms({key: apiKey});
 		var form = new window.Form();
-
-        new window.FormView({model: form}).render();
+		new window.FormView({model: form}).render();
     },
 
     /*
@@ -242,24 +245,20 @@ window.Routes = Backbone.Router.extend({
     edit: function(id){
 		$("#infoBox").html('');
         var form = this.formList.get(id);
-
         new window.FormView({model:form}).render();
     }
 });
 
-
+var updateRD = false;
 /**
  *
  *
  *
  *
  */
-
 function remove_form(ctlId){
 	model = router.formList.get(ctlId);
-	console.log(router.formList);
 	model.destroy();
-	console.log(router.formList);
 	router.formList.fetch();
 
 }
@@ -275,7 +274,7 @@ function assignDialog(field, id){
 			type:ctrl.data('type'),
 			rules:ctrl.data('rules').split("|"),
 			name: ctrl.data('name'),
-			display: ctrl.find('label:first-child').text(),
+			display: ctrl.find('label:first').text(),
 			options:[]
 		};
 		// build options as needed
@@ -291,23 +290,25 @@ function assignDialog(field, id){
 		// SET RULES IF ANY
 		if(attrb.rules.length == 2) {
 			$('select#rules option[value="|'+attrb.rules[1]+'"]').prop('selected', true);
-			console.log(attrb.rules[1]);
 		}
 	})
 }
 
 function delete_ctrl(ctlId){
-	ctlId.remove();
+	$(ctlId).remove();
+	updateRD = true;
+	updateList();
 }
-
+/**
+ *
+ *
+ */
 function update_ctrl(ctlId){
-
-
 
 	var ctlType = $(ctlId).data('type');
 	// //*[@id="fieldDisplay"]
 	$(ctlId).find('label').text($('#formModal').find('#fieldDisplay').val());
-	// //*[@id="fieldName"]
+	// TODO - Warn on name change and validate name format (lowercase and no white-space)
 	$(ctlId).data('name', $('#formModal').find('#fieldName').val());
 	// validation
 	if($('#formModal').find('input#required').is(':checked')){
@@ -331,8 +332,9 @@ function update_ctrl(ctlId){
 			setOptions($(ctlId), 'select', ctlType, options);
 		}
 	}
+	updateRD = true;
+	updateList();
 }
-
 function parseFormMeta(){
     var frm = $('fieldset.droppedFields').find('div.well');
 
@@ -342,11 +344,12 @@ function parseFormMeta(){
 
         var field = {};
 
-        field.display = $(this).find('label').text();
+        field.display = $(this).find('label:first').text();
         field.type = fieldType = $(this).data('type');
         switch(fieldType){
             case 'text':
-            case 'paragraph':
+            case 'comment':
+            case 'media:image':
                 field.name = $(this).data('name');
                 break;
             case 'checkbox-group':
@@ -392,7 +395,6 @@ function setOptions(sel, el, typ, opt){
 		}
 	});
 }
-
 function rulesToString(rules){
 	var ruleStrings = $.validateForm.defaultOptions.messages;
 	var r =rules.split('|');
@@ -402,6 +404,36 @@ function rulesToString(rules){
 	}
 	return ret;
 }
+function updateList(){
+	fieldset = [{fields:parseFormMeta()}];
+
+	//$.each(, function(index, value) {
+	ol = $('ol#col-list');
+	ol.html('');
+
+	select = $('select#identity');
+	id = select.val();
+	select.html('');
+
+	console.log(select);
+	for (var i = 0; i < fieldset[0].fields.length; i++){
+		ol.append('<li><strong>'+fieldset[0].fields[i].name+':</strong>'+fieldset[0].fields[i].type+'</li>');
+		select.append('<option value="'+fieldset[0].fields[i].name+'">'+fieldset[0].fields[i].display+'</option>');
+	}
+	select.val(id);
+}
+
+
+function listNames(fieldset){
+	names=[];
+	_.filter(fieldset[0].fields,
+		function(obj){
+			names.push({'name':obj.name, 'display':obj.display, 'type':obj.type});
+		}
+	);
+	return names;
+}
+
 // template pattern (Mustache {{ name }})
 _.templateSettings = {
 	interpolate: /\{\{\=(.+?)\}\}/g,

@@ -14,21 +14,23 @@
 <script id="users" type="text/template">
         <div class="span12">
 		<h4>Users</h4>
-            <table class="table">
+            <table class="table table-condensed">
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Active</th>
                 <th>Email</th>
-                <th>Password</th>
+                <th>Roles</th>
 				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New User&nbsp;<i class="icon icon-user"></i></a></th>
               </tr>
             </thead>
             <tbody>
             {{ _(records).each(function(user) { }}
               <tr>
-                <td><a class="user" id="{{= user.get('id') }}"><i class="icon-info icon-white"></i>&nbsp;{{= user.get('username') }}</a></td>
-                <td>{{= user.get('email') }}</td>
-                <td>{{= user.get('password') }}</td>
+                <td><a class="user" id="{{= user.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= user.get('username') }}</a></td>
+                <td>{{= (user.get('is_active') === 1) ? 'Yes':'No' }}</td>
+				<td>{{= user.get('email') }}</td>
+                <td>{{= user.get('roles') }}</td>
                 <td><span class="pull-right"><a class="btn btn-mini btn-info" href="#edit/{{= user.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
@@ -44,10 +46,29 @@
 		</div>
 </script>
 
+<script id="info" type="text/template">
+
+  <div id="user-roles" class="control-group">
+    <h4>Filter by User Roles</h4>
+	{{ for (var i = 0; i < roles.length; i++) { }}
+		<a href="#role/{{= roles[i] }}" class="label {{= select == roles[i] ? 'label-info':''}}">{{= roles[i] }}</a>
+	{{ } }}
+	<a href="#" class="label label-important">x</a>
+  </div>
+
+</script>
+
+
 <script id="userForm" type="text/template">
     <div class="form-horizontal" id="postEvent">
     <fieldset class="span12">
         <legend>User</legend>
+        <div class="control-group">
+            <label class="control-label">Status</label>
+            <div class="controls">
+				<label><input type="checkbox" id="is_active" {{= (user.is_active === 1) ? 'checked':'' }}>Is Acitve</label>
+            </div>
+        </div>
         <div class="control-group">
             <label class="control-label">Name</label>
             <div class="controls">
@@ -55,6 +76,12 @@
             </div>
         </div>
         <div class="control-group">
+            <label class="control-label">Roles</label>
+            <div class="controls">
+                <input type="text" value="{{= user.roles }}"class="span12" id="roles" name="roles" placeholder="" >
+            </div>
+        </div>
+		<div class="control-group">
             <label class="control-label">Email</label>
             <div class="controls">
 				<input type="text" value="{{= user.email }}"class="span12" id="email" name="email" placeholder="" disabled >

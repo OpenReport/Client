@@ -24,7 +24,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 /**
  * Fetch Form records for apiKey
  *
- * GET: /api/form/{apiKey}/[{tag}]
+ * GET: /api/form/{apiKey}[/{tag}]
  *
  */
 $app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response) {
@@ -58,10 +58,11 @@ $app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response)
  */
 $app->get("/tags/:apiKey", function ($apiKey) use ($app, $response) {
 
-    $conn = ActiveRecord\ConnectionManager::get_connection("development");
-
-    $sql = 'SELECT tags FROM forms WHERE api_key = \''.$apiKey.'\' GROUP BY tags ORDER BY tags ASC';
-    $tags = $conn->query($sql)->fetchAll(PDO::FETCH_COLUMN, 0);
+    $formTags = Tag::all(array('conditions'=>array('api_key = ? AND scope=\'reports\'', $apiKey)));
+    $tags = array();
+    foreach($formTags as $tag){
+        $tags[] = $tag->name;
+    }
 
     $response['data'] = $tags;
     $response['count'] = count($tags);
@@ -83,7 +84,7 @@ $app->get('/:apiKey/:id', function ($apiKey, $id) use ($app, $response) {
         $formData = Form::find($id);
         // package the data
         $response['data'] = $formData->values_for(array('id','meta'));
-        $response['count'] = count($formData->meta['fields']);
+        $response['count'] = 1; //count($formData->meta['fields']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {
         $response['message'] = 'No Records Found';
@@ -118,23 +119,25 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form->title = $request->title;
         $form->description = $request->description;
         $form->tags = $request->tags;
-        $form->report_version = 1;
+        $form->report_version = ($request->is_published?1:0);
         $form->date_created = $today;
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
         $form->is_public = $request->is_public;
+        $form->identity = $request->identity;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
-
         // Add a basic report record
         $report = new Report();
         $report->api_key = $apiKey;
         $report->form_id = $form->id;
         $report->version = 1;
         $report->title = $request->title;
-        $report->meta = json_encode($request->meta);    //TODO: Strip unnessary attr from meta
+        $report->meta = json_encode($request->meta->fieldset);    //TODO: Strip unnessary attr from meta
         $report->save();
+        // update tags as needed
+        checkTags($apiKey, $request->tags);
 
         // package the data
         $response['data'] = $form->values_for(array('id','title','description','date_created'));
@@ -166,30 +169,42 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 
     // Validate account apiKey
     if($request->id == $formId){
-
         $ver = Report::Count(array('conditions'=>array('form_id = ?', $formId)));
-
-        // Add new version of report
-        $report = new Report();
-        $report->api_key = $apiKey;
-        $report->form_id = $formId;
-        $report->version = $ver+1;
-        $report->title = $request->title;
-        $report->meta = json_encode($request->meta);    //TODO: Strip unnessary attr from meta
-        $report->save();
-
-        // create the event
         $form = Form::find($request->id);
+        // only add report defination on published forms otherwise update
+        if($request->new_report){
+            $ver = $ver+1;
+            // Add new version of report
+            $report = new Report();
+            $report->api_key = $apiKey;
+            $report->form_id = $formId;
+            $report->version = $ver;
+            $report->title = $request->title;
+            $report->meta = json_encode($request->meta->fieldset);    //TODO: Strip unnessary attr from meta
+            $report->save();
+        }
+        elseif($ver > 0){  // if we have report defination then update
+            // update report defination
+            $report = Report::first(array('conditions' => array('api_key = ? AND form_id = ? AND version = ?', $apiKey, $formId, $ver)));
+            $report->title = $request->title;
+            $report->meta = json_encode($request->meta->fieldset);    //TODO: Strip unnessary attr from meta
+            $report->save();
+        }
+        // Update Report Form
         $form->title = $request->title;
         $form->description = $request->description;
         $form->tags = $request->tags;
-        $form->report_version = $ver+1;
+        $form->report_version = $ver;
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
         $form->is_public = $request->is_public;
+        $form->identity = $request->identity;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
+
+        checkTags($apiKey, $request->tags);
+
         // package the data
         $response['data'] = $form->values_for(array('id','title','description','date_created','date_modified'));
         $response['message'] = "form saved";
@@ -277,6 +292,21 @@ $app->post("/assign/:apiKey/:formId/:userId", function ($apiKey, $formId, $userI
  */
 $app->run();
 
+
+function checkTags($apiKey, $name){
+    if($name == '') return;
+
+    $formTags = Tag::first(array('conditions'=>array('api_key = ? AND scope=\'reports\' AND name = ?', $apiKey, $name)));
+    if(empty($formTags)){
+        $tag = new Tag();
+        $tag->api_key = $apiKey;
+        $tag->scope = 'reports';
+        $tag->name = strtolower($name);
+        $tag->save();
+    }
+
+}
+
 function getColumns($data){
     return array_keys($data[0]);
 }
@@ -288,6 +318,6 @@ function getColumns($data){
  */
 function formArrayMap($forms){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_public\',\'is_published\'));'),$forms);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'report_version\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_public\',\'is_published\',\'identity\'));'),$forms);
 
 }

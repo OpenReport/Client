@@ -26,8 +26,30 @@
 class Record extends ActiveRecord\Model {
   static $table_name = 'records';
   static $belongs_to = array(array('form', 'class_name'=>'Form'));
+  /**
+   * Returns an object
+   *
+   *
+   */
   public function get_meta(){
     return json_decode($this->read_attribute('meta'), true);
+  }
+  /**
+   * Returns date for local time zone (when/where recorded)
+   *
+   * Note: all record dates are saved at GMT or UTC
+   *
+   */
+  public function get_record_date(){
+
+    $rDate = $this->read_attribute('record_date');
+    $offset = (string)$this->read_attribute('record_time_offset');
+    // Find the record's timezone
+    $timezone = preg_replace('/[:]/', '', $offset) * 36;
+    $timezone_name = timezone_name_from_abbr(null, $timezone, true);
+    // TODO: some validation on $timezone_name
+    $rDate->setTimeZone(new DateTimeZone($timezone_name));
+    return $rDate;
   }
 
 }

@@ -53,7 +53,7 @@ class AuthView extends \Slim\View
             //$app->flash('email', $email);
             return;
         }
-        $_SESSION['user'] = array('id'=>$auth->id, 'email'=>$auth->email,'username'=>$auth->username,'accountId'=>$auth->account_id);
+        $_SESSION['user'] = array('id'=>$auth->id, 'roles'=>$auth->roles, 'email'=>$auth->email,'username'=>$auth->username,'accountId'=>$auth->account_id);
 
     }
 

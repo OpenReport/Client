@@ -29,13 +29,11 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
  */
 $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 
-    // get date
-    $today = new DateTime('GMT');
     $record = Record::find($id);
-    $headers = Report::last(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $record->form_id)));
+    $headers = Report::last(array('conditions' => array('api_key=? AND form_id=? AND version=?', $apiKey, $record->form_id, $record->report_version)));
     // package the data
-    $data = $record->values_for(array('id', 'form_id','meta', 'record_date','user', 'lat', 'lon'));
-    $response['data'] = array('headers'=>$headers->meta,  'record'=>$data);
+    $data = $record->values_for(array('id','form_id','report_version','meta','identity','record_date','record_time_offset','user','lat','lon'));
+    $response['data'] = array('title'=>$headers->title,'form_name'=>$headers->form_name,'headers'=>$headers->meta,  'record'=>$data);
     $response['count'] = 1;
     // send the data
     echo json_encode($response);
@@ -46,7 +44,7 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 /**
  * Fetch Report Data for Form
  *
- * get: /report/{apiKey}/{formId}[?s={startDate}e={endDate}[&t={tags}][&l={limit[,start]}]]
+ * get: /report/{apiKey}/{formId}[?s={startDate}e={endDate}[&id={}][&t={tags}][&l={limit[,start]}]]
  *
  */
 $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
@@ -61,7 +59,15 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
             $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
         }
         else{
-            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ? AND record_date BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate)));
+            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ? AND DATE(record_date) BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate)));
+        }
+        // get report info - use last version
+        $report = Report::last(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
+        $columns = array();
+        foreach($report->meta as $fieldset){
+            foreach($fieldset['fields'] as $column){
+                $columns[] = array('name'=>$column['name'], 'type'=>$column['type'], 'values'=>(!array_key_exists('values', $column)? '':$column['values']));
+            }
         }
         // check if empty
         if(!empty($records)){
@@ -73,17 +79,18 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
                 $temp['id'] = $record->id;
                 $temp['lon'] = $record->lon;
                 $temp['lat'] = $record->lat;
-                $temp['recorded'] = $record->record_date->format('Y-m-d H:i:s');
+                $temp['recorded'] = $record->record_date;
+
                 $data[] = $temp;
             }
 
             // package the data
-            $response['data'] = array('columns'=>getColumns($data), 'rows'=>$data);
+            $response['data'] = array('report'=>$report->values_for(array('id','title','version')), 'columns'=>$columns, 'rows'=>$data);
             $response['count'] = count($response['data']['rows']);
         }
         else{
             $response['message'] = 'No Records Found';
-            $response['data'] = array('columns'=>array(), 'rows'=>array());
+            $response['data'] = array('report'=>$report->values_for(array('id','title','version')),'columns'=>array(), 'rows'=>array());
         }
     }
     catch (Exception $e) {
@@ -97,7 +104,66 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 
 });
 
+/**
+ * Fetch Reports for Identity
+ *
+ * get: /report/{apiKey}/{identity}[?s={startDate}e={endDate}][&l={limit[,start]}]]
+ *
+ */
+$app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app, $response) {
+//var_dump($identity); die;
+    try{
 
+        $startDate = $app->request()->params('s');
+        $endDate = $app->request()->params('e');
+        $join = array('LEFT JOIN forms ON(records.form_id = forms.id)');
+        $sel = 'records.*, forms.title AS form_title';
+
+
+        if($startDate == null || $endDate == null){
+        // find all records
+            $cond = array('records.api_key = ? AND records.identity = ?', $apiKey, $identity);
+        }
+        else{
+           $cond = array('records.api_key = ? AND records.identity = ? AND DATE(records.record_date) BETWEEN ? AND ?', $apiKey, $identity, $startDate, $endDate);
+        }
+        $records = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>$cond, 'order' => 'records.record_date desc', 'limit'=>10));
+        // check if empty
+        if(!empty($records)){
+
+            // normalize data
+            $data = array();
+            foreach($records as $record){
+                //$temp = $record->meta;
+                $temp['form_title'] = $record->form_title;
+                $temp['id'] = $record->id;
+                $temp['lon'] = $record->lon;
+                $temp['lat'] = $record->lat;
+                $temp['record_date'] = $record->record_date;
+                $temp['user'] = $record->user;
+
+                $data[] = $temp;
+            }
+
+            // package the data
+            $response['data'] = $data;
+            $response['count'] = count($data);
+        }
+        else{
+            $response['message'] = 'No Records Found';
+            $response['data'] = array();
+        }
+    }
+    catch (Exception $e) {
+        $response['status'] = 'error';
+        $response['message'] = $e->getMessage();
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+    // send the data
+    echo json_encode($response);
+
+});
 /**
  * Run the Slim application
  *

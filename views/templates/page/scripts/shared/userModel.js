@@ -30,7 +30,7 @@ window.User = Backbone.Model.extend({
         username:'',
         email:'',
         password:'',
-        is_active:0,
+        is_active:1,
         account_id:acctNo,
         api_key:apiKey
     },
@@ -58,6 +58,7 @@ window.Users = Backbone.Collection.extend({
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
+        this.role = options.role;
     },
     fetchEvent: function(options) {
         options || (options = {});
@@ -68,9 +69,8 @@ window.Users = Backbone.Collection.extend({
     url:function() {
         // fetch records forn an event (get:/api/task/{apiKey})
         var uri = this.key;
-        // fetch task records, optional filter by month-year (get:/api/task/{id}{/m-y})
-        //uri = uri + (this.mo > 0 ? '/'+this.mo:'')+(this.yr > 0 ? '-'+this.yr:'');
-        // build new uri
+        // fetch records based on tags
+        uri = uri + (typeof this.role != 'undefined' ? '/'+this.role:'');
 
         return "/api/user/"+uri;
     },

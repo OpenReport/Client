@@ -36,25 +36,34 @@ window.Record = Backbone.Model.extend({
 window.Records = Backbone.Collection.extend({
     model:Record,
     id:0,   // record id
+    formId:0,
+    identity:'',
     startDate:'',   // record month
     endDate:'',   // record year
 
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
+        this.identity = options.identity;
         this.formId = options.formId;
-
     },
-    fetchRecords: function(options) {
-        options || (options = {});
-        this.key = options.key;
-        this.formId = options.formId;
-        this.fetch();
-    },
+    //fetchRecords: function(options) {
+    //    options || (options = {});
+    //    this.key = options.key;
+    //    this.formId = options.formId;
+    //    this.fetch();
+    //},
     // override fetch url for addtional uri elements
     url:function() {
-        // fetch records forn an event (get:/record/event/{id})
-        var uri = this.key+'/'+this.formId;
+
+        if('undefined' == typeof this.identity){
+            // fetch records bt report (get:/record/{apikey}/{id})
+            var uri = this.key+'/'+this.formId;
+        }
+        else{
+            // fetch records by idenity
+            var uri = 'records/'+   this.key+'/'+this.identity;
+        }
         // get filter dates
         this.startDate = filters.startDate.format('YYYY-MM-DD')
         this.endDate = filters.endDate.format('YYYY-MM-DD')

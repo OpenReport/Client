@@ -27,7 +27,7 @@
 	<div  class="row-fluid">
 	<div class="span12 well">
 		<h4>Recent Submissions</h4>
-		<table class="table">
+		<table class="table table-condensed">
 		<thead>
 		  <tr>
 			<th>Report</th>
@@ -38,9 +38,9 @@
 		</thead>
 		<tbody>
 
-		{{ _(stats.recentReports).each(function(report) { }}
+		{{ if(stats.recentReports.length > 0) _(stats.recentReports).each(function(report) { }}
 		  <tr>
-			<td><a class="form" href="/reports#records/{{= report.form_id}}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= report.form_title }}</a></td>
+			<td><a class="form" href="/reports#details/{{= report.id}}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= report.form_title }}</a></td>
 			<td>{{= report.user }}</td>
 			<td>{{= report.lon }}/{{= report.lat }}</td>
 			<td>{{= moment(report.record_date.date).format('L') }}</td>
@@ -67,11 +67,10 @@
 	{{ }); }}
 	</ol>
 	<li><strong>Top Reports</strong></li>
-	{{ console.log(stats.topForms) }}
 
 	<ol>
 	{{ _(stats.topReports).each(function(topReport) { }}
-		<li>{{= topReport.form_title }} <span class="badge badge-info pull-right">{{= topReport.form_count }}</span></li>
+		<li><a href="reports#records/{{= topReport.form_id }}">{{= topReport.form_title }}</a><span class="badge badge-info pull-right">{{= topReport.form_count }}</span></li>
 	{{ }); }}
 	</ol>
 	</ul>

@@ -79,10 +79,10 @@ window.UsersView = Backbone.View.extend({
 
   deleteUser: function(e){
 
-    console.log('delete called');
+
     var target = e.target;
     //model = this.collection.get(target.id);
-	console.log(target.id);
+
 
     return this;
   }
@@ -110,14 +110,16 @@ window.UserFormView = Backbone.View.extend({
     this.model.set({
 
         username: $('#username').val(),
+        is_active: ($('#is_active').is(':checked') ? 1:0),
         email: $('#email').val(),
+		roles: $('#roles').val(),
 		password: $('#password').val()
 
     });
 	// validation
 	var errors = this.model.validate();
 	if(typeof(errors) !== 'undefined'){
-		console.log(errors);
+
 		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
 		$('#dialog').html(template).modal();
 		return true;
@@ -174,6 +176,7 @@ window.Routes = Backbone.Router.extend({
 
 	routes: {
         "" : "index",                       // initial view /tasks
+		"role/:role" : "index",				// filter by tag
         "add" : "add",						// add a reporting task /tasks#add
         "remove/:id" : "remove",			// remove reporting task /tasks#remove/{task_id}
 		"edit/:id" : "edit"					// edit reporting task /task#edit/{task_id}
@@ -181,17 +184,29 @@ window.Routes = Backbone.Router.extend({
     /*
      * Display Account User List
      */
-    index: function(){
+    index: function(role){
 
-        this.userList = new window.Users({key: apiKey});
+        this.userList = new window.Users({key: apiKey, role:role});
 		//console.log(this.taskList);
         new window.UsersView({collection: this.userList});
+		// info box
+		$.ajax({
+			url:'/api/user/roles/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				$("#infoBox").html(_.template($("#info").html(), {roles:response.data, select:role}));
+			}
+
+		});
+
     },
     /*
      * Add User
      */
     add: function(){
-	  var user = new window.User();
+	  // if called direct the need this.userList
+	  if(typeof this.userList == 'undefined') this.userList = new window.Users({key: apiKey});
+	  var user = new window.User({is_active:1});
 	  new window.UserFormView({model:user}).render();
 
 	  $('#email, #password').prop('disabled', false);
@@ -202,10 +217,11 @@ window.Routes = Backbone.Router.extend({
      */
     edit: function(id){
 	  var user = this.userList.get(id);
-	  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
-		  new window.UserFormView({model:user}).render();
-		}
-	  });
+	  new window.UserFormView({model:user}).render();
+	//  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
+	//
+	//	}
+	//  });
 
     },
     /*

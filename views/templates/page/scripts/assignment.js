@@ -50,54 +50,58 @@ window.AssignmentsView = Backbone.View.extend({
   deleteAssigned: function(e){
 	var target = e.target;
 	//this.collection.remove(this.collection.get(target.id));
-	this.collection.sync('delete', this.collection.get(target.id));
-	this.collection.fetch();
+	router.assignmentList.sync('delete', this.collection.get(target.id));
+	router.assignmentList.fetch();
   },
 
   addAssignment: function(e){
-	console.log('dialog');
 
+	$('#dialog').html('');
     var template = _.template($("#assignDialog").html());
     $('#dialog').html(template).modal();
 	// fill in the blanks
 	$.ajax({
-		url:'/api/user/'+apiKey,
+		url:'/api/user/roles/'+apiKey,
 		dataType: "json",
 		success: function(response){
 			// add users to drop down
 			for (var i = 0; i < response.data.length; i++) {
 			  var item = response.data[i]
-			  $('#userList').append('<option value="'+item.id+'">'+item.username+'</option>');
+			  $('#userList').append('<option value="'+item+'">'+item+'</option>');
 			}
 		}
 
 	});
 
 	$.ajax({
-		url:'/api/form/'+apiKey,
+		url:'/api/form/tags/'+apiKey,
 		dataType: "json",
 		success: function(response){
 			// add forms to drop down
 			for (var i = 0; i < response.data.length; i++) {
 			  var item = response.data[i]
-			  $('#reportForms').append('<option value="'+item.id+'">'+item.title+'</option>');
+			  $('#reportForms').append('<option value="'+item+'">'+item+'</option>');
 			}
 		}
 
 	});
 
-	$('#dialog').on('hidden', function(event) {
-
+	$('#assignSubmit').on('click', function(event) {
+	  // TODO: Feedback (i.e errors)
 	  var forms = $('#reportForms').val();
-	  for (var i = 0; i < forms.length; i++) {
-		var assignment = new window.Assignment();
-		assignment.set({
-		  user_id: $('#userList').val(),
-		  form_id: forms[i]
-		});
-		console.log(assignment.save());
+	  var role = $('#userList').val();
+	  if(forms !== null && role !== ''){
+		for (var i = 0; i < forms.length; i++) {
+		  // assign for each tag
+		  var assignment = new window.Assignment();
+		  assignment.set({
+			user_role: role,
+			form_tag: forms[i]
+		  });
+		  assignment.save({success: function(){router.assignmentList.fetch();}});
+		}
 	  }
-	  router.assignmentList.fetch();
+
 	});
 
     return this;
@@ -108,7 +112,7 @@ window.AssignmentsView = Backbone.View.extend({
    */
   detail: function(e){
 
-    console.log('detail called');
+
     var target = e.target;
     model = this.collection.get(target.id);
 
@@ -152,7 +156,6 @@ window.Routes = Backbone.Router.extend({
 			success: function(response){
 				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
 			}
-
 		});
     },
     /*

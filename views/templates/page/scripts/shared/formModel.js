@@ -54,6 +54,10 @@ window.Form = Backbone.Model.extend({
 });
 
 window.Forms = Backbone.Collection.extend({
+
+    tag:'',
+    startDate:'',   // record month
+    endDate:'',   // record year
     model:Form,
     initialize: function(options) {
         options || (options = {});
@@ -71,8 +75,6 @@ window.Forms = Backbone.Collection.extend({
         var uri = this.key;
         // fetch records based on tags
         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
-        // build new uri
-        console.log(uri);
         return "/api/form/"+uri;
     },
     parse:function(response){

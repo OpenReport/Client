@@ -29,19 +29,42 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
  * Returns: User Accounts
  *
  */
-$app->get("/:apiKey", function ($apiKey) use ($app, $response) {
+$app->get("/:apiKey(/:role)", function ($apiKey, $role='') use ($app, $response) {
 
     // get date
     $today = new DateTime('GMT');
-    $userData = Account::find('first', array('conditions'=>array('api_key = ?', $apiKey)));
+    // BE VERY CAREFUL WITH THIS QUERY
+    $join = array('LEFT JOIN accounts ON(accounts.id = users.account_id)');
+    $conditions = array('accounts.api_key = ? AND (FIND_IN_SET(?, users.roles) OR ? =\'\')', $apiKey,$role,$role);
+    $userData = User::all(array('joins' => $join, 'conditions'=>$conditions));
+
     // package the data
-    $response['data'] = userArrayMap($userData->users);
+    $response['data'] = userArrayMap($userData);
     $response['count'] = 1;
     // send the data
     echo json_encode($response);
 
 });
 
+/**
+ * Fetch User Roles
+ *
+ * GET: /api/user/roles/{apiKey}
+ *
+ */
+$app->get("/roles/:apiKey", function ($apiKey) use ($app, $response) {
+
+    $userTags = Tag::all(array('conditions'=>array('api_key = ? AND scope=\'roles\'', $apiKey)));
+    $tags = array();
+    foreach($userTags as $tag){
+        $tags[] = $tag->name;
+    }
+
+    $response['data'] = $tags;
+    $response['count'] = count($tags);
+    // send the data
+    echo json_encode($response);
+});
 
 $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
 
@@ -55,12 +78,17 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
        // create the event
         $user = new User();
         $user->username = $request->username;
+        $user->roles = $request->roles;
         $user->email = $request->email;
         $user->password = $request->password;
+        $user->date_created = $today;
         $user->date_modified = $today;
         $user->account_id = $request->account_id;
         $user->is_active = $request->is_active;
         $user->save();
+
+        checkRoles($apiKey, $request->roles);
+
         // package the data
         $response['data'] = $user->values_for(array('id','username','email','is_active'));
         $response['message'] = "user saved";
@@ -87,12 +115,16 @@ $app->put("/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) 
        // create the event
         $user = User::find($userId);
         $user->username = $request->username;
+        $user->roles = $request->roles;
         $user->email = $request->email;
         if($request->password !== '')
             $user->password = $request->password;
         $user->date_modified = $today;
         $user->is_active = $request->is_active;
         $user->save();
+
+        checkRoles($apiKey, $request->roles);
+
         // package the data
         $response['data'] = $user->values_for(array('id','username','email','is_active'));
         $response['message'] = "user saved";
@@ -113,6 +145,26 @@ $app->put("/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) 
  */
 $app->run();
 
+function checkRoles($apiKey, $names){
+
+    if($names == '') return;
+
+    $roles = split(',',strtolower($names));
+
+    foreach($roles as $role){
+
+        $cnt = Tag::count(array('conditions'=>array('api_key = ? AND scope=\'roles\' AND name = ?', $apiKey, $role)));
+
+        if($cnt == 0){
+            $tag = new Tag();
+            $tag->api_key = $apiKey;
+            $tag->scope = 'roles';
+            $tag->name = strtolower($role);
+            $tag->save();
+        }
+    }
+
+}
 
 /**
  * Data conversion utilites for copy events
@@ -121,6 +173,6 @@ $app->run();
  */
  function userArrayMap($tasks){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'username\',\'email\',\'password\'));'),$tasks);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'username\',\'is_active\',\'roles\',\'email\',\'password\'));'),$tasks);
 
  }

@@ -66,8 +66,8 @@
 			case 'text':
 			  helper.buildTextBox(fieldCtrl, field.name);
 			  break;
-			case 'paragraph':
-			  helper.buildParagraphBox(fieldCtrl, field.name);
+			case 'comment':
+			  helper.buildCommentBox(fieldCtrl, field.name);
 			  break;
 			case 'checkbox-group':
 			  helper.buildCheckboxGroup(fieldCtrl, field.name, field.values);
@@ -102,61 +102,74 @@
 		$(el).append(createInput(name, 'text', ''));
 	  },
 
-	  buildParagraphBox: function(selector, name){
-		  $(selector).append(createText(name));
+	  buildCommentBox: function(selector, name){
+		$(selector).append(createText(name));
 	  },
 
 	  buildCheckboxGroup: function(selector, name, values){
-		  //ul
-		  var ul = document.createElement('ul');
-		  ul.setAttribute('class', 'options');
-		  $(selector).append(ul);
-		  for (index in values){
-			  var li = document.createElement('li');
-			  field = values[index];
-			  $(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'checkbox', field.value)));
-			  $(ul).append(li);
-		  }
+		//ul
+		var ul = document.createElement('ul');
+		ul.setAttribute('class', 'options');
+		$(selector).append(ul);
+		for (index in values){
+			var li = document.createElement('li');
+			field = values[index];
+			$(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'checkbox', field.value)));
+			$(ul).append(li);
+		}
 	  },
 	  buildRadioGroup: function(selector, name, values){
 		  //ul
-		  var ul = document.createElement('ul');
-		  ul.setAttribute('class', 'options');
-		  $(selector).append(ul);
-		  for (index in values){
-			  var li = document.createElement('li');
-			  field = values[index];
-			  $(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'radio', field.value)));
-			  $(ul).append(li);
-		  }
+		var ul = document.createElement('ul');
+		ul.setAttribute('class', 'options');
+		$(selector).append(ul);
+		for (index in values){
+			var li = document.createElement('li');
+			field = values[index];
+			$(li).append($(helper.createLabel(name, field.label)).prepend(createInput(name, 'radio', field.value)));
+			$(ul).append(li);
+		}
 	  },
 	  buildDropdown: function(selector, name, values){
-
-		  var select = createSelect(name);
-		  $(selector).append(select);
-		  //$(select).append(createOption("Select One", 0)); DROP
-		  // build options for select
-		  for (index in values){
-			  field = values[index];
-			  $(select).append(createOption(field.label, field.value));
-		  }
+		var select = createSelect(name);
+		$(selector).append(select);
+		//$(select).append(createOption("Select One", 0)); DROP
+		// build options for select
+		for (index in values){
+			field = values[index];
+			$(select).append(createOption(field.label, field.value));
+		}
 	  },
 	  buildSelect: function(selector, name, values){
-
-		  var select = createSelect(name);
-		  $(select).attr('multiple', 'multiple')
-		  $(selector).append(select);
-		  // build options for select
-		  for (index in values){
-			  field = values[index];
-			  $(select).append(createOption(field.label, field.value));
-		  }
+		var select = createSelect(name);
+		$(select).attr('multiple', 'multiple')
+		$(selector).append(select);
+		// build options for select
+		for (index in values){
+			field = values[index];
+			$(select).append(createOption(field.label, field.value));
+		}
 	  },
 	  // mobile <input type="file" accept="video/*;capture=camera" />
 	  buildMediaCapture: function(el, name, accept){
-		var field = createInput(name, 'file', '');
+		var field = createInput('imageCapture-'+name, 'file', '');
 		field.setAttribute('accept', accept);;
+		field.setAttribute('style', 'display: none;');
+		field.setAttribute('class', 'imageCapture');
 		$(el).append(field);
+		var input = createInput(name, 'hidden', '');
+		$(el).append(input);
+		var ul = document.createElement('ul');
+		ul.setAttribute('class', 'capture-list');
+		ul.setAttribute('id', 'capture-img-'+name);
+		var li = document.createElement('li');
+		var img = document.createElement('img');
+		img.setAttribute('src', './img/camara.png');
+		img.setAttribute('class', 'capture-btn')
+		img.setAttribute('data-for', name)
+		$(li).append(img);
+		$(ul).append(li);
+		$(el).append(ul);
 	  }
 	}
 	// Run initializer
@@ -202,7 +215,7 @@
   };
 
   $.buildForm.defaultOptions = {
-	  ctrlClass: "ctrl",
+	  ctrlClass: "ctrl clearfix",
 	  lblClass: "ctrlLabel",
 	  fsClass: "crtlSet",
 	  fldClass: "ctrlField",

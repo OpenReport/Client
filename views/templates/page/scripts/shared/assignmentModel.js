@@ -27,8 +27,6 @@ window.Assignment = Backbone.Model.extend({
     urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
-        user_id:0,
-        form_id:0,
         api_key:apiKey
     }
 });
@@ -38,39 +36,33 @@ window.Assignments = Backbone.Collection.extend({
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
-        this.tag = options.tag;
-        this.form_id = 0;
-        this.user_id = 0;
 
     },
     fetchForms: function(options) {
         options || (options = {});
         this.key = options.key;
-        this.form_id = 0;
-        this.user_id = options.user_id;
+
         this.fetch(options);
     },
     fetchUsers: function(options) {
         options || (options = {});
         this.key = options.key;
-        this.form_id = options.form_id;
-        this.user_id = 0;
         this.fetch(options);
     },
     // override fetch url for addtional uri elements
     url:function() {
         var uri = '';
-        if(this.form_id > 0 || this.user_id > 0){
-        // fetch records (get:/api/assignmenst/{scope}/{apiKey}/{user_id | form_id}
-        uri = (this.form_id == 0 ? 'list/':'list/')+this.key;
-        // fetch task records for forms or users
-        uri = uri + (this.form_id == 0 ? '/'+this.user_id:'/'+this.form_id);
-        }
-        else{
+        //if(this.form_id > 0 || this.user_id > 0){
+        //// fetch records (get:/api/assignmenst/{scope}/{apiKey}/{user_id | form_id}
+        //uri = (this.form_id == 0 ? 'list/':'list/')+this.key;
+        //// fetch task records for forms or users
+        //uri = uri + (this.form_id == 0 ? '/'+this.user_id:'/'+this.form_id);
+        //}
+        //else{
         uri = this.key;
         // fetch records based on tags
-         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
-        }
+        // uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
+        //}
         // build new uri
         return "/api/assignment/"+uri;
     },

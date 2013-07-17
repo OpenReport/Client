@@ -24,29 +24,29 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 /**
  * Fetch all assignmets records for apiKey
  *
- * GET: /api/assignment/{apiKey}
+ * GET: /api/assignment/{apiKey}[/{tag}]
  *
- * Returns: Assesment Records
+ * Returns: Assignment Records
  *
  */
-$app->get("/:apiKey(/:tag)", function ($apiKey, $tag='') use ($app, $response) {
-
-    // get date
-    $today = new DateTime('GMT');
-
-    $join = array('LEFT JOIN users ON(assignments.user_id = users.id)',
-                  'LEFT JOIN forms ON(assignments.form_id = forms.id AND (forms.tags =\''.$tag.'\' OR \''.$tag.'\'=\'\'))');
-    $sel = 'assignments.*, forms.title AS form_title, users.username AS user';
-
-
-    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND forms.is_published = 1 AND forms.is_deleted = 0', $apiKey)));
-    // package the data
-    $response['data'] = assignmentArrayMap($data);
-    $response['count'] = 1;
-    // send the data
-    echo json_encode($response);
-
-});
+//$app->get("/:apiKey(/:tag)", function ($apiKey, $tag='') use ($app, $response) {
+//
+//    // get date
+//    $today = new DateTime('GMT');
+//
+//    $join = array('LEFT JOIN users ON(assignments.user_id = users.id)',
+//                  'LEFT JOIN forms ON(assignments.form_id = forms.id AND (forms.tags =\''.$tag.'\' OR \''.$tag.'\'=\'\'))');
+//    $sel = 'assignments.*, forms.title AS form_title, users.username AS user';
+//
+//
+//    $data = Assignment::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>array('assignments.api_key = ? AND forms.is_published = 1 AND forms.is_deleted = 0', $apiKey)));
+//    // package the data
+//    $response['data'] = assignmentArrayMap($data);
+//    $response['count'] = 1;
+//    // send the data
+//    echo json_encode($response);
+//
+//});
 
 /**
  * Fetch all assignmets records for formId
@@ -100,7 +100,24 @@ $app->get("/:apiKey(/:tag)", function ($apiKey, $tag='') use ($app, $response) {
 //
 //});
 
+/**
+ * Fetch assignmet all records for account
+ *
+ * GET: /api/assignment/{apiKey}
+ *
+ * Returns: Assesment Records
+ *
+ */
+$app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 
+    $data = Assignment::all(array('conditions'=>array('api_key = ?', $apiKey)));
+    // package the data
+    $response['data'] = assignmentArrayMap($data);
+    $response['count'] = count($data);
+    // send the data
+    echo json_encode($response);
+
+});
 /**
  * Fetch assignmet record for id
  *
@@ -109,25 +126,53 @@ $app->get("/:apiKey(/:tag)", function ($apiKey, $tag='') use ($app, $response) {
  * Returns: Assesment Record
  *
  */
-$app->get("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
+//$app->get("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
+//
+//    // get date
+//    $today = new DateTime('GMT');
+//    $data = Assignment::first(array('conditions'=>array('api_key = ? AND id = ?', $apiKey, $id)));
+//    // package the data
+//    $response['data'] = $data->values_for(array('id','user_role','form_tag','is_active'));
+//    $response['count'] = 1;
+//    // send the data
+//    echo json_encode($response);
+//
+//});
 
-    // get date
-    $today = new DateTime('GMT');
-    $data = Assignment::first(array('conditions'=>array('api_key = ? AND id = ?', $apiKey, $id)));
+/**
+ * Fetch Assignments by user role
+ *
+ * GET: /api/assignment/roles/
+ *
+ */
+$app->get("/roles/:apiKey/:role", function ($apiKey, $role) use ($app, $response) {
+    $data = Assignment::all(array('conditions'=>array('api_key = ? AND user_role = ?', $apiKey, $role)));
     // package the data
-    $response['data'] = $data->values_for(array('id','user_id','form_id','date_assigned','is_active'));
-    $response['count'] = 1;
+    $response['data'] = assignmentArrayMap($data);
+    $response['count'] = count($data);
     // send the data
     echo json_encode($response);
+});
 
+/**
+ * Fetch Assignments by form tag
+ *
+ * GET: /api/assignment/forms
+ *
+ */
+$app->get("/forms/:apiKey/:tag", function ($apiKey, $tag) use ($app, $response) {
+    $data = Assignment::all(array('conditions'=>array('api_key = ? AND form_tag = ?', $apiKey, $tag)));
+    // package the data
+    $response['data'] = assignmentArrayMap($data);
+    $response['count'] = count($data);
+    // send the data
+    echo json_encode($response);
 });
 
 
 $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
 
-    // get date
-    // get date
-    $today = new DateTime('GMT');
+
     $request = json_decode($app->request()->getBody());
 
     // Validate account apiKey
@@ -135,14 +180,13 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
 
         // create the form
         $assignment = new Assignment();
-        $assignment->form_id = $request->form_id;
-        $assignment->user_id = $request->user_id;
-        $assignment->date_assigned = $today;
+        $assignment->form_tag = $request->form_tag;
+        $assignment->user_role = $request->user_role;
         $assignment->is_active = true;
         $assignment->api_key = $apiKey;
         $assignment->save();
         // package the data
-        $response['data'] = $assignment->values_for(array('id','form_id','user_id','date_assigned'));
+        $response['data'] = $assignment->values_for(array('id','form_tag','user_role'));
         $response['message'] = "Assignment saved";
     }
     else{
@@ -166,25 +210,25 @@ $app->delete("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
  *
  *
  */
-$app->get("/forms/:apiKey", function ($apiKey) use ($app, $response) {
-
-    try {
-        $formData = Form::find('all',
-            array('conditions'=>array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey), 'order'=>'date_modified DESC'));
-        // package the data
-        $response['data'] = formArrayMap($formData);
-        $response['count'] = count($response['data']);
-    }
-    catch (\ActiveRecord\RecordNotFound $e) {
-        $response['message'] = 'No Records Found';
-        $response['data'] = array();;
-        $response['count'] = 0;
-    }
-
-    // send the data
-    echo json_encode($response);
-
-});
+//$app->get("/forms/:apiKey", function ($apiKey) use ($app, $response) {
+//
+//    try {
+//        $formData = Form::find('all',
+//            array('conditions'=>array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey), 'order'=>'date_modified DESC'));
+//        // package the data
+//        $response['data'] = formArrayMap($formData);
+//        $response['count'] = count($response['data']);
+//    }
+//    catch (\ActiveRecord\RecordNotFound $e) {
+//        $response['message'] = 'No Records Found';
+//        $response['data'] = array();;
+//        $response['count'] = 0;
+//    }
+//
+//    // send the data
+//    echo json_encode($response);
+//
+//});
 
 
 
@@ -195,35 +239,35 @@ $app->get("/forms/:apiKey", function ($apiKey) use ($app, $response) {
  * GET: /api/assignment/list/{apiKey}/{userId}
  *
  */
-$app->get("/list/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) {
-
-    // get date
-    $today = new DateTime('GMT');
-
-    // Fetch Forms
-    $forms = Form::all(array('conditions'=>array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey)));
-    // Fetch Assignments
-    $assignments = Assignment::all(array('select'=>'assignments.id, assignments.form_id', 'conditions'=>array('api_key = ? AND user_id = ? AND is_active = 1', $apiKey, $userId)));
-    // normalize form_id(s) to an array
-    $formIds = array_map(create_function('$m','return $m->form_id;'),$assignments);
-
-     // build the data set (form_id, form_title, is_assigned, user_id )
-    $list = array();
-    foreach($forms as $form){
-        $temp['form_id'] = $form->id;
-        $temp['form_title'] = $form->title;
-        $temp['is_assigned'] = in_array($form->id, $formIds, true);
-        $temp['user_id'] = $userId;
-        $list[] = $temp;
-    }
-    // package the data
-    $response['data'] = $list;
-    $response['count'] = count($list);
-    // send the data
-    echo json_encode($response);
-
-
-});
+//$app->get("/list/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) {
+//
+//    // get date
+//    $today = new DateTime('GMT');
+//
+//    // Fetch Forms
+//    $forms = Form::all(array('conditions'=>array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey)));
+//    // Fetch Assignments
+//    $assignments = Assignment::all(array('select'=>'assignments.id, assignments.form_id', 'conditions'=>array('api_key = ? AND user_id = ? AND is_active = 1', $apiKey, $userId)));
+//    // normalize form_id(s) to an array
+//    $formIds = array_map(create_function('$m','return $m->form_id;'),$assignments);
+//
+//     // build the data set (form_id, form_title, is_assigned, user_id )
+//    $list = array();
+//    foreach($forms as $form){
+//        $temp['form_id'] = $form->id;
+//        $temp['form_title'] = $form->title;
+//        $temp['is_assigned'] = in_array($form->id, $formIds, true);
+//        $temp['user_id'] = $userId;
+//        $list[] = $temp;
+//    }
+//    // package the data
+//    $response['data'] = $list;
+//    $response['count'] = count($list);
+//    // send the data
+//    echo json_encode($response);
+//
+//
+//});
 
 
 
@@ -244,7 +288,7 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user_id\',\'form_id\',\'date_assigned\',\'is_active\',\'form_title\',\'user\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user_role\',\'form_tag\',\'is_active\'));'),$data);
 
 }
 
