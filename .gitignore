@@ -1,3 +1,5 @@
 /assets/img/micro_carbon.png
 /api/uuid.php
 /assets/js/vendor/backbone.paginator.min.js
+/assets/js/vendor/typeahead.js/typeahead.js
+/assets/js/vendor/typeahead.js/typeahead.min.js
