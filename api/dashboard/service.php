@@ -33,8 +33,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 
-    // get date
-    $today = new DateTime('GMT');
+
     // get stats
     $join = array('LEFT JOIN users ON(records.user = users.email)',
                   'LEFT JOIN forms ON(records.form_id = forms.id)');
@@ -52,9 +51,6 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     $recCount =  Record::count(array('conditions' =>array('api_key = ?', $apiKey)));
     $frmCount =  Form::count(array('conditions' =>array('api_key = ? AND is_deleted = 0', $apiKey)));
 
-
-    // get date
-    $today = new DateTime('GMT');
     // get stats
 
     $conn = ActiveRecord\ConnectionManager::get_connection("development");

@@ -17,238 +17,12 @@
  *
  */
 
-
 /**
- * Views - Collection of Reporting Forms
+ *   **** SUPPORT FUNCTIONS ****
+ *
  *
  *
  */
-app.views.FormsView = Backbone.View.extend({
-  el: '#formContext',
-  collection: null,
-  initialize: function(options){
-    _.bind(this, 'render');
-    this.listenTo(this.collection, 'reset', this.render);
-    this.collection.fetch();
-
-  },
-
-  events:{
-    "click .detailBtn":"detail",
-    "click .deleteBtn":"deleteForm"
-  },
-
-  render: function(){
-    var params = { records: this.collection.models};
-
-    var template = _.template($("#forms").html(), params);
-    $(this.el).html(template);
-
-    return this;
-  },
-
-
-  /**
-   * Display Form Details in a Modal Dialog
-   *
-   */
-  detail: function(e){
-
-    var target = e.target;
-    model = this.collection.get(target.id);
-
-    var template = _.template($("#formDetail").html(), model.attributes);
-    $('#dialog').html(template).modal();
-    return this;
-  },
-
-  deleteForm: function(e){
-
-
-    var target = e.target;
-    //model = this.collection.get(target.id);
-
-
-    return this;
-  }
-
-});
-
-/**
- * View - Single Reporting Form
- *
- *
- */
-app.views.FormView = Backbone.View.extend({
-  el: '#formContext',
-  model: null,
-  columns: null,
-  initialize: function(options){
-    _.bind(this, 'render');
-    //this.listenTo(this.model, 'change', this.render);
-
-  },
-  events:{
-
-    "click #submit":"saveForm",
-    "click #close":"cancel"
-  },
-
-  saveForm:_.debounce(function() {
-
-    this.model.set({
-        title: $('#formTitle').val(),
-        description: $('#formDescription').val(),
-		tags: $('#formTags').val(),
-		is_published: ($('#is_published').is(':checked') ? 1:0),
-		is_public: ($('#is_public').is(':checked') ? 1:0),
-		new_report: ($('#new_report').is(':checked') ? 1:0),
-		identity: $('#identity').val(),
-		meta: {name:$('#formName').val(),
-			   title:$('#formTitle').val(),
-			   desc:$('#formDescription').val(),
-			   fieldset:[{name:'group-1', legend:'',fields:parseFormMeta()}]}
-
-    });
-	// validation
-	var errors = this.model.validate();
-	if(typeof(errors) !== 'undefined'){
-
-		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
-		$('#dialog').html(template).modal();
-		return true;
-	}
-
-	// Save It
-    if (this.model.isNew()) {
-        //var self = this;
-        router.formList.create(this.model, {
-            success:function () {
-                router.navigate('/', {trigger: true});
-            }
-        });
-    } else {
-
-        this.model.save({}, {
-            success:function () {
-
-                router.navigate('/', {trigger: true});
-            }
-        });
-    }
-
-    //window.history.back();
-
-    return false;
-  }, 500),
-
-  render: function(){
-	// build content
-    var template = _.template($("#formBuilder").html(), this.model.attributes);
-    $(this.el).html(template);
-    // build form controls
-	var ctrlIndex = 1, fldIndex = 1;
-	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
-
-    // make sortable
-	$( ".droppedFields" ).sortable({
-		cancel: null, // Cancel the default events on the controls
-		connectWith: ".droppedFields"
-	}).disableSelection();
-
-	// assign dialogs
-	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
-		var ctrlId = 'ctl'+ctrlIndex++;
-		assignDialog(this, ctrlId);
-		$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
-	});
-
-	// assign add events to selectorField(s)
-	$(".selectorField").each(function(i, e){
-		// append to the form
-		$(e).on('click', function(){
-			//clone and add
-			t = $(this).clone();
-			$(t).removeClass("selectorField");
-			$(t).appendTo($('fieldset.droppedFields'));
-			$(t).data('name', 'col'+fldIndex++);
-			// assign dialog
-			assignDialog($(t), 'ctl'+ctrlIndex++);
-			$(t).trigger('click');
-		})
-	});
-	// capture column names
-	console.log(this.model.attributes);
-	this.columns = listNames(this.model.attributes.meta.fieldset);
-	$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity:this.model.attributes.identity}));
-
-    return this;
-  },
-  cancel:function () {
-    this.close();
-    window.history.back();
-  },
-
-  close:function () {
-
-    $(this.el).unbind();
-    $(this.el).empty();
-  }
-
-});
-
-/**
- * Routes
- *
- *
- */
-app.controller = Backbone.Router.extend({
-
-	routes: {
-        "" : "index",                       // initial view
-		"tag/:tag" : "index",				// filter by tag
-		"edit/:id" : "edit",
-		"add" : "add"
-	},
-
-    /*
-     * Display Reporting Tasks Forms
-     */
-    index: function(tag){
-
-        app.data.formList = new app.collections.Forms({key: apiKey, tag: tag});
-        new app.views.FormsView({collection: app.data.formList});
-		// info box
-		$.ajax({
-			url:'/api/form/tags/'+apiKey,
-			dataType: "json",
-			success: function(response){
-				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
-			}
-
-		});
-	},
-
-    /*
-     * Add Form
-     */
-    add: function(){
-		// if called direct we need this.formList
-		if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
-		var form = new app.models.Form();
-		new app.views.FormView({model: form}).render();
-    },
-
-    /*
-     * Edit Form
-     */
-    edit: function(id){
-		$("#infoBox").html('');
-        var form = app.data.formList.get(id);
-        new app.views.FormView({model:form}).render();
-    }
-});
-
 var updateRD = false;
 /**
  *
@@ -415,7 +189,6 @@ function updateList(){
 	id = select.val();
 	select.html('');
 
-	console.log(select);
 	for (var i = 0; i < fieldset[0].fields.length; i++){
 		ol.append('<li><strong>'+fieldset[0].fields[i].name+':</strong>'+fieldset[0].fields[i].type+'</li>');
 		select.append('<option value="'+fieldset[0].fields[i].name+'">'+fieldset[0].fields[i].display+'</option>');
@@ -433,6 +206,245 @@ function listNames(fieldset){
 	);
 	return names;
 }
+
+/**********************************************************************************************/
+
+/**
+ * Views - Collection of Reporting Forms
+ *
+ *
+ */
+app.views.FormsView = Backbone.View.extend({
+  el: '#formContext',
+  collection: null,
+  initialize: function(options){
+    _.bind(this, 'render');
+    this.listenTo(this.collection, 'reset', this.render);
+    this.collection.fetch();
+
+  },
+
+  events:{
+    "click .detailBtn":"detail",
+    "click .deleteBtn":"deleteForm"
+  },
+
+  render: function(){
+    var params = { records: this.collection.models};
+
+    var template = _.template($("#forms").html(), params);
+    $(this.el).html(template);
+
+    return this;
+  },
+
+
+  /**
+   * Display Form Details in a Modal Dialog
+   *
+   */
+  detail: function(e){
+
+    var target = e.target;
+    model = this.collection.get(target.id);
+
+    var template = _.template($("#formDetail").html(), model.attributes);
+    $('#dialog').html(template).modal();
+    return this;
+  },
+
+  deleteForm: function(e){
+
+
+    var target = e.target;
+    //model = this.collection.get(target.id);
+
+
+    return this;
+  }
+
+});
+
+/**
+ * View - Single Reporting Form
+ *
+ *
+ */
+app.views.FormView = Backbone.View.extend({
+  el: '#formContext',
+  model: null,
+  columns: null,
+  initialize: function(options){
+    _.bind(this, 'render');
+    //this.listenTo(this.model, 'change', this.render);
+
+  },
+  events:{
+	"keyup #formTags": "tagAutoComplete",
+    "click #submit":"saveForm",
+    "click #close":"cancel"
+  },
+
+  tagAutoComplete: function(e){
+	//console.log(String.fromCharCode(e.keyCode).toLocaleLowerCase());
+
+  },
+
+  saveForm:_.debounce(function() {
+
+    this.model.set({
+        title: $('#formTitle').val(),
+        description: $('#formDescription').val(),
+		tags: $('#formTags').val(),
+		is_published: ($('#is_published').is(':checked') ? 1:0),
+		is_public: ($('#is_public').is(':checked') ? 1:0),
+		new_report: ($('#new_report').is(':checked') ? 1:0),
+		identity: $('#identity').val(),
+		meta: {name:$('#formName').val(),
+			   title:$('#formTitle').val(),
+			   desc:$('#formDescription').val(),
+			   fieldset:[{name:'group-1', legend:'',fields:parseFormMeta()}]}
+
+    });
+	// validation
+	var errors = this.model.validate();
+	if(typeof(errors) !== 'undefined'){
+
+		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+		$('#dialog').html(template).modal();
+		return true;
+	}
+
+	// Save It
+    if (this.model.isNew()) {
+        //var self = this;
+        app.data.formList.create(this.model, {
+            success:function () {
+                app.router.navigate('/', {trigger: true});
+            }
+        });
+    } else {
+
+        this.model.save({}, {
+            success:function () {
+
+                app.router.navigate('/', {trigger: true});
+            }
+        });
+    }
+
+    //window.history.back();
+
+    return false;
+  }, 500),
+
+  render: function(){
+	// build content
+    var template = _.template($("#formBuilder").html(), this.model.attributes);
+    $(this.el).html(template);
+    // build form controls
+	var ctrlIndex = 1, fldIndex = 1;
+	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
+
+    // make sortable
+	$( ".droppedFields" ).sortable({
+		cancel: null, // Cancel the default events on the controls
+		connectWith: ".droppedFields"
+	}).disableSelection();
+
+	// assign dialogs
+	$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
+		var ctrlId = 'ctl'+ctrlIndex++;
+		assignDialog(this, ctrlId);
+		$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
+	});
+
+	// assign add events to selectorField(s)
+	$(".selectorField").each(function(i, e){
+		// append to the form
+		$(e).on('click', function(){
+			//clone and add
+			t = $(this).clone();
+			$(t).removeClass("selectorField");
+			$(t).appendTo($('fieldset.droppedFields'));
+			$(t).data('name', 'col'+fldIndex++);
+			// assign dialog
+			assignDialog($(t), 'ctl'+ctrlIndex++);
+			$(t).trigger('click');
+		})
+	});
+	// capture column names
+	this.columns = listNames(this.model.attributes.meta.fieldset);
+	$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity:this.model.attributes.identity}));
+
+    return this;
+  },
+  cancel:function () {
+    this.close();
+    window.history.back();
+  },
+
+  close:function () {
+
+    $(this.el).unbind();
+    $(this.el).empty();
+  }
+
+});
+
+/**
+ * Routes
+ *
+ *
+ */
+app.controller = Backbone.Router.extend({
+
+	routes: {
+        "" : "index",                       // initial view
+		"tag/:tag" : "index",				// filter by tag
+		"edit/:id" : "edit",
+		"add" : "add"
+	},
+
+    /*
+     * Display Reporting Tasks Forms
+     */
+    index: function(tag){
+
+        app.data.formList = new app.collections.Forms({key: apiKey, tag: tag});
+        new app.views.FormsView({collection: app.data.formList});
+		// info box
+		$.ajax({
+			url:'/api/form/tags/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				app.data.tags = response.data;
+				$("#infoBox").html(_.template($("#info").html(), {tags:app.data.tags, select:tag}));
+			}
+
+		});
+	},
+
+    /*
+     * Add Form
+     */
+    add: function(){
+		// if called direct we need this.formList
+		if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
+		var form = new app.models.Form();
+		new app.views.FormView({model: form}).render();
+    },
+
+    /*
+     * Edit Form
+     */
+    edit: function(id){
+		$("#infoBox").html('');
+        var form = app.data.formList.get(id);
+        new app.views.FormView({model:form}).render();
+    }
+});
+
 
 /**
  * initilize app

@@ -297,10 +297,10 @@ span.error{
 
   <div id="form-tags" class="control-group">
     <h4>Filter by Form Tag</h4>
+	<a href="#" class="label label-important">x</a>
 	{{ for (var i = 0; i < tags.length; i++) { }}
 		<a href="#tag/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
 	{{ } }}
-	<a href="#" class="label label-important">x</a>
   </div>
 
 </script>

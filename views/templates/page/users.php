@@ -50,10 +50,10 @@
 
   <div id="user-roles" class="control-group">
     <h4>Filter by User Roles</h4>
+	<a href="#" class="label label-important">x</a>
 	{{ for (var i = 0; i < roles.length; i++) { }}
 		<a href="#role/{{= roles[i] }}" class="label {{= select == roles[i] ? 'label-info':''}}">{{= roles[i] }}</a>
 	{{ } }}
-	<a href="#" class="label label-important">x</a>
   </div>
 
 </script>
@@ -98,10 +98,6 @@
         </div>
     </fieldset>
     </div>
-
-
-
-
 </script>
 
 
@@ -117,8 +113,8 @@
 					<ul class="details">
 						<li><strong>Name:</strong> {{= username }}</li>
 						<li><strong>email:</strong> {{= email }}</li>
+						<li><strong>Accessed:</strong> {{= date_last_accessed === null ? '':date_last_accessed.date }}</li>
 					</ul>
-					<span class="pull-right">&nbsp;<a class="" href="#">Delete <i class="icon-minus-sign icon-white"></i></a>&nbsp;<a id="{{= id }}" href="#edit/{{= id }}">Edit <i class="icon-edit icon-white"></i></a></span>
 				</div>
 			</div>
 		</div>
@@ -128,5 +124,4 @@
 <script type="text/javascript" src="/assets/js/vendor/backbone.paginator.min.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/userModel.js"></script>
-<script type="text/javascript" src="/views/templates/page/scripts/shared/assignmentModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/users.js"></script>

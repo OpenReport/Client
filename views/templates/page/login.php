@@ -18,6 +18,12 @@
             background-color: #f5f5f5;
         }
 
+        .brand{
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+        }
+
         .form-signin
         {
             max-width: 300px;
@@ -35,6 +41,7 @@
         .form-signin .checkbox
         {
             margin-bottom: 10px;
+            font-size: 21px;
         }
 
         .form-signin input[type="text"],
@@ -51,6 +58,7 @@
 <body>
 
 <div class="container">
+    <h2 class="brand" style="color: rgb(42, 35, 231);"><i class="icon-bar-chart icon-black" style="font-size: 24px;color: rgb(238, 126, 23);"></i>&nbsp;OpenReport&nbsp;&nbsp;</h2>
     <form class="form-signin" method="post">
 
         <h2 class="form-signin-heading">Please sign in</h2>
@@ -63,8 +71,9 @@
             <span class="add-on"><i class="icon-large icon-key"></i></span>
             <input class="span3" type="password" name="password" placeholder="Password">
         </div>
-        <button class="btn btn-large btn-primary" type="submit" name="submit">Sign in</button>
-    </form>
+        <button class="btn btn-primary" type="submit" name="submit">Sign in</button>
+
+   </form>
 </div>
 <!-- /container -->
 

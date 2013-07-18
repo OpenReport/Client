@@ -71,7 +71,7 @@ app.collections.Forms = Backbone.Collection.extend({
     //},
     // override fetch url for addtional uri elements
     url:function() {
-        // fetch records for an event (get:/record/event/{id})
+        // fetch records (get:/api/forms/{key}/[tag])
         var uri = this.key;
         // fetch records based on tags
         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');

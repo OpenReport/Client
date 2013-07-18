@@ -102,8 +102,15 @@ app.views.UserFormView = Backbone.View.extend({
     this.listenTo(this.model, 'change', this.render);
 
   },
+  render: function(){
+	// build content
+	var template = _.template($("#userForm").html(), {user:this.model.attributes});
+    $(this.el).html(template);
+    return this;
+  },
   events:{
     "click #submit":"saveUser",
+	"click #password": "changePassword",
     "click #close":"cancel"
   },
   saveUser:function () {
@@ -126,16 +133,16 @@ app.views.UserFormView = Backbone.View.extend({
 	}
     if (this.model.isNew()) {
         var self = this;
-        router.userList.create(this.model, {
+        app.router.userList.create(this.model, {
             success:function () {
-                router.navigate('/', {trigger: true});
+                app.router.navigate('/', {trigger: true});
             }
         });
     } else {
         this.model.save({}, {
             success:function () {
 			  // update assignments
-              router.navigate('/', {trigger: true});
+              app.router.navigate('/', {trigger: true});
             }
         });
     }
@@ -149,11 +156,9 @@ app.views.UserFormView = Backbone.View.extend({
 
     return false;
   },
-  render: function(){
-	// build content
-	var template = _.template($("#userForm").html(), {user:this.model.attributes});
-    $(this.el).html(template);
-    return this;
+
+  changePassword: function(e){
+	console.log(e.target);
   },
   cancel:function () {
     this.close();
@@ -187,7 +192,6 @@ app.controller = Backbone.Router.extend({
     index: function(role){
 
         this.userList = new app.collections.Users({key: apiKey, role:role});
-		//console.log(this.taskList);
         new app.views.UsersView({collection: this.userList});
 		// info box
 		$.ajax({
@@ -208,7 +212,7 @@ app.controller = Backbone.Router.extend({
 	  if(typeof this.userList == 'undefined') this.userList = new app.collections.Users({key: apiKey});
 	  var user = new app.models.User({is_active:1});
 	  new app.views.UserFormView({model:user}).render();
-
+	  // enable password and email controls on new user
 	  $('#email, #password').prop('disabled', false);
 
     },
@@ -218,10 +222,10 @@ app.controller = Backbone.Router.extend({
     edit: function(id){
 	  var user = this.userList.get(id);
 	  new app.views.UserFormView({model:user}).render();
-	//  new window.Assignments().fetchForms({key: apiKey, user_id: id, success: function(data){
-	//
-	//	}
-	//  });
+	  // add password change dialog??
+
+
+
 
     },
     /*

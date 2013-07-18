@@ -18,7 +18,7 @@
 		<tbody>
 		{{ _(records).each(function(form) { if(form.get('is_published') === 1) }}
 		  <tr>
-			<td><a class="form" id="{{= form.get('id') }}" href="#records/{{= form.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
+			<td><a class="form" id="{{= form.get('id') }}" href="#records/{{= form.get('id') }}"><i class="icon-list icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
 			<td>{{= form.get('description') }}</td>
 			<td>{{= form.get('tags') }}</td>
 			<td>{{= moment(form.get('date_modified').date).format('L') }}</td>
@@ -108,7 +108,7 @@
 
 				</div>
 				<div class="tab-pane" id="map">
-					<p>Maps Offline</p>
+				<div id="map_canvas" class="thumbnail"></div>
 				</div>
 				<div class="tab-pane" id="media">
 
@@ -141,7 +141,7 @@
 
 		{{ _(relatedReports).each(function(record) { }}
 		  <tr>
-			<td><a class="form" href="/reports#details/{{= record.attributes.id}}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= record.attributes.form_title }}</a></td>
+			<td><a class="form" href="/reports#details/{{= record.attributes.id}}"><i class="icon-list-alt icon-white"></i>&nbsp;{{= record.attributes.form_title }}</a></td>
 			<td>{{= record.attributes.user }}</td>
 			<td>{{= record.attributes.lon }}/{{= record.attributes.lat }}</td>
 			<td>{{= moment(record.attributes.record_date.date).format('L') }}</td>
@@ -273,9 +273,14 @@
 
 </script>
 
-
 <script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.export.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/recordModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/reports.js"></script>
+
+<!-- need async load here -->
+<script type="text/javascript">
+	document.write('<script src="http://maps.google.com/maps/api/js?key='+map_api_key+'&sensor=false">');
+	document.write('</script'+'>')
+</script>

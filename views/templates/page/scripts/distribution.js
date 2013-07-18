@@ -23,8 +23,8 @@
  *
  *
  */
-app.views.AssignmentsView = Backbone.View.extend({
-  el: '#assignmentContext',
+app.views.DistributionsView = Backbone.View.extend({
+  el: '#distributionContext',
   collection: null,
   initialize: function(options){
     _.bind(this, 'render');
@@ -33,28 +33,49 @@ app.views.AssignmentsView = Backbone.View.extend({
 
   },
 
-  events:{
-    "click .delete":"deleteAssigned",
-	"click #add":"addAssignment"
-  },
-
   render: function(){
     var params = { records: this.collection.models};
 
-    var template = _.template($("#assignments").html(), params);
+    var template = _.template($("#distributions").html(), params);
     $(this.el).html(template);
+
+	// info box
+	if($("#infoBox").html() !== '')return this;
+	var base = this;
+	$.ajax({
+		url:'/api/form/tags/'+apiKey,
+		dataType: "json",
+		success: function(response){
+			$("#infoBox").html(_.template($("#tags").html(), {tags:response.data}));
+			//"click .tag-btn":"filterByTag",
+			$('.tag-btn').on('click', function(e){base.filterByTag(e, base);});
+		  $.ajax({
+			  url:'/api/user/roles/'+apiKey,
+			  dataType: "json",
+			  success: function(response){
+				  $("#infoBox").append(_.template($("#roles").html(), {roles:response.data}));
+				  $('.role-btn').on('click', function(e){base.filterByRole(e, base);});
+			  }
+		  });
+		}
+	});
+
 	//$.bootstrapSortable();
     return this;
   },
-
-  deleteAssigned: function(e){
-	var target = e.target;
-	//this.collection.remove(this.collection.get(target.id));
-	router.assignmentList.sync('delete', this.collection.get(target.id));
-	router.assignmentList.fetch();
+  events:{
+    "click .delete":"deleteDistribution",
+	"click #add":"addDistribution"
   },
 
-  addAssignment: function(e){
+  deleteDistribution: function(e){
+	var target = e.target;
+	//this.collection.remove(this.collection.get(target.id));
+	app.router.distributionList.sync('delete', this.collection.get(target.id));
+	app.router.distributionList.fetch();
+  },
+
+  addDistribution: function(e){
 
 	$('#dialog').html('');
     var template = _.template($("#assignDialog").html());
@@ -93,12 +114,12 @@ app.views.AssignmentsView = Backbone.View.extend({
 	  if(forms !== null && role !== ''){
 		for (var i = 0; i < forms.length; i++) {
 		  // assign for each tag
-		  var assignment = new window.Assignment();
+		  var assignment = new app.models.Distribution();
 		  assignment.set({
 			user_role: role,
 			form_tag: forms[i]
 		  });
-		  assignment.save({success: function(){router.assignmentList.fetch();}});
+		  assignment.save({success: function(){router.distributionList.fetch();}});
 		}
 	  }
 
@@ -106,22 +127,25 @@ app.views.AssignmentsView = Backbone.View.extend({
 
     return this;
   },
-  /**
-   * Display User Details in a Modal Dialog
-   *
-   */
-  detail: function(e){
-
-
-    var target = e.target;
-    model = this.collection.get(target.id);
-
-    var template = _.template($("#assignmentDetail").html(), model.toJSON());
-    $('#dialog').html(template).modal();
-
-
-
-    return this;
+  filterByTag: function(e, base){
+	$('.tag-btn, .role-btn').removeClass('label-success');
+	if($(e.target).data('for')!==''){
+	  $(e.target).addClass('label-success');
+	  base.collection.fetchByTag({tag:$(e.target).data('for')});
+	}
+	else{
+	  base.collection.fetchByTag();
+	}
+  },
+  filterByRole: function(e, base){
+	$('.tag-btn, .role-btn').removeClass('label-success');
+	if($(e.target).data('for')!==''){
+	  $(e.target).addClass('label-success');
+	  base.collection.fetchByRole({role:$(e.target).data('for')});
+	}
+	else{
+	  base.collection.fetchByRole();
+	}
   }
 
 });
@@ -135,49 +159,19 @@ app.views.AssignmentsView = Backbone.View.extend({
 app.controller = Backbone.Router.extend({
 
 	routes: {
-        "" : "index",                       // initial view /tasks
-		"tag/:tag" : "index",				// filter by tag
-        "add" : "add",						// add a reporting task /tasks#add
-        "remove/:id" : "remove",			// remove reporting task /tasks#remove/{task_id}
-		"edit/:id" : "edit"					// edit reporting task /task#edit/{task_id}
+        "" : "index"
+
 	},
     /*
      * Display Account User List
      */
-    index: function(tag){
+    index: function(){
 
-        this.assignmentList = new app.collections.Assignments({key: apiKey, tag:tag});
-		//console.log(this.taskList);
-        new app.views.AssignmentsView({collection: this.assignmentList});
-		// info box
-		$.ajax({
-			url:'/api/form/tags/'+apiKey,
-			dataType: "json",
-			success: function(response){
-				$("#infoBox").html(_.template($("#info").html(), {tags:response.data, select:tag}));
-			}
-		});
-    },
-    /*
-     * Add Assignment
-     */
-    add: function(){
-
-
+	  this.distributionList = new app.collections.Distributions({key: apiKey});	  console.log(apiKey);
+	  new app.views.DistributionsView({collection: this.distributionList});
 
     },
-    /*
-     * Edit Assignment
-     */
-    edit: function(id){
 
-    },
-    /*
-     * Remove Assignment
-     */
-    remove: function(id){
-
-    }
 });
 
 

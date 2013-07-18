@@ -19,19 +19,10 @@
  */
 
 
-
 /**
  *
  */
-class Account extends ActiveRecord\Model {
-  static $table_name = 'accounts';
-  static $has_many = array(array('users', 'class'=>'User'));
-  /**
-   * Returns an object
-   *
-   *
-   */
-  public function get_account_limits(){
-    return json_decode($this->read_attribute('account_limits'), true);
-  }
+class Distribution extends ActiveRecord\Model {
+  static $table_name = 'distributions';
+
 }

@@ -5,7 +5,12 @@
 
 body{background-image: url('../img/paper-bg.png');}
 .content{margin-top: 60px; }
-
+span.error{
+    float: left;
+    clear: both;
+    font-size: 1.2em;
+    color: blue;
+}
 .sidebar-nav
 {
     padding: 0;

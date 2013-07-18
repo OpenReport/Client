@@ -35,7 +35,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     $today = new DateTime('GMT');
     $accountData = Account::find('first', array('conditions'=>array('api_key = ? AND is_active = 1', $apiKey)));
     // package the data
-    $response['data'] = $accountData->values_for(array('id','name','api_key'));
+    $response['data'] = $accountData->values_for(array('id','api_key','name','account_limits','admin_email','map_api_key'));
     $response['count'] = 1;
     // send the data
     echo json_encode($response);
@@ -53,9 +53,11 @@ $app->put("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
     if($apiKey == $request->api_key){
         $accountData = Account::find($id);
         $accountData->name = $request->name;
+        $accountData->admin_email = $request->admin_email;
+        $accountData->map_api_key = $request->map_api_key;
         $accountData->save();
         // package the data
-        $response['data'] = $accountData->values_for(array('id','name','api_key'));
+        $response['data'] = $accountData->values_for(array('id','api_key','name', 'admin_email','account_limits','map_api_key'));
         $response['count'] = 1;
     }
     // send the data

@@ -61,6 +61,7 @@
 		  $fieldset.append(fieldCtrl);
 		  // add form label
 		  $(fieldCtrl).append(helper.createLabel(field.name, field.display));
+
 		  // render input fields
 		  switch(field.type){
 			case 'text':
@@ -85,7 +86,7 @@
 			  helper.buildMediaCapture(fieldCtrl, field.name, 'video/*;capture=camera');
 			  break;
 		  }
-		  $(fieldCtrl).append('<span class="error"></span>');
+		   $(fieldCtrl).append('<span class="error"></span>');
 		}
 	  }
 

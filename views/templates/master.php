@@ -2,7 +2,6 @@
 <html class="no-js">
 <head>
   <?php
-    $pageMeta = $this->getData('meta');
     $account = $this->getData('account');
   ?>
   <meta charset="utf-8">
@@ -38,12 +37,12 @@
 
       var localTime = moment();
       var navTime = localTime;
-      var timeZone = "PDT";  // todo: should be GMT
       var curMonth = localTime.format('M');
       var curYear = localTime.format('YYYY');
       // set account data
       var apiKey = "<?php echo $account['api_key'] ?>";  // this is a global account key
-      var acctNo = "<?php echo $account['id'] ?>";  // this is a global account key
+      var acctNo = "<?php echo $account['id'] ?>";  // this is a global account No
+      var map_api_key = "<?php echo $account['map_api_key'] ?>";  // this is a global map key
   </script>
 
 </head>
@@ -57,7 +56,6 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-
                 <ul class="nav">
                   <li><a onclick="window.history.back();"><i class="icon-large icon-arrow-left"></i></a></li>
                   <li class="divider-vertical"></li>
@@ -68,11 +66,9 @@
                         <li class=""><a href="/"><i class="icon-home icon-black"></i> Dashboard</a></li>
                         <li class=""><a href="/reports"><i class="icon-bar-chart icon-black"></i> Reports</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
-                               class="icon-edit icon-black"></i>
-                                Manage <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-edit icon-black"></i>&nbsp;Manage&nbsp;<b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/assignments"><i class="icon icon-check"></i>&nbsp;Reporting Assignments</a></li>
+                                <li><a href="/distribution"><i class="icon icon-share"></i>&nbsp;Report Distribution</a></li>
                                 <li><a href="/forms"><i class="icon icon-list-alt"></i>&nbsp;Reporting Forms</a></li>
                                 <li><a href="/users"><i class="icon icon-user"></i>&nbsp;User Accounts</a></li>
                             </ul>
@@ -82,14 +78,13 @@
                         <li><a href="/account/settings" class="tip icon logout" data-original-title="Settings"
                                data-placement="bottom"><i class="icon-large icon-cog"></i></a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="/a/logout" class="tip icon logout" data-original-title="Logout" data-placement="bottom"><i
-                           class="icon-large icon-off"></i></a></li>
+                        <li><a href="/a/logout" class="tip icon logout" data-original-title="Logout" data-placement="bottom"><i class="icon-large icon-off"></i></a></li>
                     </ul>
                     <ul class="nav pull-right settings">
                         <li class="divider-vertical"></li>
                     </ul>
                     <p class="navbar-text pull-right">
-                        Welcome <strong><?php echo $this->user(); ?></strong>
+                        <strong><?php echo $account['name'] ?>: <?php echo $this->user(); ?></strong>
                         <span class="" id="localDate"><span>
                     </p>
                     <ul class="nav pull-right settings">
@@ -119,8 +114,8 @@
 
 <hr>
 
-<footer align="center">
-    <p>OpenReport v1.0 Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
+<footer>
+    <p style="margin: auto;text-align: center;">OpenReport v1.0 Copyright &copy; 2013 <strong>The Austin Conner Group</strong></p>
 </footer>
 
 

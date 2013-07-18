@@ -3,7 +3,7 @@
 RewriteEngine On
 
 # service directory
-RewriteBase /api/assignment/
+RewriteBase /api/distribution/
 
 # Rewrite Service URIs
 RewriteCond %{REQUEST_FILENAME} !-f

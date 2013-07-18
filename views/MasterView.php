@@ -43,7 +43,7 @@ class MasterView extends \Slim\View
         // Grab User Account info....
         $accountData = Account::find('first',array('conditions'=>array('id = ?', $this->accountId())));
         // grab only what we need
-        $this->setData('account', $accountData->values_for(array('id','name', 'api_key')));
+        $this->setData('account', $accountData->values_for(array('id','name','api_key','map_api_key')));
     }
 
     /** Render Page
@@ -56,7 +56,7 @@ class MasterView extends \Slim\View
         return parent::render('master.php');
 
     }
-    /** Render Content Page
+    /** Render Content
      *
      */
     public function partial($template, $data = array())
@@ -70,16 +70,6 @@ class MasterView extends \Slim\View
     public function user()
     {
         return $_SESSION['user']['username'];
-    }
-
-    /** user id
-     *
-     *
-     *
-     */
-    public function userId()
-    {
-        return $_SESSION['user']['id'];
     }
 
     /** account id

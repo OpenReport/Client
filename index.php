@@ -51,11 +51,7 @@ $authenticate = function ($app) {
 $app->get('/', $authenticate($app), function () use($app) {
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/home.php', $data);
+    $app->render('page/home.php');
 
 
 });
@@ -69,47 +65,22 @@ $app->get('/', $authenticate($app), function () use($app) {
 $app->get('/account/settings', $authenticate($app), function () use($app) {
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/account/settings.php', $data);
+    $app->render('page/settings.php');
 
 
 });
 
-/**
- * Billing Page - Dashboard
- *
- *
- *
- */
-$app->get('/account/billing', $authenticate($app), function () use($app) {
-    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
-    $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/account/billing.php', $data);
-
-
-});
 
 /**
  * Calendar Admin
  *
  */
-$app->get('/calendar', $authenticate($app), function () use ($app){
-    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
-    $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/calendar.php', $data);
-
-});
+//$app->get('/calendar', $authenticate($app), function () use ($app){
+//    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+//    $app->view(new MasterView());
+//    $app->render('page/calendar.php');
+//
+//});
 
 /**
  * Reports - Used to render reports/records/ect
@@ -120,11 +91,7 @@ $app->get('/calendar', $authenticate($app), function () use ($app){
 $app->get('/reports', $authenticate($app), function () use ($app){
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/reports.php', $data);
+    $app->render('page/reports.php');
 
 });
 
@@ -136,11 +103,7 @@ $app->get('/reports', $authenticate($app), function () use ($app){
 $app->get('/forms', $authenticate($app), function () use ($app){
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/forms.php', $data);
+    $app->render('page/forms.php');
 
 });
 
@@ -151,26 +114,18 @@ $app->get('/forms', $authenticate($app), function () use ($app){
 $app->get('/users', $authenticate($app), function () use ($app){
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/users.php', $data);
+    $app->render('page/users.php');
 
 });
 
 /**
- * Assignments - Create and assignments users
+ * Distribution - Create Report distribution
  *
  */
-$app->get('/assignments', $authenticate($app), function () use ($app){
+$app->get('/distribution', $authenticate($app), function () use ($app){
     require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
     $app->view(new MasterView());
-
-    // Page Meta
-    $meta = array();
-    $data = array('meta'=>$meta);
-    $app->render('page/assignments.php', $data);
+    $app->render('page/distribution.php');
 
 });
 

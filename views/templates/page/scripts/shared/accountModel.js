@@ -27,8 +27,11 @@ app.models.Account = Backbone.Model.extend({
     urlRoot: '/api/account/'+apiKey,
     defaults:{
         id:null,
+        api_key:apiKey,
         name:'',
-        api_key:apiKey
+        admin_email:'',
+        map_api_key:'',
+        account_limits:{}
     },
     parse:function(response){
         return response.data;

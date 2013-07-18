@@ -37,7 +37,6 @@ app.views.AccountFormView = Backbone.View.extend({
   //},
   saveAccount:function () {
 
-
 	this.model.save({
         name: $('#acctname').val()
 	  },
@@ -51,10 +50,11 @@ app.views.AccountFormView = Backbone.View.extend({
     return this;
   },
   render: function(){
-	// build content
-
+	// build form
 	var template = _.template($("#accountForm").html(), this.model.attributes);
     $(this.el).html(template);
+	// build info
+	$('#infoBox').html(_.template($("#accountInfo").html(), this.model.attributes));
     return this;
   },
   cancel:function () {

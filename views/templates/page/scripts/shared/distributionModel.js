@@ -23,48 +23,44 @@
  *
  *
  */
-app.models.Assignment = Backbone.Model.extend({
-    urlRoot: '/api/assignment/'+apiKey,
+app.models.Distribution = Backbone.Model.extend({
+    urlRoot: '/api/distribution/'+apiKey,
     defaults:{
         id:null,
         api_key:apiKey
     }
 });
 
-app.collections.Assignments = Backbone.Collection.extend({
-    model:app.models.Assignment,
+app.collections.Distributions = Backbone.Collection.extend({
+
+    model:app.models.Distribution,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
-
     },
-    fetchForms: function(options) {
+    fetchByTag: function(options) {
         options || (options = {});
-        this.key = options.key;
-
+        this.tag = options.tag;
         this.fetch(options);
     },
-    fetchUsers: function(options) {
+    fetchByRole: function(options) {
         options || (options = {});
-        this.key = options.key;
+        this.role = options.role;
         this.fetch(options);
     },
     // override fetch url for addtional uri elements
     url:function() {
-        var uri = '';
-        //if(this.form_id > 0 || this.user_id > 0){
-        //// fetch records (get:/api/assignmenst/{scope}/{apiKey}/{user_id | form_id}
-        //uri = (this.form_id == 0 ? 'list/':'list/')+this.key;
-        //// fetch task records for forms or users
-        //uri = uri + (this.form_id == 0 ? '/'+this.user_id:'/'+this.form_id);
-        //}
-        //else{
-        uri = this.key;
-        // fetch records based on tags
-        // uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
-        //}
-        // build new uri
-        return "/api/assignment/"+uri;
+        var uri = this.key; // default
+        //// by form tags
+        if(typeof this.tag != 'undefined'){
+            uri = 'forms/'+this.key+'/'+this.tag;
+        }
+        // by user role
+        else if(typeof this.role != 'undefined'){
+            uri = 'roles/'+this.key+'/'+this.role;
+        }
+        // return new url
+        return "/api/distribution/"+uri;
     },
     parse:function(response){
         return response.data;

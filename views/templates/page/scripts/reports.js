@@ -263,15 +263,54 @@ app.views.RecordDetail = Backbone.View.extend({
     this.listenTo(this.model,'change', this.render);
     this.model.fetch();
   },
-
   render: function(){
 	var params = {title: this.model.attributes.data.title, form_name: this.model.attributes.data.form_name, record:this.model.attributes.data.record, headers:this.model.attributes.data.headers};
 	var template = _.template($("#recordDetails").html(), params);
 	$(this.el).html(template);
 	// info box
 	$("#infoBox").html(_.template($("#infoDetails").html(), {title: this.model.attributes.data.title, form_name: this.model.attributes.data.form_name,record: params.record, columns:params.headers}));
+	// (late) bind tab events
+	$('a[data-toggle="tab"]').on('shown', this.tabShown);
+
+
 	return this;
   },
+  events:{
+
+
+  },
+  tabShown: function(e){
+	// catch map tab
+	if(e.target.hash == '#map'){
+		try{
+		    var map = new google.maps.Map(document.getElementById("map_canvas"), {
+		      mapTypeId: google.maps.MapTypeId.HYBRID,
+		      disableDefaultUI:true,
+		      rotateControl:true
+		    });
+		}
+		catch(e){
+			$('div#map').html('<p>Maps Offline</p>');
+		    return;
+		}
+	}
+
+
+  },
+
+
+    //try{
+    //    var map = new google.maps.Map(document.getElementById("map_canvas"), {
+    //      mapTypeId: google.maps.MapTypeId.HYBRID,
+    //      disableDefaultUI:true,
+    //      rotateControl:true
+    //    });
+    //}
+    //catch(e){
+    //
+    //    return;
+    //}
+
 
 });
 

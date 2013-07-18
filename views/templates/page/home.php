@@ -12,16 +12,16 @@
 <script id="details" type="text/template">
 	<div class="row-fluid">
     <div class="span3 well">
-		<h4>Total Reports: {{= stats.formCount }}
+		<h4>Total Reports: {{= stats.formCount }}</h4>
     </div>
     <div class="span3 well">
-		<h4>Total Records: {{= stats.recordCount }}
+		<h4>Total Records: {{= stats.recordCount }}</h4>
     </div>
     <div class="span3 well">
-		<h4>Total Users: {{= stats.totalUsers }}<h4>
+		<h4>Total Users: {{= stats.totalUsers }}</h4>
     </div>
     <div class="span3 well">
-		<h4>Media: {{= stats.mediaCount }}GB<h4>
+		<h4>Media: {{= stats.mediaCount }}GB</h4>
     </div>
 	</div>
 	<div  class="row-fluid">
@@ -40,7 +40,7 @@
 
 		{{ if(stats.recentReports.length > 0) _(stats.recentReports).each(function(report) { }}
 		  <tr>
-			<td><a class="form" href="/reports#details/{{= report.id}}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= report.form_title }}</a></td>
+			<td><a class="form" href="/reports#details/{{= report.id}}"><i class="icon-list-alt icon-white"></i>&nbsp;{{= report.form_title }}</a></td>
 			<td>{{= report.user }}</td>
 			<td>{{= report.lon }}/{{= report.lat }}</td>
 			<td>{{= moment(report.record_date.date).format('L') }}</td>

@@ -54,7 +54,7 @@ $app->get("/:apiKey(/:role)", function ($apiKey, $role='') use ($app, $response)
  */
 $app->get("/roles/:apiKey", function ($apiKey) use ($app, $response) {
 
-    $userTags = Tag::all(array('conditions'=>array('api_key = ? AND scope=\'roles\'', $apiKey)));
+    $userTags = Tag::all(array('conditions'=>array('(api_key = ? OR api_key = \'***GLOBAL***\') AND scope=\'roles\'', $apiKey)));
     $tags = array();
     foreach($userTags as $tag){
         $tags[] = $tag->name;
@@ -153,7 +153,7 @@ function checkRoles($apiKey, $names){
 
     foreach($roles as $role){
 
-        $cnt = Tag::count(array('conditions'=>array('api_key = ? AND scope=\'roles\' AND name = ?', $apiKey, $role)));
+        $cnt = Tag::count(array('conditions'=>array('(api_key = ? OR api_key = \'***GLOBAL***\') AND scope=\'roles\' AND name = ? ', $apiKey, $role)));
 
         if($cnt == 0){
             $tag = new Tag();
@@ -173,6 +173,6 @@ function checkRoles($apiKey, $names){
  */
  function userArrayMap($tasks){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'username\',\'is_active\',\'roles\',\'email\',\'password\'));'),$tasks);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'username\',\'is_active\',\'roles\',\'email\',\'password\',\'date_last_accessed\'));'),$tasks);
 
  }
