@@ -28,10 +28,10 @@
               <tr>
                 <td>{{= assignment.get('form_title') }}</td>
                 <td>{{= assignment.get('user_name') }}</td>
-                <td>DATE</td>
-                <td>Daily</td>
-                <td>Open</td>
-                <td>DATE</td>
+                <td>{{= moment(assignment.get('date_assigned').date).format('L') }}</td>
+                <td>{{= assignment.get('schedule') }}</td>
+                <td>{{= assignment.get('status') }}</td>
+                <td>{{= moment(assignment.get('date_expires').date).format('L') }}</td>
                 <td><span class="pull-right"><button data-for="{{= assignment.get('id') }}" class="btn btn-mini btn-info">Edit <i class="icon-edit icon-white"></i></button></span></td>
               </tr>
 

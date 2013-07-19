@@ -125,6 +125,6 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user_id\',\'user_name\',\'form_id\',\'form_title\',\'is_active\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user_id\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
 
 }

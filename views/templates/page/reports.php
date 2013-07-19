@@ -172,10 +172,11 @@
 <script id="info" type="text/template">
   <div id="form-tags" class="control-group">
     <h4>Filter by Form Tag</h4>
+	<a href="#" class="label label-important">x</a>
 	{{ for (var i = 0; i < tags.length; i++) { }}
 		<a href="#tag/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
 	{{ } }}
-	<a href="#" class="label label-important">x</a>
+
   </div>
 </script>
 
@@ -184,7 +185,7 @@
   <div class="control-group">
     <h4>Quick Filters</h4>
     <div class="btn-group" style="margin: 9px 0 5px;">
-      <button id="monthly" class="filters btn btn-primary btn-mini">Monthly</button>
+      <button id="monthly" class="filters btn btn-info btn-mini">Monthly</button>
       <button id="every30" class="filters btn btn-mini">30 Days</button>
       <button id="every60" class="filters btn btn-mini">60 Days</button>
       <button id="every90" class="filters btn btn-mini">90 Days</button>
@@ -262,10 +263,10 @@
 	  });
 
 	  function resetDates(sel){
-		$('.filters').removeClass('btn-primary');
+		$('.filters').removeClass('btn-info');
 		$('#startDate').val(filters.startDate.format('LL'));
 		$('#endDate').val(filters.endDate.format('LL'));
-		sel.addClass('btn-primary');
+		sel.addClass('btn-info');
 		return true;
 	  }
 

@@ -135,9 +135,9 @@ app.views.DistributionsView = Backbone.View.extend({
    *
    */
   filterByTag: function(e, base){
-	$('.tag-btn, .role-btn').removeClass('label-success');
+	$('.tag-btn, .role-btn').removeClass('label-info');
 	if($(e.target).data('for')!==''){
-	  $(e.target).addClass('label-success');
+	  $(e.target).addClass('label-info');
 	  base.collection.fetchByTag({tag:$(e.target).data('for')});
 	}
 	else{
@@ -145,9 +145,9 @@ app.views.DistributionsView = Backbone.View.extend({
 	}
   },
   filterByRole: function(e, base){
-	$('.tag-btn, .role-btn').removeClass('label-success');
+	$('.tag-btn, .role-btn').removeClass('label-info');
 	if($(e.target).data('for')!==''){
-	  $(e.target).addClass('label-success');
+	  $(e.target).addClass('label-info');
 	  base.collection.fetchByRole({role:$(e.target).data('for')});
 	}
 	else{
