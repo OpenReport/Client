@@ -23,50 +23,29 @@
  *
  *
  */
-app.models.Distribution = Backbone.Model.extend({
-    urlRoot: '/api/distribution/'+apiKey,
+app.models.Assignment = Backbone.Model.extend({
+    urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
         api_key:apiKey
     }
 });
 
-app.collections.Distributions = Backbone.Collection.extend({
 
-    model:app.models.Distribution,
+app.collections.Assignments = Backbone.Collection.extend({
+
+    model:app.models.Assignment,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
     },
-    fetchAll: function(options) {
-        options || (options = {});
-        this.tag = undefined;
-        this.role = undefined;
-        this.fetch(options);
-    },
-    fetchByTag: function(options) {
-        options || (options = {});
-        this.tag = options.tag;
-        this.fetch(options);
-    },
-    fetchByRole: function(options) {
-        options || (options = {});
-        this.role = options.role;
-        this.fetch(options);
-    },
     // override fetch url for addtional uri elements
     url:function() {
         var uri = this.key; // default
-        //// by form tags
-        if(typeof this.tag != 'undefined'){
-            uri = 'forms/'+this.key+'/'+this.tag;
-        }
-        // by user role
-        else if(typeof this.role != 'undefined'){
-            uri = 'roles/'+this.key+'/'+this.role;
-        }
+
+
         // return new url
-        return "/api/distribution/"+uri;
+        return "/api/assignment/"+uri;
     },
     parse:function(response){
         return response.data;

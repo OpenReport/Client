@@ -70,13 +70,13 @@ app.views.DistributionsView = Backbone.View.extend({
 
   deleteDistribution: function(e){
 	var target = e.target;
-	//this.collection.remove(this.collection.get(target.id));
-	app.router.distributionList.sync('delete', this.collection.get(target.id));
-	app.router.distributionList.fetch();
+	var base = this;
+
+	this.collection.sync('delete', base.collection.get(target.id), {success:function(){base.collection.fetch();}});
   },
 
   addDistribution: function(e){
-
+	var base = this;
 	$('#dialog').html('');
     var template = _.template($("#assignDialog").html());
     $('#dialog').html(template).modal();
@@ -109,24 +109,31 @@ app.views.DistributionsView = Backbone.View.extend({
 
 	$('#assignSubmit').on('click', function(event) {
 	  // TODO: Feedback (i.e errors)
-	  var forms = $('#reportForms').val();
-	  var role = $('#userList').val();
-	  if(forms !== null && role !== ''){
-		for (var i = 0; i < forms.length; i++) {
+	  var form = $('#reportForms').val();
+	  var roles = $('#userList').val();
+	  if(roles !== null && form !== ''){
+		for (var i = 0; i < roles.length; i++) {
 		  // assign for each tag
 		  var assignment = new app.models.Distribution();
 		  assignment.set({
-			user_role: role,
-			form_tag: forms[i]
+			user_role: roles[i],
+			form_tag: form
 		  });
-		  assignment.save({success: function(){router.distributionList.fetch();}});
+		  assignment.save();
 		}
+		// HACK - Need a better method
+		setTimeout(function(){base.collection.fetch();}, 500);
+
 	  }
 
 	});
 
     return this;
   },
+  /**
+   * REVIEW - SHOULD USE _.filterBy(collection, 'tag', 'inspection');
+   *
+   */
   filterByTag: function(e, base){
 	$('.tag-btn, .role-btn').removeClass('label-success');
 	if($(e.target).data('for')!==''){
@@ -134,7 +141,7 @@ app.views.DistributionsView = Backbone.View.extend({
 	  base.collection.fetchByTag({tag:$(e.target).data('for')});
 	}
 	else{
-	  base.collection.fetchByTag();
+	  base.collection.fetchAll();
 	}
   },
   filterByRole: function(e, base){
@@ -144,7 +151,7 @@ app.views.DistributionsView = Backbone.View.extend({
 	  base.collection.fetchByRole({role:$(e.target).data('for')});
 	}
 	else{
-	  base.collection.fetchByRole();
+	  base.collection.fetchAll();
 	}
   }
 
@@ -163,11 +170,11 @@ app.controller = Backbone.Router.extend({
 
 	},
     /*
-     * Display Account User List
+     * Display Distribution List
      */
     index: function(){
 
-	  this.distributionList = new app.collections.Distributions({key: apiKey});	  console.log(apiKey);
+	  this.distributionList = new app.collections.Distributions({key: apiKey});
 	  new app.views.DistributionsView({collection: this.distributionList});
 
     },

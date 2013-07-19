@@ -60,7 +60,7 @@
 
 
 <script id="userForm" type="text/template">
-    <div class="form-horizontal" id="postEvent">
+    <div class="form-horizontal">
     <fieldset class="span12">
         <legend>User</legend>
         <div class="control-group">

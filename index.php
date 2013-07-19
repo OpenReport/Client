@@ -129,6 +129,16 @@ $app->get('/distribution', $authenticate($app), function () use ($app){
 
 });
 
+/**
+ * Assignment - Create Report distribution
+ *
+ */
+$app->get('/assignment', $authenticate($app), function () use ($app){
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+    $app->render('page/assignment.php');
+
+});
 
 /**
  * Run the Slim application

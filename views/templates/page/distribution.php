@@ -10,21 +10,20 @@
 <!-- Templates -->
 <script id="distributions" type="text/template">
         <div class="span12">
+			<h4>Report Distribution</h4>
             <table class="table table-condensed">
             <thead>
               <tr>
+                <th>Role</th>
                 <th>Forms</th>
-                <th>Roles</th>
-
-				<th><button id="add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-share"></i></button></li></th>
+				<th><button id="add" class="btn btn-mini btn-primary pull-right">Add Form&nbsp;<i class="icon icon-share"></i></button></li></th>
               </tr>
             </thead>
             <tbody>
             {{ _(records).each(function(distribution) { }}
               <tr>
-                <td>{{= distribution.get('form_tag') }}</td>
                 <td>{{= distribution.get('user_role') }}</td>
-
+                <td>{{= distribution.get('form_tag') }}</td>
                 <td><span class="pull-right"><button class="delete btn btn-mini btn-danger" id="{{= distribution.get('id') }}">Delete <i class="icon-remove icon-white"></i></button></span></td>
               </tr>
 
@@ -67,19 +66,21 @@
 	<div class="modal" id="formModal">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal">✕</button>
-			<h3>Report Form Assignment</h3>
+			<h3>Report Form Distribution</h3>
 		</div>
 		<div class="modal-body" style="text-align:left;">
 			<div class="row-fluid">
 				<div class="span12">
 					<div class="control-group">
-						<select id="userList" class="span12">
-						<option value="">Select User</option>
+						<label>Add...</label>
+						<select id="reportForms" name="reportForms" class="span12" >
+						<option value="">Select Forms</option>
 						</select>
 					</div>
 					<div class="control-group">
-					<select id="reportForms" name="reportForms" class="span12" multiple="multiple" size='10'>
-					</select>
+						<label>To User Role...</label>
+						<select id="userList" class="span12" multiple="multiple" size='5'>
+						</select>
 					</div>
 					<div class="control-group pull-right">
 					<button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>

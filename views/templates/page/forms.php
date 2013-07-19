@@ -130,17 +130,7 @@ span.error{
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="optional" data-name="" data-type="media:image">
-			<label class="control-label">Attach Photo</label>
-			<input type="hidden">
-			<input id="imageCapture-1" style="display: none;" type="file" accept="video/*;capture=camera">
-			<ul class="capture-list" id="capture-img-colImg1">
-			<li>
-			    <img class="capture-btn" data-for="colImg1" src="./assets/img/camara.png" style="height: 64px; width:64px;"></img>
-			</li>
-		    	</ul>
-			<span class="clearfix"></span>
-		</div>
+		<div class="selectorField well clearfix" data-rules="optional" data-type="media:image" data-name="photos" id="ctl3"><label for="photos">Attach Photo</label><input name="imageCapture-photos" id="imageCapture-photos" value="" type="file" accept="video/*;capture=camera" style="display: none;" class="imageCapture"><input name="photos" id="photos" value="" type="hidden"><ul class="capture-list" id="capture-img-photos"><li><img src="./img/camara.png" class="capture-btn" data-for="photos"></li></ul><span class="error"></span></div>
 		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="dropdown">
 			<label class="control-label">Combobox</label>
 			<select class="ctrl-combobox span12">
@@ -282,10 +272,6 @@ span.error{
 							<dt>Created On:&nbsp;</dt><dd>{{= moment(date_created.date).format('L') }}</dd>
 							<dt>Last Modified:&nbsp;</dt><dd>{{= moment(date_modified.date).format('L') }}</dd>
 						<dl>
-					</div>
-					<div class="control-group pull-right">
-					<button type="button" onclick='remove_form({{= id }})' class="btn btn-danger" data-dismiss="modal">REMOVE<i class="icon-minus-sign icon-white"></i></button>
-					<button type="button" onclick='router.navigate("/edit/{{= id }}", true);' class="btn btn-primary" data-dismiss="modal">Edit<i class="icon-minus-sign icon-white"></i></button>
 					</div>
 				</div>
 			</div>

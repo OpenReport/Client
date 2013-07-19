@@ -5,7 +5,7 @@
 
 <script id="reportingForms" type="text/template">
 	<div class="span12">
-		<h4>Reports</h4>
+		<h4>Report Forms List</h4>
 		<table class="table table-condensed">
 		<thead>
 		  <tr>
