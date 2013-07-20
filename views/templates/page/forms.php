@@ -191,9 +191,9 @@ span.error{
 	{{ } }}
 	</ol>
 	<h4>Identity Field</h4>
-	<select id="identity">
+	<select id="identity_name">
 	{{ for (var i = 0; i < columns.length; i++) { if(columns[i].type === 'text') }}
-	<option value="{{= columns[i].name }}" {{= columns[i].name === identity ? 'selected':'' }}>{{= columns[i].display }}</option>
+	<option value="{{= columns[i].name }}" {{= columns[i].name === identity_name ? 'selected':'' }}>{{= columns[i].display }}</option>
 	{{ } }}
 	</select>
   </div>

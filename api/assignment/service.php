@@ -87,6 +87,11 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment->api_key = $apiKey;
         $assignment->form_id = $request->form_id;
         $assignment->user_id = $request->user_id;
+        $assignment->schedule = $request->schedule;
+        $assignment->repeat_schedule = $request->repeat_schedule;
+        $assignment->date_assigned = $request->date_assigned;
+        $assignment->date_expires = $request->date_expires;
+        $assignment->status = $request->status;
         $assignment->is_active = true;
         $assignment->save();
         // package the data

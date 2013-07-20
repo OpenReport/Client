@@ -42,36 +42,46 @@ $app->get("/record/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 
 
 /**
- * Fetch Report Data for Form
+ * Fetch Report Records for Form
  *
- * get: /report/{apiKey}/{formId}[?s={startDate}e={endDate}[&id={}][&t={tags}][&l={limit[,start]}]]
+ * get: /report/{apiKey}/{formId}[?s={startDate}e={endDate}[&id={}][&t={tags}][&l={limit[,offset]}]]
  *
  */
 $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
 
     try{
 
+
+        $options = array();
         $startDate = $app->request()->params('s');
         $endDate = $app->request()->params('e');
-
         if($startDate == null || $endDate == null){
-        // find all records
-            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
+            // find all records
+            $options['conditions'] = array('api_key = ? AND form_id = ?', $apiKey, $formId);
         }
         else{
-            $records = Record::all(array('conditions' => array('api_key = ? AND form_id = ? AND DATE(record_date) BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate)));
+            // filter records
+            $options['conditions'] = array('api_key = ? AND form_id = ? AND DATE(record_date) BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate);
         }
+        $recCount = Record::count($options);
+        if((int)$recCount > 0){
+            $page = $app->request()->params('l');
+            if($page != null){
+                $limit = split(',',$page);
+                if(count($limit)>1){
+                     $options['offset'] = $limit[1];
+                }
+                $options['limit'] = $limit[0];
+            }
+            $options['order'] = 'record_date desc';
+        }
+        // fetch records
+        $records = Record::all($options);
         // get report info - use last version
         $report = Report::last(array('conditions' => array('api_key = ? AND form_id = ?', $apiKey, $formId)));
-        $columns = array();
-        foreach($report->meta as $fieldset){
-            foreach($fieldset['fields'] as $column){
-                $columns[] = array('name'=>$column['name'], 'type'=>$column['type'], 'values'=>(!array_key_exists('values', $column)? '':$column['values']));
-            }
-        }
+
         // check if empty
         if(!empty($records)){
-
             // normalize data
             $data = array();
             foreach($records as $record){
@@ -80,13 +90,20 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
                 $temp['lon'] = $record->lon;
                 $temp['lat'] = $record->lat;
                 $temp['recorded'] = $record->record_date;
-
                 $data[] = $temp;
             }
+            $columns = array();
+            foreach($report->meta as $fieldset){
+                foreach($fieldset['fields'] as $column){
+                    $columns[] = array('name'=>$column['name'], 'type'=>$column['type'], 'values'=>(!array_key_exists('values', $column)? '':$column['values']));
+                }
+            }
+            // add record date
+            $columns[] = array('name'=>'recorded', 'type'=>'date', 'values'=>'');
 
             // package the data
             $response['data'] = array('report'=>$report->values_for(array('id','title','version')), 'columns'=>$columns, 'rows'=>$data);
-            $response['count'] = count($response['data']['rows']);
+            $response['count'] = $recCount;
         }
         else{
             $response['message'] = 'No Records Found';
@@ -96,7 +113,7 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
     catch (Exception $e) {
         $response['status'] = 'error';
         $response['message'] = $e->getMessage();
-        $response['data'] = array();;
+        $response['data'] = array('report'=>null, 'columns'=>array(), 'rows'=>array() );
         $response['count'] = 0;
     }
     // send the data
@@ -107,7 +124,7 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 /**
  * Fetch Reports for Identity
  *
- * get: /report/{apiKey}/{identity}[?s={startDate}e={endDate}][&l={limit[,start]}]]
+ * get: /report/{apiKey}/{identity}[?s={startDate}e={endDate}][&p={page[,limit]}]]
  *
  */
 $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app, $response) {
@@ -116,8 +133,10 @@ $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app,
 
         $startDate = $app->request()->params('s');
         $endDate = $app->request()->params('e');
-        $join = array('LEFT JOIN forms ON(records.form_id = forms.id)');
-        $sel = 'records.*, forms.title AS form_title';
+        $page = $app->request()->params('p');
+
+
+
 
 
         if($startDate == null || $endDate == null){

@@ -23,7 +23,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'system/Slim/Slim.php';
 
 
 $app = new \Slim\Slim(array('session.handler' => null, 'templates.path'=>$_SERVER['DOCUMENT_ROOT'].'views/templates/'));
-$app->add(new \Slim\Middleware\SessionCookie());
+$app->add(new \Slim\Middleware\SessionCookie(array('secret' => 'Z54cN9Jf8nE6hqj9V0wAuoaldIQ=','expires' => '60 minutes')));
 
 require $_SERVER['DOCUMENT_ROOT'].'views/AuthView.php';
 $app->view(new AuthView());

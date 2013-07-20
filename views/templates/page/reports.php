@@ -34,10 +34,11 @@
 	<div class="span12">
 	<!-- Display records -->
 		<div class="btn-group pull-right" style="margin: 9px 0 5px;">
-		<button id="navPrev" class="btn btn-mini">«</button>><button id="navNext" class="btn btn-mini">»</button></li>
+		<button id="navPrev" class="btn btn-mini">«</button><button id="navNext" class="btn btn-mini">»</button></li>
 
 		</div>
-		<h4>{{= report.title}} Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h4>
+		<h4>{{= report.title}} Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}<br/>
+			<small>showing {{= records.length}} of {{= count }} records</small></h4>
 		{{ if(!records.length){ }}<p> NO RECORDS FOUND </p> {{ } }}
 		<table class="table sortable">
 			<thead>
@@ -47,6 +48,7 @@
 			  {{_(headers).each(function(col){ if(col.name !== 'id') }}
 				<th class="sortable">{{= col.name }} </th>
 			  {{ }); }}
+
 			  </tr>
 			</thead>
 			<tbody>
@@ -57,11 +59,16 @@
 				{{_(headers).each(function(col){ if(col.name !== 'id')  }}
 				  <td>{{= formatColumnData(row[col.name], col.type) }} </td>
 				{{ }); }}
+
 				</tr>
 			  {{ }); }}
 			</tbody>
 		</table>
-
+		<div class="btn-group btn-group pull-right">
+		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+		<button class="btn btn-mini">Page</button>
+		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+		</div>
 	{{_(headers).each(function(col){  }}
 	  {{ if('object' === typeof col.values) { }}
 	  <div class="span3">
@@ -108,7 +115,7 @@
 
 				</div>
 				<div class="tab-pane" id="map">
-				<div id="map_canvas" class="thumbnail"></div>
+				<div id="map_canvas" class="thumbnail" style="height:480px;"></div>
 				</div>
 				<div class="tab-pane" id="media">
 
@@ -282,6 +289,6 @@
 
 <!-- need async load here -->
 <script type="text/javascript">
-	document.write('<script src="http://maps.google.com/maps/api/js?key='+map_api_key+'&sensor=false">');
+	document.write('<script src="http://maps.google.com/maps/api/js?&sensor=false">');
 	document.write('</script'+'>')
 </script>

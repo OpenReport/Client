@@ -32,7 +32,7 @@
                 <td>{{= assignment.get('schedule') }}</td>
                 <td>{{= assignment.get('status') }}</td>
                 <td>{{= moment(assignment.get('date_expires').date).format('L') }}</td>
-                <td><span class="pull-right"><button data-for="{{= assignment.get('id') }}" class="btn btn-mini btn-info">Edit <i class="icon-edit icon-white"></i></button></span></td>
+                <td><span class="pull-right"><button data-for="{{= assignment.get('id') }}" class="edit btn btn-mini btn-info">Edit <i class="icon-edit icon-white"></i></button></span></td>
               </tr>
 
             {{ }); }}
@@ -46,7 +46,54 @@
 		</div>
 </script>
 
+<script id="scheduleDialog" type="text/template">
+	<div class="modal" id="formModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">✕</button>
+			<h3>Assignment Schedule</h3>
+		</div>
+		<div class="modal-body" style="text-align:left;">
+			<div class="row-fluid">
+				<div class="span12">
+					<legend>Schedule</legend>
+					<div class="control-group">
+					  <div class='row-fluid'>
+					  <div class="span6">
+						<label>Schedule</label>
+						<select id="schedule" class="span12">
+							<option value="daily">Daily</option>
+							<option value="weekly">Weekly</option>
+							<option value="monthly">Monthly</option>
+						</select>
+					  </div>
+					  <div class="span6">
+						<label>Repeat</label>
+						<input type="text" id="repeat_schedule" value="1" class="span12">
+					  </div>
+					  </div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Start Assignment</label>
+						<div class="input-append date" data-date-format="MM d yyyy">
+							<input id="date_assigned" class="span11" type="text" value="{{= moment().format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Expires</label>
+						<div class="input-append date" data-date-format="MM d yyyy">
+							<input id="date_expires" class="span11" type="text" value="" disabled><span class="add-on"><i class="icon-calendar"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="control-group pull-right">
+				<button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+				</div>
+			</div>
 
+		</div>
+	</div>
+
+</script>
 
 
 
@@ -69,44 +116,70 @@
         <div class="span6">
             <legend>Schedule</legend>
             <div class="control-group">
-                <label class="control-label">Start Assignment</label>
-                <div class="input-append date" data-date-format="MM d yyyy">
-                    <input id="startDate" class="span11" type="text" value="{{= moment(filters.startDate).format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
-                </div>
-            </div>
-            <div class="control-group">
+			  <div class='row-fluid'>
+			  <div class="span6">
                 <label>Schedule</label>
                 <select id="schedule" class="span12">
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                 </select>
+			  </div>
+			  <div class="span6">
+				<label>Repeat</label>
+                <input type="text" id="repeat_schedule" value="1" class="span12">
+              </div>
+			  </div>
+			</div>
+            <div class="control-group">
+                <label class="control-label">Start Assignment</label>
+                <div class="input-append date" data-date-format="MM d yyyy">
+                    <input id="date_assigned" class="span11" type="text" value="{{= moment().format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
             </div>
-
             <div class="control-group">
                 <label class="control-label">Expires</label>
                 <div class="input-append date" data-date-format="MM d yyyy">
-                    <input id="expireDate" class="span11" type="text" value="{{= moment(filters.endDate).format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
+                    <input id="date_expires" class="span11" type="text" value="" disabled><span class="add-on"><i class="icon-calendar"></i></span>
                 </div>
             </div>
         </div>
         <div class="clearfix">
             <div class="control-group pull-right">
-            <button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+            <button id='submit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
             </div>
         </div>
     </div>
 	<!-- Bit of a Hack... but it works! -->
 	<script type="text/javascript">
 
-	  // initialize filter control
+	  // initialize date controls
 	  $('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
-		// set filter dates
-		filters.endDate = moment($('#endDate').val());
-		filters.startDate = moment($('#startDate').val());
-		if(filters.navigate.on="custom") filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
+			setExpire(e.date);
+	  });
+	  $('#schedule, #repeat_schedule').on('change', function(e){
+		// update date_expires
+		setExpire($('#date_assigned').val());
 
 	  });
+	  // expire logic
+	  function setExpire(date){
+		var startDate = moment(date);
+		var endDate = startDate;
+		var cnt = $('#repeat_schedule').val();
+		switch($('#schedule').val()){
+			case 'daily':
+				endDate = startDate.add('days', cnt-1);
+			break;
+			case 'weekly':
+				endDate = startDate.add('weeks', cnt-1);
+			break;
+			case 'monthly':
+				endDate = startDate.add('months', cnt-1);
+			break;
+		}
+		$('#date_expires').val(endDate.format('LL'));
+	  }
     </script>
 
 </script>

@@ -1,7 +1,12 @@
+<script type="text/javascript">
 <!--
 
+var userView = {
+	roles: []
+}
 
 -->
+</script>
 <div class="container-fluid">
 	<div id="userContext" class="row-fluid well"></div>
     <!-- Modals -->
@@ -58,8 +63,14 @@
 
 </script>
 
-
+<style>
+	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+	.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+	.autocomplete-selected { background: #F0F0F0; }
+	.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+</style>
 <script id="userForm" type="text/template">
+
     <div class="form-horizontal">
     <fieldset class="span12">
         <legend>User</legend>
@@ -98,6 +109,11 @@
         </div>
     </fieldset>
     </div>
+
+	 <script type="text/javascript">
+
+	 </script>
+
 </script>
 
 
@@ -121,7 +137,7 @@
 	</div>
 </script>
 
-<script type="text/javascript" src="/assets/js/vendor/backbone.paginator.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/jquery.autocomplete.min.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/userModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/users.js"></script>

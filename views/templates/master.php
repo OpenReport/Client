@@ -20,6 +20,7 @@
   <script src="/assets/js/vendor/underscore-min.js"></script>
   <script src="/assets/js/vendor/backbone-min.js"></script>
 
+  <script src="/assets/js/vendor/backbone.paginator.min.js"></script>
   <script src="/assets/js/vendor/bootstrap.min.js"></script>
   <script src="/assets/js/vendor/bootstrap-datepicker.js"></script>
   <script src="/assets/js/vendor/moment.min.js"></script>
@@ -34,6 +35,8 @@
         'endDate':moment().endOf('month'),
         'filter':{}
       };
+
+      var paging = {'items':10};
 
       var localTime = moment();
       var navTime = localTime;
@@ -65,11 +68,10 @@
                     <ul class="nav">
                         <li class=""><a href="/"><i class="icon-home icon-black"></i> Dashboard</a></li>
                         <li class=""><a href="/reports"><i class="icon-bar-chart icon-black"></i> Reports</a></li>
-                        <li><a href="/assignment"><i class="icon icon-check"></i>&nbsp;Assignments</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-edit icon-black"></i>&nbsp;Manage&nbsp;<b class="caret"></b></a>
                             <ul class="dropdown-menu">
-
+                                <li><a href="/assignment"><i class="icon icon-check"></i>&nbsp;Report Assignments</a></li>
                                 <li><a href="/distribution"><i class="icon icon-share"></i>&nbsp;Report Distribution</a></li>
                                 <li><a href="/forms"><i class="icon icon-list-alt"></i>&nbsp;Reporting Forms</a></li>
                                 <li><a href="/users"><i class="icon icon-user"></i>&nbsp;User Accounts</a></li>

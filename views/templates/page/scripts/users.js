@@ -106,6 +106,15 @@ app.views.UserFormView = Backbone.View.extend({
 	// build content
 	var template = _.template($("#userForm").html(), {user:this.model.attributes});
     $(this.el).html(template);
+console.log(userView.roles);
+		$('#roles').autocomplete({
+			delimiter: ',',
+			lookup: userView.roles,
+			onSelect: function (suggestion) {
+				alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+			}
+		});
+
     return this;
   },
   events:{
@@ -198,6 +207,7 @@ app.controller = Backbone.Router.extend({
 			url:'/api/user/roles/'+apiKey,
 			dataType: "json",
 			success: function(response){
+			  userView.roles = response.data;
 				$("#infoBox").html(_.template($("#info").html(), {roles:response.data, select:role}));
 			}
 
@@ -247,5 +257,15 @@ app.init(new app.controller());
  *
  */
 $(document).ready(function(){
-	Backbone.history.start({pushstate:false});
+
+  		$.ajax({
+			url:'/api/user/roles/'+apiKey,
+			dataType: "json",
+			success: function(response){
+			  userView.roles = response.data;
+			  Backbone.history.start({pushstate:false});
+			}
+
+		});
+
 });

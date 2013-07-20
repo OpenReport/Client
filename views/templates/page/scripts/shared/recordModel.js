@@ -40,19 +40,18 @@ app.collections.Records = Backbone.Collection.extend({
     identity:'',
     startDate:'',   // record month
     endDate:'',   // record year
-
+    recCount:0,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
         this.identity = options.identity;
         this.formId = options.formId;
     },
-    //fetchRecords: function(options) {
-    //    options || (options = {});
-    //    this.key = options.key;
-    //    this.formId = options.formId;
-    //    this.fetch();
-    //},
+    fetchRecords: function(options) {
+        options || (options = {});
+        this.pageOffset = options.pageOffset;
+        this.fetch(options);
+    },
     // override fetch url for addtional uri elements
     url:function() {
 
@@ -64,13 +63,20 @@ app.collections.Records = Backbone.Collection.extend({
             // fetch records by idenity
             var uri = 'records/'+   this.key+'/'+this.identity;
         }
-        // get filter dates
+        var limit = paging.items;
+        // check for paging
+        if('undefined' != typeof this.pageOffset){
+
+            limit = limit+','+this.pageOffset;
+        }
+
+        // get by filter dates
         this.startDate = filters.startDate.format('YYYY-MM-DD')
         this.endDate = filters.endDate.format('YYYY-MM-DD')
-
-        return "/api/report/"+uri+"?s="+this.startDate+'&e='+this.endDate;
+        return "/api/report/"+uri+"?s="+this.startDate+'&e='+this.endDate+'&l='+limit;
     },
     parse:function(response){
+        this.recCount = response.count;
         return response.data;
     }
 });

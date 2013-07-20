@@ -39,20 +39,16 @@ app.views.AssignmentsView = Backbone.View.extend({
     var template = _.template($("#assignments").html(), params);
     $(this.el).html(template);
 
-  }/*,
+  },
   events:{
-    "click button.edit":"editAssignment",
-	"click #add":"addAssignment"
+    "click button.edit":"editAssignment"
   },
-  editAssignment:function(){
-
-  },
-  addAssignment: function(){
+  editAssignment:function(e){
 	var base = this;
 	$('#dialog').html('');
-    var template = _.template($("#assignDialog").html());
+    var template = _.template($("#scheduleDialog").html());
     $('#dialog').html(template).modal();
-  }*/
+  }
 });
 
 
@@ -106,17 +102,40 @@ app.views.AssignmentForm = Backbone.View.extend({
     "click #close":"cancel"
   },
   save:function(){
-
+	var users = $('#userList').val();
+	var form_id = $('#reportList').val();
+	if(users == null || form_id == '') return this;
+	var schedule = $('#schedule').val();
+	var repeat_schedule = $('#repeat_schedule').val();
+	var date_assigned = $('#date_assigned').val();
+	var date_expires = $('#date_expires').val();
+	for (var i = 0; i < users.length; i++) {
+	  var assignment = new app.models.Assignment();
+	  assignment.set({
+		schedule: schedule,
+		repeat_schedule: repeat_schedule,
+		date_assigned: date_assigned,
+		date_expires: date_expires,
+		form_id: form_id,
+		user_id: users[i],
+		status: 'open',
+		is_active: 1
+	  });
+	  assignment.save();
+	}
+	this.close();
+	app.router.navigate('/', {trigger: true});
+	return this;
   },
   cancel:function () {
     this.close();
     window.history.back();
-  }/*,
+  },
   close:function () {
 
     $(this.el).unbind();
     $(this.el).empty();
-  }*/
+  }
 
 
 });

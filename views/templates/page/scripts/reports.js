@@ -44,6 +44,9 @@ function formatColumnData(value, type){
 	else if(type === 'comment' && value.length > 26){
 		retValue = value.substring(0,23)+'...';
 	}
+	else if(type === 'date'){
+		retValue = moment(value.date).format('ll');
+	}
 
 	return retValue;
 }
@@ -90,7 +93,7 @@ function formatMedia(links){
 
 	for(i=0;i<images.length;i++){
 		if(images[i] === '') continue;
-		media = media + '<img class="thumb" src="http://api.openreport.local/media/data/'+images[i]+'" >';
+		media = media + '<img class="span12 thumb" src="http://api.openreport.local/media/data/'+images[i]+'" >';
 	}
 
 	return media === '' ? 'no photos':media;
@@ -104,8 +107,11 @@ function formatMedia(links){
 app.views.ReportsView = Backbone.View.extend({
   el: '#reportContext',
   collection: null,
+  pageIndex: 0,
+  recordCount: 0,
   initialize: function(options){
-    _.bind(this, 'render');
+	var base = this;
+    _.bind(this, 'render', 'next', 'prev');
     this.listenTo(this.collection, 'reset', this.render);
 	this.collection.fetch();
   },
@@ -121,7 +127,6 @@ app.views.ReportsView = Backbone.View.extend({
 
 	return this;
   },
-
   close:function () {
     $(this.el).unbind();
     $(this.el).empty();
@@ -201,21 +206,17 @@ app.views.RelatedView = Backbone.View.extend({
  */
 app.views.RecordsView = Backbone.View.extend({
   el: '#reportContext',
+  pageIndex: 0,
+  recordCount: 0,
   collection: null,
   initialize: function(options){
     _.bind(this, 'render');
     this.listenTo(this.collection, 'reset', this.render);
     this.collection.fetch();
   },
-
-  events:{
-    "click #export":"exportRecords",
-    "click #navPrev":"prev",
-    "click #navNext":"next"
-  },
   render: function(){
 
-	var params = { report:this.collection.models[0].get('report'), headers: this.collection.models[0].get('columns'), records: this.collection.models[0].get('rows') };
+	var params = { report:this.collection.models[0].get('report'), headers: this.collection.models[0].get('columns'), records: this.collection.models[0].get('rows'), count:this.collection.recCount };
     var template = _.template($("#reportRecords").html(), params);
     $(this.el).html(template);
 	// render once
@@ -229,6 +230,14 @@ app.views.RecordsView = Backbone.View.extend({
     }
     return this;
   },
+  events:{
+    "click #export":"exportRecords",
+    "click #navPrev":"prev",
+    "click #navNext":"next",
+    "click #nextPage":"prevPage",
+    "click #prevPage":"nextPage"
+
+  },
   next: function(e){
 
 	filters.startDate.add(filters.navigate.on,filters.navigate.index);
@@ -241,9 +250,24 @@ app.views.RecordsView = Backbone.View.extend({
 	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
 	this.refresh();
   },
+
+  prevPage: function(index){
+	if((this.pageIndex) < paging.items ) return;
+	this.pageIndex = this.pageIndex - paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+  nextPage:function(index){
+	if((this.pageIndex + paging.items) > this.collection.recCount) return;
+	this.pageIndex = this.pageIndex + paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
   refresh:function(){
+	this.pageIndex = 0;
 	this.collection.fetch();
   },
+
   exportRecords: function(){
 	var csv = jsonExport(this.collection.models[0].get('rows'), true, true);
 	window.open("data:text/csv;charset=utf-8," + escape(csv));
@@ -260,6 +284,7 @@ app.views.RecordDetail = Backbone.View.extend({
   el: '#reportContext',
   model: null,
   initialize: function(options){
+	_.bindAll(this, 'tabShown');
     this.listenTo(this.model,'change', this.render);
     this.model.fetch();
   },
@@ -281,20 +306,35 @@ app.views.RecordDetail = Backbone.View.extend({
   },
   tabShown: function(e){
 	// catch map tab
-	if(e.target.hash == '#map'){
+	if(e.target.hash == '#map' && map == null){
+		console.log(this.model.attributes.data.record.lat);
+		console.log(this.model.attributes.data.record.lon);
 		try{
-		    var map = new google.maps.Map(document.getElementById("map_canvas"), {
-		      mapTypeId: google.maps.MapTypeId.HYBRID,
-		      disableDefaultUI:true,
-		      rotateControl:true
-		    });
+
+			var Latlng = new google.maps.LatLng(this.model.attributes.data.record.lat,this.model.attributes.data.record.lon);
+
+			var mapOptions = {
+				zoom: 20,
+				center: Latlng,
+				mapTypeId: google.maps.MapTypeId.HYBRID
+			}
+
+
+		    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+			var marker = new google.maps.Marker({
+				  position: Latlng,
+				  map: map,
+				  title: this.model.attributes.data.record.identity
+			  });
+
+
 		}
 		catch(e){
 			$('div#map').html('<p>Maps Offline</p>');
 		    return;
 		}
 	}
-
 
   },
 
@@ -385,4 +425,5 @@ app.init(new app.controller());
  */
 $(document).ready(function(){
 	Backbone.history.start({pushstate:false});
+
 });

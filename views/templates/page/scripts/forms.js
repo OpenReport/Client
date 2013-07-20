@@ -185,7 +185,7 @@ function updateList(){
 	ol = $('ol#col-list');
 	ol.html('');
 
-	select = $('select#identity');
+	select = $('select#identity_name');
 	id = select.val();
 	select.html('');
 
@@ -299,7 +299,7 @@ app.views.FormView = Backbone.View.extend({
 		is_published: ($('#is_published').is(':checked') ? 1:0),
 		is_public: ($('#is_public').is(':checked') ? 1:0),
 		new_report: ($('#new_report').is(':checked') ? 1:0),
-		identity: $('#identity').val(),
+		identity_name: $('#identity_name').val(),
 		meta: {name:$('#formName').val(),
 			   title:$('#formTitle').val(),
 			   desc:$('#formDescription').val(),
@@ -375,7 +375,7 @@ app.views.FormView = Backbone.View.extend({
 	});
 	// capture column names
 	this.columns = listNames(this.model.attributes.meta.fieldset);
-	$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity:this.model.attributes.identity}));
+	$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity_name:this.model.attributes.identity_name}));
 
     return this;
   },

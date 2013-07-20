@@ -124,7 +124,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
         $form->is_public = $request->is_public;
-        $form->identity = $request->identity;
+        $form->identity_name = $request->identity_name;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
@@ -198,7 +198,7 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         $form->date_modified = $today;
         $form->is_published = $request->is_published;
         $form->is_public = $request->is_public;
-        $form->identity = $request->identity;
+        $form->identity_name = $request->identity_name;
         $form->meta = json_encode($request->meta);
         $form->api_key = $apiKey;
         $form->save();
@@ -318,6 +318,6 @@ function getColumns($data){
  */
 function formArrayMap($forms){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'report_version\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_public\',\'is_published\',\'identity\'));'),$forms);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'report_version\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_public\',\'is_published\',\'identity_name\'));'),$forms);
 
 }
