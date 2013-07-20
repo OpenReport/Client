@@ -51,7 +51,6 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 
     try{
 
-
         $options = array();
         $startDate = $app->request()->params('s');
         $endDate = $app->request()->params('e');
@@ -124,29 +123,41 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
 /**
  * Fetch Reports for Identity
  *
- * get: /report/{apiKey}/{identity}[?s={startDate}e={endDate}][&p={page[,limit]}]]
+ * get: /report/records/{apiKey}/{identity}[?s={startDate}e={endDate}][&p={page[,limit]}]]
  *
  */
 $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app, $response) {
 //var_dump($identity); die;
     try{
+        $options = array();
 
+        $options['joins'] = array('LEFT JOIN forms ON(records.form_id = forms.id)');
+        $options['select'] = 'records.*, forms.title AS form_title';
+        // Date filtering
         $startDate = $app->request()->params('s');
         $endDate = $app->request()->params('e');
-        $page = $app->request()->params('p');
-
-
-
-
-
         if($startDate == null || $endDate == null){
         // find all records
-            $cond = array('records.api_key = ? AND records.identity = ?', $apiKey, $identity);
+            $options['conditions'] = array('records.api_key = ? AND records.identity = ?', $apiKey, $identity);
         }
         else{
-           $cond = array('records.api_key = ? AND records.identity = ? AND DATE(records.record_date) BETWEEN ? AND ?', $apiKey, $identity, $startDate, $endDate);
+           $options['conditions'] = array('records.api_key = ? AND records.identity = ? AND DATE(records.record_date) BETWEEN ? AND ?', $apiKey, $identity, $startDate, $endDate);
         }
-        $records = Record::all(array('joins' => $join, 'select'=>$sel, 'conditions'=>$cond, 'order' => 'records.record_date desc', 'limit'=>10));
+        $recCount = Record::count($options);
+        if((int)$recCount > 0){
+            // paging
+            $page = $app->request()->params('l');
+            if($page != null){
+                $limit = split(',',$page);
+                if(count($limit)>1){
+                     $options['offset'] = $limit[1];
+                }
+                $options['limit'] = $limit[0];
+            }
+            $options['order'] = 'record_date desc';
+        }
+        // fetch records
+        $records = Record::all($options);
         // check if empty
         if(!empty($records)){
 
@@ -166,7 +177,7 @@ $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app,
 
             // package the data
             $response['data'] = $data;
-            $response['count'] = count($data);
+            $response['count'] = $recCount;
         }
         else{
             $response['message'] = 'No Records Found';

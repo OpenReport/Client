@@ -133,7 +133,8 @@
 		<div class="btn-group pull-right" style="margin: 9px 0 5px;">
 		<button id="navPrev" class="btn btn-mini">«</button>><button id="navNext" class="btn btn-mini">»</button></li>
 		</div>
-		<h4>{{=identity}} Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}</h4>
+		<h4>{{=identity}} Reports for {{= filters.startDate.format('LL') }} to {{= filters.endDate.format('LL') }}<br/>
+			<small>showing {{= relatedReports.length}} of {{= count }} records</small></h4>
 		{{ if(!relatedReports.length){ }}<p> NO REPORTS FOUND </p> {{ } }}
 		<table class="table table-condensed">
 		<thead>
@@ -157,6 +158,11 @@
 
 		</tbody>
 		</table>
+		<div class="btn-group btn-group pull-right">
+		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+		<button class="btn btn-mini">Page</button>
+		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+		</div>
 	</div>
 </script>
 <script id="infoDetails" type="text/template">

@@ -141,6 +141,7 @@ app.views.ReportsView = Backbone.View.extend({
  */
 app.views.RelatedView = Backbone.View.extend({
   el: '#reportContext',
+  pageIndex: 0,
   collection: null,
   initialize: function(options){
     _.bind(this, 'render');
@@ -150,7 +151,7 @@ app.views.RelatedView = Backbone.View.extend({
 
   render: function(){
 
-	var params = {relatedReports: this.collection.models, identity:this.collection.identity};
+	var params = {relatedReports: this.collection.models, identity:this.collection.identity, count:this.collection.recCount };
 
 	var template = _.template($("#relatedReports").html(), params);
 	$(this.el).html(template);
@@ -170,7 +171,9 @@ app.views.RelatedView = Backbone.View.extend({
   events:{
     "click #export":"exportRecords",
     "click #navPrev":"prev",
-    "click #navNext":"next"
+    "click #navNext":"next",
+    "click #nextPage":"prevPage",
+    "click #prevPage":"nextPage"
   },
   next: function(e){
 
@@ -184,7 +187,20 @@ app.views.RelatedView = Backbone.View.extend({
 	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
 	this.refresh();
   },
+  prevPage: function(index){
+	if((this.pageIndex) < paging.items ) return;
+	this.pageIndex = this.pageIndex - paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+  nextPage:function(index){
+	if((this.pageIndex + paging.items) > this.collection.recCount) return;
+	this.pageIndex = this.pageIndex + paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
   refresh:function(){
+	this.pageIndex = 0;
 	this.collection.fetch();
   },
   exportRecords: function(){
