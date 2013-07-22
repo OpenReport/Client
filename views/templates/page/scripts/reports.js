@@ -111,14 +111,13 @@ app.views.ReportsView = Backbone.View.extend({
   recordCount: 0,
   initialize: function(options){
 	var base = this;
-    _.bind(this, 'render', 'next', 'prev');
+    //_.bind(this, 'render', 'next', 'prev');
     this.listenTo(this.collection, 'reset', this.render);
 	this.collection.fetch();
   },
 
   render: function(){
-
-	var params = { records: this.collection.models};
+	var params = { forms: this.collection.models, count:this.collection.recCount};
 
 	//console.log(params.records[0].get('title'));
 	var template = _.template($("#reportingForms").html(), params);
@@ -127,9 +126,29 @@ app.views.ReportsView = Backbone.View.extend({
 
 	return this;
   },
+  events:{
+
+    "click #nextPage":"prevPage",
+    "click #prevPage":"nextPage"
+  },
+
+  prevPage: function(index){
+	if((this.pageIndex) < paging.items ) return;
+	this.pageIndex = this.pageIndex - paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+  nextPage:function(index){
+	if((this.pageIndex + paging.items) > this.collection.recCount) return;
+	this.pageIndex = this.pageIndex + paging.items;
+	this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
   close:function () {
     $(this.el).unbind();
     $(this.el).empty();
+	$("#infoBox").unbind();
+	$("#infoBox").empty();
   }
 
 });
@@ -210,6 +229,8 @@ app.views.RelatedView = Backbone.View.extend({
   close:function () {
     $(this.el).unbind();
     $(this.el).empty();
+	$("#infoBox").unbind();
+	$("#infoBox").empty();
   }
 
 });
@@ -287,6 +308,12 @@ app.views.RecordsView = Backbone.View.extend({
   exportRecords: function(){
 	var csv = jsonExport(this.collection.models[0].get('rows'), true, true);
 	window.open("data:text/csv;charset=utf-8," + escape(csv));
+  },
+  close:function () {
+    $(this.el).unbind();
+    $(this.el).empty();
+	$("#infoBox").unbind();
+	$("#infoBox").empty();
   }
 
 });
@@ -323,19 +350,15 @@ app.views.RecordDetail = Backbone.View.extend({
   tabShown: function(e){
 	// catch map tab
 	if(e.target.hash == '#map' && map == null){
-		console.log(this.model.attributes.data.record.lat);
-		console.log(this.model.attributes.data.record.lon);
+
 		try{
 
 			var Latlng = new google.maps.LatLng(this.model.attributes.data.record.lat,this.model.attributes.data.record.lon);
-
 			var mapOptions = {
 				zoom: 20,
 				center: Latlng,
 				mapTypeId: google.maps.MapTypeId.HYBRID
 			}
-
-
 		    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
 			var marker = new google.maps.Marker({
@@ -343,8 +366,6 @@ app.views.RecordDetail = Backbone.View.extend({
 				  map: map,
 				  title: this.model.attributes.data.record.identity
 			  });
-
-
 		}
 		catch(e){
 			$('div#map').html('<p>Maps Offline</p>');
@@ -353,20 +374,12 @@ app.views.RecordDetail = Backbone.View.extend({
 	}
 
   },
-
-
-    //try{
-    //    var map = new google.maps.Map(document.getElementById("map_canvas"), {
-    //      mapTypeId: google.maps.MapTypeId.HYBRID,
-    //      disableDefaultUI:true,
-    //      rotateControl:true
-    //    });
-    //}
-    //catch(e){
-    //
-    //    return;
-    //}
-
+  close:function () {
+    $(this.el).unbind();
+    $(this.el).empty();
+	$("#infoBox").unbind();
+	$("#infoBox").empty();
+  }
 
 });
 
@@ -390,7 +403,8 @@ app.controller = Backbone.Router.extend({
      */
     index: function(tag){
         this.reportList = new app.collections.Forms({key: apiKey, tag: tag});
-        new app.views.ReportsView({collection: this.reportList});
+        if(app.pageView !== null) app.pageView.close();
+        app.pageView = new app.views.ReportsView({collection: this.reportList});
 		// info box
 		$.ajax({
 			url:'/api/form/tags/'+apiKey,
@@ -408,22 +422,21 @@ app.controller = Backbone.Router.extend({
 		// direct call - do not pull from collection
         this.recordList = new app.collections.Records({key: apiKey, formId: id});
 		//console.log(this.recordList);
-        var view = new app.views.RecordsView({collection: this.recordList});
+        if(app.pageView !== null) app.pageView.close();
+        app.pageView = new app.views.RecordsView({collection: this.recordList});
 
     },
 	details: function(id){
 
 		this.record = new app.models.Record({id:id});
-		new app.views.RecordDetail({model:this.record});
+		if(app.pageView !== null) app.pageView.close();
+        app.pageView = new app.views.RecordDetail({model:this.record});
 
-
-		//var template = _.template($("#infoDetails").html());
-		//$("#infoBox").html(template);
 	},
     related: function(identity){
-
         this.reportList = new app.collections.Records({key: apiKey, identity: identity});
-        new app.views.RelatedView({collection: this.reportList});
+		if(app.pageView !== null) app.pageView.close();
+        app.pageView = new app.views.RelatedView({collection: this.reportList});
 
     }
 

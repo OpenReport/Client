@@ -34,7 +34,7 @@ app.views.AssignmentsView = Backbone.View.extend({
   },
 
   render: function(){
-    var params = { records: this.collection.models};
+    var params = { records: this.collection.models, count:this.collection.recCount};
 
     var template = _.template($("#assignments").html(), params);
     $(this.el).html(template);
@@ -70,7 +70,7 @@ app.views.AssignmentForm = Backbone.View.extend({
 	// render user and forms controls
 	// fill in the blanks
 	$.ajax({
-		url:'/api/user/'+apiKey,
+		url:'/api/user/list/'+apiKey,
 		dataType: "json",
 		success: function(response){
 			// add users to drop down
@@ -83,13 +83,13 @@ app.views.AssignmentForm = Backbone.View.extend({
 	});
 
 	$.ajax({
-		url:'/api/form/'+apiKey,
+		url:'/api/form/list/'+apiKey,
 		dataType: "json",
 		success: function(response){
 			// add forms to drop down
 			for (var i = 0; i < response.data.length; i++) {
 			  var item = response.data[i]
-			  $('#reportList').append('<option value="'+item.id+'">'+item.title+'</option>');
+			  $('#reportList').append('<option value="'+item.id+'">'+item.title+' Report</option>');
 			}
 		}
 

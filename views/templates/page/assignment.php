@@ -10,7 +10,8 @@
 <!-- Templates -->
 <script id="assignments" type="text/template">
         <div class="span12">
-			<h4>Report Assignments</h4>
+			<h4>Report Assignments<br/>
+			<small>showing {{= records.length}} of {{= count }} assignments</small></h4>
             <table class="table table-condensed">
             <thead>
               <tr>
@@ -38,12 +39,13 @@
             {{ }); }}
             </tbody>
             </table>
+
+			<div class="btn-group btn-group pull-right">
+			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+			<button class="btn btn-mini">Page</button>
+			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+			</div>
         </div>
-		<div class="btn-group btn-group pull-right" style="display: none;">
-		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
-		<button class="btn btn-mini">Page</button>
-		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
-		</div>
 </script>
 
 <script id="scheduleDialog" type="text/template">

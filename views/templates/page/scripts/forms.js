@@ -1,4 +1,4 @@
-/**
+/*
  * Open Report
  *
  * Copyright 2013, The Austin Conner Group
@@ -17,7 +17,7 @@
  *
  */
 
-/**
+/*
  *   **** SUPPORT FUNCTIONS ****
  *
  *
@@ -137,6 +137,7 @@ function parseFormMeta(){
                 field.values = getOptions($(this).find('select'),'option');
                 break;
         }
+		field.name = underscoreFormat(field.name).toLowerCase();
         field.rules = $(this).data('rules');
         formFields.push(field);
 
@@ -218,20 +219,18 @@ app.views.FormsView = Backbone.View.extend({
   el: '#formContext',
   collection: null,
   initialize: function(options){
-    _.bind(this, 'render');
+    //_.bind(this, 'render');
     this.listenTo(this.collection, 'reset', this.render);
     this.collection.fetch();
 
   },
 
   events:{
-    "click .detailBtn":"detail",
-    "click .deleteBtn":"deleteForm"
+    "click .detailBtn":"detail"
   },
 
   render: function(){
-    var params = { records: this.collection.models};
-
+	var params = { forms:this.collection.models, count:this.collection.recCount };
     var template = _.template($("#forms").html(), params);
     $(this.el).html(template);
 
@@ -251,16 +250,6 @@ app.views.FormsView = Backbone.View.extend({
     var template = _.template($("#formDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
-  },
-
-  deleteForm: function(e){
-
-
-    var target = e.target;
-    //model = this.collection.get(target.id);
-
-
-    return this;
   }
 
 });
@@ -275,19 +264,13 @@ app.views.FormView = Backbone.View.extend({
   model: null,
   columns: null,
   initialize: function(options){
-    _.bind(this, 'render');
+    //_.bind(this, 'render');
     //this.listenTo(this.model, 'change', this.render);
 
   },
   events:{
-	"keyup #formTags": "tagAutoComplete",
     "click #submit":"saveForm",
     "click #close":"cancel"
-  },
-
-  tagAutoComplete: function(e){
-	//console.log(String.fromCharCode(e.keyCode).toLocaleLowerCase());
-
   },
 
   saveForm:_.debounce(function() {
@@ -295,26 +278,23 @@ app.views.FormView = Backbone.View.extend({
     this.model.set({
         title: $('#formTitle').val(),
         description: $('#formDescription').val(),
-		tags: $('#formTags').val(),
+		tags: hyphenFormat($('#formTags').val()),
 		is_published: ($('#is_published').is(':checked') ? 1:0),
 		is_public: ($('#is_public').is(':checked') ? 1:0),
 		new_report: ($('#new_report').is(':checked') ? 1:0),
 		identity_name: $('#identity_name').val(),
-		meta: {name:$('#formName').val(),
-			   title:$('#formTitle').val(),
-			   desc:$('#formDescription').val(),
-			   fieldset:[{name:'group-1', legend:'',fields:parseFormMeta()}]}
-
+		meta: {name:hyphenFormat($('#formName').val()).toUpperCase(),
+			title:$('#formTitle').val(),
+			desc:$('#formDescription').val(),
+			fieldset:[{name:hyphenFormat($('#formName').val()).toUpperCase()+'-A', legend:'',fields:parseFormMeta()}]}
     });
 	// validation
 	var errors = this.model.validate();
 	if(typeof(errors) !== 'undefined'){
-
 		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
 		$('#dialog').html(template).modal();
 		return true;
 	}
-
 	// Save It
     if (this.model.isNew()) {
         //var self = this;
@@ -324,10 +304,8 @@ app.views.FormView = Backbone.View.extend({
             }
         });
     } else {
-
         this.model.save({}, {
             success:function () {
-
                 app.router.navigate('/', {trigger: true});
             }
         });
@@ -345,7 +323,12 @@ app.views.FormView = Backbone.View.extend({
     // build form controls
 	var ctrlIndex = 1, fldIndex = 1;
 	$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
-
+	console.log(app.data.tags);
+	$('#formTags').autocomplete({
+		tabDisabled: true,
+		autoSelectFirst: true,
+		lookup: app.data.tags
+	});
     // make sortable
 	$( ".droppedFields" ).sortable({
 		cancel: null, // Cancel the default events on the controls
@@ -405,7 +388,6 @@ app.controller = Backbone.Router.extend({
 		"edit/:id" : "edit",
 		"add" : "add"
 	},
-
     /*
      * Display Reporting Tasks Forms
      */
@@ -413,6 +395,7 @@ app.controller = Backbone.Router.extend({
 
         app.data.formList = new app.collections.Forms({key: apiKey, tag: tag});
         new app.views.FormsView({collection: app.data.formList});
+
 		// info box
 		$.ajax({
 			url:'/api/form/tags/'+apiKey,
@@ -421,10 +404,8 @@ app.controller = Backbone.Router.extend({
 				app.data.tags = response.data;
 				$("#infoBox").html(_.template($("#info").html(), {tags:app.data.tags, select:tag}));
 			}
-
 		});
 	},
-
     /*
      * Add Form
      */
@@ -439,12 +420,11 @@ app.controller = Backbone.Router.extend({
      * Edit Form
      */
     edit: function(id){
-		$("#infoBox").html('');
+		$("#infoBox").empty();
         var form = app.data.formList.get(id);
         new app.views.FormView({model:form}).render();
     }
 });
-
 
 /**
  * initilize app

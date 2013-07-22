@@ -71,7 +71,6 @@ app.collections.Users = Backbone.Collection.extend({
         var uri = this.key;
         // fetch records based on tags
         uri = uri + (typeof this.role != 'undefined' ? '/'+this.role:'');
-
         return "/api/user/"+uri;
     },
     parse:function(response){

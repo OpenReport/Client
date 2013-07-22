@@ -24,19 +24,34 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 /**
  * Fetch Form records for apiKey
  *
- * GET: /api/form/{apiKey}[/{tag}]
+ * GET: /api/form/{apiKey}[/{tag}]?l={limit[,offset]}]
  *
  */
 $app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response) {
 
-    // get date
-    $today = new DateTime('GMT');
+
     try {
-        $formData = Form::find('all',
-            array('conditions'=>array('api_key = ? AND is_deleted = 0 AND (tags=? OR ?=\'\')', $apiKey, $tag, $tag), 'order'=>'date_modified DESC'));
+        $options = array();
+        $options['conditions'] = array('api_key = ? AND is_deleted = 0 AND (tags=? OR ?=\'\')', $apiKey, $tag, $tag);
+
+        $recCount = Form::count($options);
+
+        if((int)$recCount > 0){
+            $page = $app->request()->params('l');
+            if($page != null){
+                $limit = split(',',$page);
+                if(count($limit)>1){
+                     $options['offset'] = $limit[1];
+                }
+                $options['limit'] = $limit[0];
+            }
+            $options['order'] = 'date_modified DESC';
+        }
+
+        $formData = Form::all($options);
         // package the data
         $response['data'] = formArrayMap($formData);
-        $response['count'] = count($response['data']);
+        $response['count'] = $recCount;
     }
     catch (\ActiveRecord\RecordNotFound $e) {
         $response['message'] = 'No Records Found';
@@ -50,6 +65,34 @@ $app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response)
 
 });
 
+
+/**
+ * Fetch Form List (title and id)
+ *
+ * GET: /api/form/list/{apiKey}
+ *
+ */
+$app->get("/list/:apiKey", function($apiKey) use ($app, $response){
+
+    try {
+        $options = array();
+        $options['conditions'] = array('api_key = ? AND is_deleted = 0 AND is_published = 1', $apiKey);
+        $options['order'] = 'title';
+        $forms = Form::all($options);
+        // package the data
+        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\'));'),$forms);
+        $response['count'] = count($response['data']);
+    }
+    catch (\ActiveRecord\RecordNotFound $e) {
+        $response['message'] = 'No Records Found';
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+
+    // send the data
+    echo json_encode($response);
+
+});
 /**
  * Fetch Forms Tags
  *

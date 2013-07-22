@@ -54,7 +54,7 @@ app.models.Form = Backbone.Model.extend({
 });
 
 app.collections.Forms = Backbone.Collection.extend({
-
+    recCount:0,
     tag:'',
     startDate:'',   // record month
     endDate:'',   // record year
@@ -64,20 +64,28 @@ app.collections.Forms = Backbone.Collection.extend({
         this.key = options.key;
         this.tag = options.tag;
     },
-    //fetchReportForms: function(options) {
-    //    options || (options = {});
-    //    this.key = options.key;
-    //    this.fetch();
-    //},
+    fetchRecords: function(options) {
+        options || (options = {});
+        this.pageOffset = options.pageOffset;
+        this.fetch(options);
+    },
+
     // override fetch url for addtional uri elements
     url:function() {
         // fetch records (get:/api/forms/{key}/[tag])
         var uri = this.key;
         // fetch records based on tags
         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
-        return "/api/form/"+uri;
+        var limit = paging.items;
+        // check for paging
+        if('undefined' != typeof this.pageOffset){
+
+            limit = limit+','+this.pageOffset;
+        }
+        return "/api/form/"+uri+'?l='+limit;
     },
     parse:function(response){
+        this.recCount = response.count;
         return response.data;
     }
 });

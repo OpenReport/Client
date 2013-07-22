@@ -24,7 +24,7 @@
               <tr>
                 <td>{{= distribution.get('user_role') }}</td>
                 <td>{{= distribution.get('form_tag') }}</td>
-                <td><span class="pull-right"><button class="delete btn btn-mini btn-danger" id="{{= distribution.get('id') }}">Delete <i class="icon-remove icon-white"></i></button></span></td>
+                <td><span class="pull-right"><button class="delete btn btn-mini btn-danger" id="{{= distribution.get('id') }}">Remove <i class="icon-remove icon-white"></i></button></span></td>
               </tr>
 
             {{ }); }}

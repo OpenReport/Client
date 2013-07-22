@@ -29,15 +29,37 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
  *
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
+    try {
+        $options = array();
+        $options['joins'] = array('LEFT JOIN forms ON(assignments.form_id = forms.id)','LEFT JOIN users ON(assignments.user_id = users.id)');
+        $options['select'] = 'assignments.*, users.username AS user_name, forms.title AS form_title';
+        $options['conditions'] = array('assignments.api_key = ?', $apiKey);
 
-    $join = array('LEFT JOIN forms ON(assignments.form_id = forms.id)',
-                  'LEFT JOIN users ON(assignments.user_id = users.id)');
-    $sel = 'assignments.*, users.username AS user_name, forms.title AS form_title';
-    $data = Assignment::all(array('select'=>$sel, 'joins'=>$join,'conditions'=>array('assignments.api_key = ?', $apiKey)));
-    // package the data
+        $recCount = Assignment::count($options);
 
-    $response['data'] = assignmentArrayMap($data);
-    $response['count'] = count($data);
+        if((int)$recCount > 0){
+            $page = $app->request()->params('l');
+            if($page != null){
+                $limit = split(',',$page);
+                if(count($limit)>1){
+                     $options['offset'] = $limit[1];
+                }
+                $options['limit'] = $limit[0];
+            }
+            $options['order'] = 'date_expires ASC';
+        }
+
+        $data = Assignment::all($options);
+        // package the data
+        $response['data'] = assignmentArrayMap($data);
+        $response['count'] = $recCount;
+    }
+    catch (\ActiveRecord\RecordNotFound $e) {
+        $response['message'] = 'No Records Found';
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+
     // send the data
     echo json_encode($response);
 

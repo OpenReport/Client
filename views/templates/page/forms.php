@@ -8,7 +8,8 @@
 <script id="forms" type="text/template">
         <div class="span12">
 
-			<h4>Reporting Forms</h4>
+			<h4>Reporting Forms<br/>
+			<small>showing {{= forms.length}} of {{= count }} forms</small></h4>
 			<table class="table table-condensed">
             <thead>
               <tr>
@@ -21,44 +22,51 @@
               </tr>
             </thead>
             <tbody>
-            {{ _(records).each(function(form) { }}
+            {{ _(forms).each(function(form) { }}
               <tr>
-                <td><a class="detailBtn" id="{{= form.get('id') }}" href="#"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
-                <td>{{= form.get('description') }}</td>
-				<td>{{= form.get('tags') }}</td>
-				<td>{{= form.get('is_published') === 1 ? 'Yes':'No' }}</td>
-				<td>{{= form.get('is_public') === 1 ? 'Yes':'No' }}</td>
-                <td><span class="pull-right"><a class="btn btn-mini btn-info" href="#edit/{{= form.get('id') }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
+                <td><a class="detailBtn" id="{{= form.id }}" href="#"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.attributes.title }}</a></td>
+                <td>{{= form.attributes.description }}</td>
+				<td>{{= form.attributes.tags }}</td>
+				<td>{{= form.attributes.is_published === 1 ? 'Yes':'No' }}</td>
+				<td>{{= form.attributes.is_public === 1 ? 'Yes':'No' }}</td>
+                <td><span class="pull-right"><a class="btn btn-mini btn-info" href="#edit/{{= form.attributes.id }}">Edit <i class="icon-edit icon-white"></i></a></span></td>
               </tr>
 
             {{ }); }}
             </tbody>
             </table>
+		<div class="btn-group btn-group pull-right">
+		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+		<button class="btn btn-mini">Page</button>
+		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
         </div>
-
+	</div>
 </script>
 <style>
-img.capture-btn,
-img.capture-img{
-     border: solid 1px black;height: 64px; width:64px;
-margin: 2px;
-padding: 1px;
-}
-ul.capture-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  float: none;
-}
-ul.capture-list > li {
- float: left;
-}
-span.error{
-    float: left;
-    clear: both;
-}
+	img.capture-btn,
+	img.capture-img{
+		 border: solid 1px black;height: 64px; width:64px;
+	margin: 2px;
+	padding: 1px;
+	}
+	ul.capture-list {
+	  list-style-type: none;
+	  margin: 0;
+	  padding: 0;
+	  float: none;
+	}
+	ul.capture-list > li {
+	 float: left;
+	}
+	span.error{
+		float: left;
+		clear: both;
+	}
+	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+	.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+	.autocomplete-selected { background: #F0F0F0; }
+	.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
 </style>
-
 <script id="formBuilder" type="text/template">
 <div class="tabbable">
 	<!-- List of controls rendered into Bootstrap Tabs -->
@@ -291,6 +299,7 @@ span.error{
 
 </script>
 
+<script type="text/javascript" src="/assets/js/vendor/jquery.autocomplete.min.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.builder.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>

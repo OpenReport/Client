@@ -33,7 +33,7 @@
         'navigate':{'on':'month','index':1},
         'startDate':moment().startOf('month'),
         'endDate':moment().endOf('month'),
-        'filter':{}
+        'selected':'#monthly'
       };
 
       var paging = {'items':10};
@@ -152,9 +152,47 @@
 
 
 <script type="text/javascript">
+
+
+  /**
+   * Helper: hyphenFormat()
+   *
+   * Replaces whitespaces with hyphens
+   *
+   */
+  function hyphenFormat(propertyName)
+  {
+    return trim(propertyName).replace(/[\s]+/g, '-');
+  }
+  /**
+   * Helper: underscoreFormat()
+   *
+   * Replaces whitespaces with underscores
+   *
+   */
+  function underscoreFormat(propertyName)
+  {
+    return trim(propertyName).replace(/[\s]+/g, '_');
+  }
+  /**
+   * Helper: trim()
+   *
+   * Trims whitespace from leading and trailing ends of a string
+   *
+   */
+  function trim(property){
+     return property.replace(/^\s+|\s+$/g, '');
+  }
+
+
+  /**
+   *
+   * Set Local Time
+   */
   $(document).ready(function(){
     $('#localDate').append(localTime.format('LL'));
   });
+
 </script>
 
 

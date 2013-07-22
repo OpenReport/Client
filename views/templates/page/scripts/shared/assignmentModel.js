@@ -33,21 +33,32 @@ app.models.Assignment = Backbone.Model.extend({
 
 
 app.collections.Assignments = Backbone.Collection.extend({
-
+    recCount:0,
     model:app.models.Assignment,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
     },
+    fetchRecords: function(options) {
+        options || (options = {});
+        this.pageOffset = options.pageOffset;
+        this.fetch(options);
+    },
     // override fetch url for addtional uri elements
     url:function() {
         var uri = this.key; // default
 
+        var limit = paging.items;
+        // check for paging
+        if('undefined' != typeof this.pageOffset){
 
+            limit = limit+','+this.pageOffset;
+        }
         // return new url
-        return "/api/assignment/"+uri;
+        return "/api/assignment/"+uri+'?l='+limit;
     },
     parse:function(response){
+        this.recCount = response.count;
         return response.data;
     }
 });

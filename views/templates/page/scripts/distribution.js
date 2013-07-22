@@ -42,6 +42,7 @@ app.views.DistributionsView = Backbone.View.extend({
 	// info box
 	if($("#infoBox").html() !== '')return this;
 	var base = this;
+	// REVIEW - NEED A BETTER METHOD HERE
 	$.ajax({
 		url:'/api/form/tags/'+apiKey,
 		dataType: "json",
@@ -82,6 +83,7 @@ app.views.DistributionsView = Backbone.View.extend({
     $('#dialog').html(template).modal();
 	// fill in the blanks
 	$.ajax({
+	  //
 		url:'/api/user/roles/'+apiKey,
 		dataType: "json",
 		success: function(response){
@@ -131,7 +133,7 @@ app.views.DistributionsView = Backbone.View.extend({
     return this;
   },
   /**
-   * REVIEW - SHOULD USE _.filterBy(collection, 'tag', 'inspection');
+   * REVIEW - SHOULD BE ABLE USE _.filterBy(collection, 'tag', 'inspection');
    *
    */
   filterByTag: function(e, base){

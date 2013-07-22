@@ -19,7 +19,35 @@
  */
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
+/**
+ * Fetch User List (title and id)
+ *
+ * GET: /api/user/list/{apiKey}
+ *
+ */
+$app->get("/list/:apiKey", function($apiKey) use ($app, $response){
 
+    try {
+        $options = array();
+        $options['select'] = 'users.id, users.username';
+        $options['joins'] = array('LEFT JOIN accounts ON(accounts.id = users.account_id)');
+        $options['conditions'] = array('accounts.api_key = ? AND users.is_active = 1', $apiKey);
+        $options['order'] = 'users.username';
+        $users = User::all($options);
+        // package the data
+        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'username\'));'),$users);
+        $response['count'] = count($response['data']);
+    }
+    catch (\ActiveRecord\RecordNotFound $e) {
+        $response['message'] = 'No Records Found';
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+
+    // send the data
+    echo json_encode($response);
+
+});
 
 /**
  * Fetch all User records for apiKey

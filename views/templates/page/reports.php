@@ -5,7 +5,8 @@
 
 <script id="reportingForms" type="text/template">
 	<div class="span12">
-		<h4>Report Forms List</h4>
+		<h4>Reports<br/>
+			<small>showing {{= forms.length}} of {{= count }}</small></h4>
 		<table class="table table-condensed">
 		<thead>
 		  <tr>
@@ -16,17 +17,21 @@
 		  </tr>
 		</thead>
 		<tbody>
-		{{ _(records).each(function(form) { if(form.get('is_published') === 1) }}
+		{{ _(forms).each(function(form) { if(form.attributes.is_published === 1) }}
 		  <tr>
-			<td><a class="form" id="{{= form.get('id') }}" href="#records/{{= form.get('id') }}"><i class="icon-list icon-white"></i>&nbsp;{{= form.get('title') }}</a></td>
-			<td>{{= form.get('description') }}</td>
-			<td>{{= form.get('tags') }}</td>
-			<td>{{= moment(form.get('date_modified').date).format('L') }}</td>
+			<td><a class="form" id="{{= form.attributes.id }}" href="#records/{{= form.attributes.id }}"><i class="icon-list icon-white"></i>&nbsp;{{= form.attributes.title }}</a></td>
+			<td>{{= form.attributes.description }}</td>
+			<td>{{= form.attributes.tags }}</td>
+			<td>{{= moment(form.attributes.date_modified.date).format('L') }}</td>
 		  </tr>
-
 		{{ }); }}
 		</tbody>
 		</table>
+		<div class="btn-group btn-group pull-right">
+		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+		<button class="btn btn-mini">Page</button>
+		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+		</div>
 	</div>
 
 </script>
@@ -48,7 +53,6 @@
 			  {{_(headers).each(function(col){ if(col.name !== 'id') }}
 				<th class="sortable">{{= col.name }} </th>
 			  {{ }); }}
-
 			  </tr>
 			</thead>
 			<tbody>
@@ -198,7 +202,7 @@
   <div class="control-group">
     <h4>Quick Filters</h4>
     <div class="btn-group" style="margin: 9px 0 5px;">
-      <button id="monthly" class="filters btn btn-info btn-mini">Monthly</button>
+      <button id="monthly" class="filters btn btn-mini">Monthly</button>
       <button id="every30" class="filters btn btn-mini">30 Days</button>
       <button id="every60" class="filters btn btn-mini">60 Days</button>
       <button id="every90" class="filters btn btn-mini">90 Days</button>
@@ -225,7 +229,7 @@
 
 	<!-- Bit of a Hack... but it works! -->
 	<script type="text/javascript">
-
+	  $(filters.selected).addClass('btn-info');
 	  // initialize filter control
 	  $('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
 		// set filter dates
@@ -241,11 +245,13 @@
 		resetDates($('#custom'));
 	  });
 	  $('#custom').bind('click', function( event ){
+		filters.selected = '#custom'
 		filters.navigate.on = 'days';
 		filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
 		resetDates($('#custom'));
 	  });
 	  $('#monthly').bind('click', function( event ){
+		filters.selected = '#monthly'
 		filters.startDate = moment().startOf('month');
 		filters.endDate = moment().endOf('month');
 		filters.navigate.on = 'months';
@@ -253,6 +259,7 @@
 		resetDates($('#monthly'));
 	  });
 	  $('#every30').bind('click', function( event ){
+		filters.selected = '#every30'
 		filters.startDate = moment().subtract('days', 30);
 		filters.endDate = moment();
 		filters.navigate.on = 'days';
@@ -261,6 +268,7 @@
 		return true;
 	  });
 	  $('#every60').bind('click', function( event ){
+		filters.selected = '#every60'
 		filters.startDate = moment().subtract('days', 60);
 		filters.endDate = moment();
 		filters.navigate.on = 'days';
@@ -268,6 +276,7 @@
 		resetDates($('#every60'));
 	  });
 	  $('#every90').bind('click', function( event ){
+		filters.selected = '#every90'
 		filters.startDate = moment().subtract('days', 90);
 		filters.endDate = moment();
 		filters.navigate.on = 'days';

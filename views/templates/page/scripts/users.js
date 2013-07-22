@@ -17,6 +17,19 @@
  *
  */
 
+/**
+ *
+ * Support Funtions
+ *
+ */
+
+function formatSet(arr){
+  var set = '';
+	for(i=0; i< arr.length; i++){
+		set = set + (set == '' ? '':',')+hyphenFormat(trim(arr[i])).toLowerCase();
+	}
+	return set;
+}
 
 /**
  * User List
@@ -106,15 +119,13 @@ app.views.UserFormView = Backbone.View.extend({
 	// build content
 	var template = _.template($("#userForm").html(), {user:this.model.attributes});
     $(this.el).html(template);
-console.log(userView.roles);
-		$('#roles').autocomplete({
-			delimiter: ',',
-			lookup: userView.roles,
-			onSelect: function (suggestion) {
-				alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-			}
-		});
-
+	$('#roles').autocomplete({
+		delimiter: ',',
+		lookup: userView.roles/*,
+		onSelect: function (suggestion) {
+			alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+		}*/
+	});
     return this;
   },
   events:{
@@ -128,7 +139,7 @@ console.log(userView.roles);
         username: $('#username').val(),
         is_active: ($('#is_active').is(':checked') ? 1:0),
         email: $('#email').val(),
-		roles: $('#roles').val(),
+		roles: formatSet($('#roles').val().split(',')),
 		password: $('#password').val()
 
     });
