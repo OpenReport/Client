@@ -327,6 +327,39 @@ $app->post("/assign/:apiKey/:formId/:userId", function ($apiKey, $formId, $userI
 
 
 
+
+/**
+ *
+ *
+ *
+ */
+$app->get("/libaray/:apiKey", function($apiKey) use ($app, $response){
+    try {
+        $options = array();
+        $options['conditions'] = array('api_key = ? AND role = \'field\' AND is_active = 1', $apiKey);
+        //
+        $records = Libaray::all($options);
+
+        $fields = array();
+        foreach($records as $field){
+            $fields[] = $field->meta;
+        }
+
+        // package the data
+        $response['data'] = $fields;
+        $response['count'] = count($fields);
+    }
+    catch (\ActiveRecord\RecordNotFound $e) {
+        $response['message'] = 'No Records Found';
+        $response['data'] = array();;
+        $response['count'] = 0;
+    }
+
+    // send the data
+    echo json_encode($response);
+
+});
+
 /**
  * Run the Slim application
  *
@@ -362,5 +395,11 @@ function getColumns($data){
 function formArrayMap($forms){
 
     return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'title\',\'report_version\',\'description\',\'tags\',\'meta\',\'date_created\',\'date_modified\',\'is_public\',\'is_published\',\'identity_name\'));'),$forms);
+
+}
+
+function fieldsArrayMap($data){
+
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'api_key\',\'role\',\'meta\',\'is_active\'));'),$data);
 
 }

@@ -75,13 +75,16 @@
 			<a href="#formAttr" data-toggle="tab">Form</a>
 		</li>
 		<li>
-			<a href="#frmCtrls" data-toggle="tab">Fields</a>
+			<a href="#frmCtrls" data-toggle="tab">Controls</a>
+		</li>
+		<li>
+			<a href="#frmFields" data-toggle="tab">Libaray</a>
 		</li>
 	</ul>
 	<div class="row-fluid">
 	<div id="listOfFields" class="span4 tab-content">
 	  <div class="tab-pane active well" id="formAttr">
-	  <h3>Report Form Details</h3>
+	  <h4>Report Form Details</h4>
 		<div class="control-group">
 			<label>Title:&nbsp;<small>Enter report title.</small></label>
 			<input type="text" id="formTitle" placeholder="Title..." value="{{= title }}" class="ctrl-textbox span12">
@@ -109,18 +112,18 @@
 	  </div>
 
 	  <div class="tab-pane well" id="frmCtrls">
-	  <h3>Report Fields <small>Click to add</small></h3>
-		<div class="selectorField well clearfix" data-rules="required" data-name="iText" data-type="text">
+	  <h4>Report Form Controls</br><small>Click to add</small></h4>
+		<div class="selectorField well clearfix" data-rules="required" data-name="input" data-type="text" id="ctrl-A">
 			<label class="control-label">Text Input</label>
 			<input type="text" class="ctrl-textbox span12">
-			<span></span>
+			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="comment">
+		<div class="selectorField well clearfix" data-rules="required" data-name="comment" data-type="comment">
 			<label class="control-label">Comments</label>
 			<textarea class="span12"></textarea>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="checkbox-group">
+		<div class="selectorField well clearfix" data-rules="required" data-name="options" data-type="checkbox-group">
 			<label class="control-label" style="vertical-align:top">Checkboxes</label>
 			<ul class="ctrl-checkboxgroup ">
 				<li><input type="checkbox" name="checkboxField" value="option1">Option 1</li>
@@ -129,7 +132,7 @@
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="radio-group">
+		<div class="selectorField well clearfix" data-rules="required" data-name="option" data-type="radio-group">
 			<label class="control-label" style="vertical-align:top">Radio buttons</label>
 			<ul>
 				<li><input type="radio" name="radioField" value="option1">Option 1</li>
@@ -138,8 +141,16 @@
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="optional" data-type="media:image" data-name="photos" id="ctl3"><label for="photos">Attach Photo</label><input name="imageCapture-photos" id="imageCapture-photos" value="" type="file" accept="video/*;capture=camera" style="display: none;" class="imageCapture"><input name="photos" id="photos" value="" type="hidden"><ul class="capture-list" id="capture-img-photos"><li><img src="./img/camara.png" class="capture-btn" data-for="photos"></li></ul><span class="error"></span></div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="dropdown">
+		<div class="selectorField well clearfix" data-rules="optional" data-type="media:image" data-name="photos">
+			<label for="photos">Attach Photo</label>
+			<input name="imageCapture-photos" id="photo-files" type="file" accept="video/*;capture=camera" style="display: none;" class="imageCapture">
+			<input name="photos" id="photos" value="" type="hidden">
+			<ul class="capture-list" id="capture-img-photos">
+				<li><img src="./img/camara.png" class="capture-btn" data-for="photos"></li>
+			</ul>
+			<span class="error"></span>
+		</div>
+		<div class="selectorField well clearfix" data-rules="required" data-name="option" data-type="dropdown">
 			<label class="control-label">Combobox</label>
 			<select class="ctrl-combobox span12">
 				<option value="0">Select an Option</option>
@@ -148,7 +159,7 @@
 			</select>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="select">
+		<div class="selectorField well clearfix" data-rules="required" data-name="options" data-type="select">
 			<label class="control-label" style="vertical-align:top">Select multiple</label>
 			<div>
 				<select multiple="multiple" class="ctrl-selectmultiplelist span12">
@@ -162,16 +173,22 @@
 		</div>
 	  </div>
 
+
+	  <div class="tab-pane well" id="frmFields">
+	  <h4>Report Form Fields<br/><small>Predefined</small></h4>
+
+		<div id="standards"></div>
+
     </div>
+</div>
+		<div class="span8" id="selected-content">
 
-	<div class="span8" id="selected-content">
-
-	  <div class="row-fluid">
-		<div id="form-ctrl-column" class="span12 well" style="min-height:80px;background-color: rgb(255, 255, 255);">
-			<form id="{{= meta.name }}" class="" submit="return false"></form>
+			<div class="row-fluid">
+			<div id="form-ctrl-column" class="span12 well" style="min-height:80px;background-color: rgb(255, 255, 255);">
+				<form id="{{= meta.name }}" class="" submit="return false"></form>
+			</div>
+			</div>
 		</div>
-	  </div>
-	</div>
 	</div>
 
 	<!-- submit button -->
@@ -182,10 +199,6 @@
         </div>
 	</div>
   </div>
-
-
-
-
 
 </script>
 
@@ -222,39 +235,40 @@
 		<div class="modal-body" style="text-align:left;">
 			<div class="row-fluid">
 				<div class="span12">
-					<fieldset class="">
+					<fieldset class="well">
 						<div class="control-group"><label>Display:&nbsp;<small>This is displayed on the report form</small></label><input class="span12" id="fieldDisplay" type="text" placeholder="Display Text Here..." value="{{= display }}"></div>
 						<div class="control-group"><label>Label:&nbsp;<small>Name of Datapoint (column name).</small></label><input class="span12" id="fieldName" type="text" placeholder="Data label Here..." value="{{= name }}"></div>
 						{{ if(options.length > 0){ }}
-							<div class="control-group"><label>Options:&nbsp;<small>Set Options for the field (display=value)</small></label><textarea id="options" class="span12" rows="4">{{ options.forEach(function (item) { }}{{= item.label }}={{= item.value + '\n'}}{{ }) }}</textarea></div>
+							<div class="control-group"><label>Options:&nbsp;<small>Set Options for the field (display=value)</small></label><textarea id="options" class="span12" rows="3">{{ options.forEach(function (item) { }}{{= item.label }}={{= item.value + '\n'}}{{ }) }}</textarea></div>
 						{{ } }}
-						<div class="control-group"><label>Validation:&nbsp;</label></div>
 						{{if(type==='text'){ }}
-						<div class="control-group"><label><small>Select type of validation.</small></label>
+						<div class="control-group"><label>Validation:&nbsp;<small>Select type of validation.</small></label>
 						<select id="rules" class="span12">
 							<option value="">Any Characters</option>
-							<option value="|valid_email">'Valid email address.'</option>
-							<option value="|alpha">'Contain alphabetical characters only.'</option>
-							<option value="|alpha_numeric">'Contain alpha-numeric characters.'</option>
-							<option value="|alpha_dash">'Contain alpha-numeric characters, underscores, and dashes.'</option>
-							<option value="|numeric">'Contain only numbers.'</option>
-							<option value="|integer">'Contain an integer.'</option>
-							<option value="|decimal">'Contain a decimal number.'</option>
-							<option value="|is_natural">'Contain only positive numbers.'</option>
-							<option value="|is_natural_no_zero">'Contain a number greater than zero.'</option>
-							<option value="|valid_ip">'Contain a valid IP.'</option>
-							<option value="|valid_base64">'Contain a base64 string.'</option>
-							<option value="|valid_credit_card">'Contain a vaild credit card number'v
-							<option value="|valid_url">'Contain a valid URL.'</option>
+							<option value="|valid_email">Valid email address.</option>
+							<option value="|alpha">Contain alphabetical characters only.</option>
+							<option value="|alpha_numeric">Contain alpha-numeric characters.</option>
+							<option value="|alpha_dash">Contain alpha-numeric characters, underscores, and dashes.</option>
+							<option value="|numeric">Contain only numbers.</option>
+							<option value="|integer">Contain an integer.</option>
+							<option value="|decimal">Contain a decimal number.</option>
+							<option value="|is_natural">Contain only positive numbers.</option>
+							<option value="|is_natural_no_zero">Contain a number greater than zero.</option>
+							<option value="|valid_ip">Contain a valid IP.</option>
+							<option value="|valid_base64">Contain a base64 string.</option>
+							<option value="|valid_credit_card">Contain a vaild credit card number</option>
+							<option value="|valid_url">Contain a valid URL.</option>
 						</select>
 						</div>
 						{{ } }}
 						<div class="control-group"><label class="checkbox">Optional:&nbsp;<small>Check this box if this field is optional.</small><input id="required" type="checkbox" {{= rules[0]==='required' ? '' : 'checked' }}></label></div>
 					</fieldset>
+
 					<div class="control-group pull-right">
-					<button type="button" onclick='delete_ctrl({{= id }})' class="btn" data-dismiss="modal">DELETE<i class="icon-minus-sign icon-white"></i></button>
-					<button type="button" onclick='update_ctrl({{= id }})' class="btn btn-primary" data-dismiss="modal">Save<i class="icon-minus-sign icon-white"></i></button>
+					<button type="button" onclick='delete_ctrl({{= id }})' class="btn btn-mini" data-dismiss="modal">DELETE<i class="icon-minus-sign icon-white"></i></button>
+					<button type="button" onclick='update_ctrl({{= id }})' class="btn btn-mini btn-primary" data-dismiss="modal">Save<i class="icon-minus-sign icon-white"></i></button>
 					</div>
+					<div class="control-group pull-left"><label class="checkbox">Standard:&nbsp;<small>Check this box if this field is a Standard.</small><input id="standard" type="checkbox" ></label></div>
 				</div>
 			</div>
 		</div>
@@ -300,7 +314,8 @@
 </script>
 
 <script type="text/javascript" src="/assets/js/vendor/jquery.autocomplete.min.js"></script>
-<script type="text/javascript" src="/views/templates/page/scripts/lib/openreport.builder.js"></script>
+<script type="text/javascript" src="/views/templates/page/scripts/lib/OpenReport.builder.js"></script>
+<script type="text/javascript" src="/views/templates/page/scripts/lib/OpenReport.validate.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/formModel.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/forms.js"></script>

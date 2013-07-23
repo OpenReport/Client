@@ -1,3 +1,4 @@
+<?php
 /**
  * OpenReport
  *
@@ -18,21 +19,13 @@
  */
 
 
-var app = {
-    config: {},
-    views: {},
-    models: {},
-    collections: {},
-    router: {},
-    utility: {},
-    pageView: null,
-    data: {},
-    init:(function(router) {
-        // use mastasch pattern
-        _.templateSettings = {
-            interpolate: /\{\{\=(.+?)\}\}/g,
-            evaluate: /\{\{(.+?)\}\}/g
-        };
-        app.router = router;
-    })
+/**
+ *
+ */
+class Libaray extends ActiveRecord\Model {
+  static $table_name = 'libaray';
+  public function get_meta(){
+    return json_decode($this->read_attribute('meta'), true);
+  }
+
 }

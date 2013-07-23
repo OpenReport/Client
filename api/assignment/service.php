@@ -31,7 +31,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     try {
         $options = array();
-        $options['joins'] = array('LEFT JOIN forms ON(assignments.form_id = forms.id)','LEFT JOIN users ON(assignments.user_id = users.id)');
+        $options['joins'] = array('LEFT JOIN forms ON(assignments.form_id = forms.id)','LEFT JOIN users ON(assignments.user = users.email)');
         $options['select'] = 'assignments.*, users.username AS user_name, forms.title AS form_title';
         $options['conditions'] = array('assignments.api_key = ?', $apiKey);
 
@@ -64,36 +64,36 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
     echo json_encode($response);
 
 });
-
-/**
- * Fetch Assignment Forms by userid
- *
- * GET: /api/assignment/forms/
- *
- */
-$app->get("/forms/:apiKey/:userId", function ($apiKey, $userId) use ($app, $response) {
-    $data = Assignment::all(array('conditions'=>array('api_key = ? AND user_id = ?', $apiKey, $userId)));
-    // package the data
-    $response['data'] = assignmentArrayMap($data);
-    $response['count'] = count($data);
-    // send the data
-    echo json_encode($response);
-});
-
-/**
- * Fetch Form Assignment Users by form_id
- *
- * GET: /api/assignment/users
- *
- */
-$app->get("/users/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
-    $data = Assignment::all(array('conditions'=>array('api_key = ? AND form_id = ?', $apiKey, $formId)));
-    // package the data
-    $response['data'] = assignmentArrayMap($data);
-    $response['count'] = count($data);
-    // send the data
-    echo json_encode($response);
-});
+//
+///**
+// * Fetch Assignment Forms by user
+// *
+// * GET: /api/assignment/forms/
+// *
+// */
+//$app->get("/forms/:apiKey/:user", function ($apiKey, $user) use ($app, $response) {
+//    $data = Assignment::all(array('conditions'=>array('api_key = ? AND user = ?', $apiKey, $user)));
+//    // package the data
+//    $response['data'] = assignmentArrayMap($data);
+//    $response['count'] = count($data);
+//    // send the data
+//    echo json_encode($response);
+//});
+//
+///**
+// * Fetch Form Assignment Users by form_id
+// *
+// * GET: /api/assignment/users
+// *
+// */
+//$app->get("/users/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) {
+//    $data = Assignment::all(array('conditions'=>array('api_key = ? AND form_id = ?', $apiKey, $formId)));
+//    // package the data
+//    $response['data'] = assignmentArrayMap($data);
+//    $response['count'] = count($data);
+//    // send the data
+//    echo json_encode($response);
+//});
 
 
 $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
@@ -108,7 +108,7 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment = new Assignment();
         $assignment->api_key = $apiKey;
         $assignment->form_id = $request->form_id;
-        $assignment->user_id = $request->user_id;
+        $assignment->user = $request->user;
         $assignment->schedule = $request->schedule;
         $assignment->repeat_schedule = $request->repeat_schedule;
         $assignment->date_assigned = $request->date_assigned;
@@ -117,7 +117,7 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment->is_active = true;
         $assignment->save();
         // package the data
-        $response['data'] = $assignment->values_for(array('id','user_id','form_id'));
+        $response['data'] = $assignment->values_for(array('id','user','form_id'));
         $response['message'] = "Assignment saved";
     }
     else{
@@ -152,6 +152,6 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user_id\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
 
 }

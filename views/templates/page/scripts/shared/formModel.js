@@ -31,7 +31,7 @@ app.models.Form = Backbone.Model.extend({
         title:'',
         description:'',
         tags:'',
-        meta:{'name':'frm', "title":"", "desc":"",'fieldset':[{'name':'grp1', 'legend':'',fields:[]}]},
+        meta:{'name':'FORM-1', "title":"", "desc":"",'fieldset':[{'name':'GROUP-A', 'legend':'',fields:[]}]},
         date_created:'',
         is_published: 0,
         is_public: 0,
@@ -87,5 +87,27 @@ app.collections.Forms = Backbone.Collection.extend({
     parse:function(response){
         this.recCount = response.count;
         return response.data;
+    }
+});
+
+/**
+ * Single Standard Field
+ *
+ */
+app.models.Field = Backbone.Model.extend({
+    urlRoot: '/api/form/labaray/'+apiKey,
+    defaults:{
+        id:null,
+    }
+});
+
+/**
+ * Libaray of Standard Fields
+ *
+ */
+app.models.Libaray = Backbone.Collection.extend({
+    initialize: function(options) {
+        options || (options = {});
+        this.key = options.key;
     }
 });

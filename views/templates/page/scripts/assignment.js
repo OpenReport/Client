@@ -76,7 +76,7 @@ app.views.AssignmentForm = Backbone.View.extend({
 			// add users to drop down
 			for (var i = 0; i < response.data.length; i++) {
 			  var item = response.data[i]
-			  $('#userList').append('<option value="'+item.id+'">'+item.username+'</option>');
+			  $('#userList').append('<option value="'+item.email+'">'+item.username+'</option>');
 			}
 		}
 
@@ -102,22 +102,22 @@ app.views.AssignmentForm = Backbone.View.extend({
     "click #close":"cancel"
   },
   save:function(){
-	var users = $('#userList').val();
-	var form_id = $('#reportList').val();
-	if(users == null || form_id == '') return this;
+	var user = $('#userList').val();
+	var forms = $('#reportList').val();
+	if(user == null || forms == '') return this;
 	var schedule = $('#schedule').val();
 	var repeat_schedule = $('#repeat_schedule').val();
 	var date_assigned = $('#date_assigned').val();
 	var date_expires = $('#date_expires').val();
-	for (var i = 0; i < users.length; i++) {
+	for (var i = 0; i < forms.length; i++) {
 	  var assignment = new app.models.Assignment();
 	  assignment.set({
 		schedule: schedule,
 		repeat_schedule: repeat_schedule,
 		date_assigned: date_assigned,
 		date_expires: date_expires,
-		form_id: form_id,
-		user_id: users[i],
+		form_id: forms[i],
+		user: user,
 		status: 'open',
 		is_active: 1
 	  });
