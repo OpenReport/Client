@@ -68,6 +68,7 @@ function formatReportData(value, type, options){
 		}
 	}
 	if('undefined' != typeof options){
+		if(options.length == 0) return '--';
 		retValue = '';
 		if('string' == typeof value) value = [value];
 		_.filter(value,

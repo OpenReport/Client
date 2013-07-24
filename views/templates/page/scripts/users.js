@@ -111,46 +111,41 @@ app.views.UserFormView = Backbone.View.extend({
   model: null,
   initialize: function(options){
 	options || (options = {});
-    _.bind(this, 'render');
+    //_.bind(this, 'render');
     this.listenTo(this.model, 'change', this.render);
 
   },
   render: function(){
-	// build content
-	var template = _.template($("#userForm").html(), {user:this.model.attributes});
-    $(this.el).html(template);
-	$('#roles').autocomplete({
-		delimiter: ',',
-		lookup: userView.roles/*,
-		onSelect: function (suggestion) {
-			alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-		}*/
+		// build content
+		var template = _.template($("#userForm").html(), {user:this.model.attributes});
+		$(this.el).html(template);
+		$('#roles').autocomplete({
+			delimiter: ',',
+			lookup: userView.roles
 	});
     return this;
   },
   events:{
-    "click #submit":"saveUser",
-	"click #password": "changePassword",
-    "click #close":"cancel"
+		"click #submit":"saveUser",
+		"click #password": "changePassword",
+		"click #close":"cancel"
   },
   saveUser:function () {
     this.model.set({
-
-        username: $('#username').val(),
-        is_active: ($('#is_active').is(':checked') ? 1:0),
-        email: $('#email').val(),
-		roles: formatSet($('#roles').val().split(',')),
-		password: $('#password').val()
-
+			username: $('#username').val(),
+			is_active: ($('#is_active').is(':checked') ? 1:0),
+			email: $('#email').val(),
+			roles: formatSet($('#roles').val().split(',')),
+			password: $('#password').val()
     });
-	// validation
-	var errors = this.model.validate();
-	if(typeof(errors) !== 'undefined'){
+		// validation
+		var errors = this.model.validate();
+		if(typeof(errors) !== 'undefined'){
 
-		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
-		$('#dialog').html(template).modal();
-		return true;
-	}
+			var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+			$('#dialog').html(template).modal();
+			return true;
+		}
     if (this.model.isNew()) {
         var self = this;
         app.router.userList.create(this.model, {
@@ -178,7 +173,9 @@ app.views.UserFormView = Backbone.View.extend({
   },
 
   changePassword: function(e){
-	console.log(e.target);
+		console.log(e.target);
+		$('#password').prop('readonly', false);
+		$('#password').attr('placeholder', 'Enter New Password');
   },
   cancel:function () {
     this.close();
@@ -200,10 +197,10 @@ app.views.UserFormView = Backbone.View.extend({
 app.controller = Backbone.Router.extend({
 
 	routes: {
-        "" : "index",                       // initial view /tasks
+		"" : "index",                       // initial view /tasks
 		"role/:role" : "index",				// filter by tag
-        "add" : "add",						// add a reporting task /tasks#add
-        "remove/:id" : "remove",			// remove reporting task /tasks#remove/{task_id}
+		"add" : "add",						// add a reporting task /tasks#add
+		"remove/:id" : "remove",			// remove reporting task /tasks#remove/{task_id}
 		"edit/:id" : "edit"					// edit reporting task /task#edit/{task_id}
 	},
     /*
@@ -229,25 +226,22 @@ app.controller = Backbone.Router.extend({
      * Add User
      */
     add: function(){
-	  // if called direct the need this.userList
-	  if(typeof this.userList == 'undefined') this.userList = new app.collections.Users({key: apiKey});
-	  var user = new app.models.User({is_active:1});
-	  new app.views.UserFormView({model:user}).render();
-	  // enable password and email controls on new user
-	  $('#email, #password').prop('disabled', false);
+			// if called direct the need this.userList
+			if(typeof this.userList == 'undefined') this.userList = new app.collections.Users({key: apiKey});
+			var user = new app.models.User({is_active:1});
+			new app.views.UserFormView({model:user}).render();
+			// enable password and email controls on new user
+			$('#email, #password').prop('readonly', false);
+			$('#password').attr('placeholder', '');
 
     },
     /*
      * Edit user
      */
     edit: function(id){
-	  var user = this.userList.get(id);
-	  new app.views.UserFormView({model:user}).render();
-	  // add password change dialog??
-
-
-
-
+			var user = this.userList.get(id);
+			new app.views.UserFormView({model:user}).render();
+			// add password change dialog??
     },
     /*
      * Remove User
