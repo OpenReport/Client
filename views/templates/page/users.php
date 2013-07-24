@@ -7,11 +7,11 @@ var userView = {
 
 -->
 </script>
-<div class="container-fluid">
-	<div id="userContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="userContext" class="row-fluid well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
+
 
 
 
@@ -32,7 +32,7 @@ var userView = {
             <tbody>
             {{ _(records).each(function(user) { }}
               <tr>
-                <td><a class="user" id="{{= user.get('id') }}"><i class="icon-info-sign icon-white"></i>&nbsp;{{= user.get('username') }}</a></td>
+                <td><a class="user" id="{{= user.get('id') }}" href="#" ><i class="icon-info-sign icon-white"></i>&nbsp;{{= user.get('username') }}</a></td>
                 <td>{{= (user.get('is_active') === 1) ? 'Yes':'No' }}</td>
 				<td>{{= user.get('email') }}</td>
                 <td>{{= user.get('roles') }}</td>
@@ -95,17 +95,17 @@ var userView = {
 		<div class="control-group">
             <label class="control-label">Email</label>
             <div class="controls">
-				<input type="text" value="{{= user.email }}"class="span12" id="email" name="email" placeholder="" disabled >
+				<input type="text" value="{{= user.email }}"class="span12" id="email" name="email" placeholder="" readonly >
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Password</label>
             <div class="controls">
-				<input type="password" value=""class="span12" id="password" name="password" placeholder="" disabled >
+				<input type="password" value="" class="span12" id="password" name="password" placeholder="Click to change password" readonly >
             </div>
         </div>
         <div class="form-actions">
-            <span class="pull-right"><button id="close" class="btn">Cancel</button> <button class="btn btn-primary" id="submit">Save changes</button> </span>
+            <span class="pull-right"><button id="close" class="btn btn-mini">Cancel</button> <button class="btn btn-mini btn-primary" id="submit">Save changes</button> </span>
         </div>
     </fieldset>
     </div>

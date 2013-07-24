@@ -2,11 +2,11 @@
 
 
 -->
-<div class="container-fluid">
-	<div id="userContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="userContext" class="row-fluid well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
+
 
 <script id="accountForm" type="text/template">
     <div class="form-horizontal" id="postEvent">

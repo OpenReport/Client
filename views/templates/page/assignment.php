@@ -2,11 +2,11 @@
 
 
 -->
-<div class="container-fluid">
-	<div id="assignmentContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="assignmentContext" class="row-fluid well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
+
 <!-- Templates -->
 <script id="assignments" type="text/template">
         <div class="span12">
@@ -57,44 +57,59 @@
 		<div class="modal-body" style="text-align:left;">
 			<div class="row-fluid">
 				<div class="span12">
+				<div class="well">
 					<legend>Schedule</legend>
 					<div class="control-group">
 					  <div class='row-fluid'>
 					  <div class="span6">
 						<label>Schedule</label>
 						<select id="schedule" class="span12">
-							<option value="daily">Daily</option>
-							<option value="weekly">Weekly</option>
-							<option value="monthly">Monthly</option>
+							<option value="daily" {{= schedule =='daily' ? 'selected':'' }}>Daily</option>
+							<option value="weekly" {{= schedule =='weekly' ? 'selected':'' }}>Weekly</option>
+							<option value="monthly" {{= schedule =='monthly' ? 'selected':'' }}>Monthly</option>
 						</select>
 					  </div>
 					  <div class="span6">
 						<label>Repeat</label>
-						<input type="text" id="repeat_schedule" value="1" class="span12">
+						<input type="text" id="repeat_schedule" value="{{= repeat_schedule }}" class="span12">
 					  </div>
 					  </div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Start Assignment</label>
 						<div class="input-append date" data-date-format="MM d yyyy">
-							<input id="date_assigned" class="span11" type="text" value="{{= moment().format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
+							<input id="date_assigned" class="span11" type="text" value="{{= moment(date_assigned.date).format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Expires</label>
 						<div class="input-append date" data-date-format="MM d yyyy">
-							<input id="date_expires" class="span11" type="text" value="" disabled><span class="add-on"><i class="icon-calendar"></i></span>
+							<input id="date_expires" class="span11" type="text" value="{{= moment(date_expires.date).format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
 						</div>
 					</div>
 				</div>
+				</div>
 				<div class="control-group pull-right">
-				<button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
+				<button id='assignSubmit' data-for="{{= id }}" class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
 				</div>
 			</div>
 
 		</div>
 	</div>
+		<!-- Bit of a Hack... but it works! -->
+		<script type="text/javascript">
 
+			// initialize date controls
+			$('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
+				setExpire(e.date);
+			});
+			$('#schedule, #repeat_schedule').on('change', function(e){
+			// update date_expires
+			setExpire($('#date_assigned').val());
+
+			});
+
+		</script>
 </script>
 
 
@@ -152,19 +167,25 @@
             </div>
         </div>
     </div>
-	<!-- Bit of a Hack... but it works! -->
-	<script type="text/javascript">
+		<!-- Bit of a Hack... but it works! -->
+		<script type="text/javascript">
 
-	  // initialize date controls
-	  $('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
-			setExpire(e.date);
-	  });
-	  $('#schedule, #repeat_schedule').on('change', function(e){
-		// update date_expires
-		setExpire($('#date_assigned').val());
+			// initialize date controls
+			$('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
+				setExpire(e.date);
+			});
+			$('#schedule, #repeat_schedule').on('change', function(e){
+			// update date_expires
+			setExpire($('#date_assigned').val());
 
-	  });
-	  // expire logic
+			});
+
+		</script>
+
+</script>
+
+<script type="text/javascript">
+			  // expire logic
 	  function setExpire(date){
 		var startDate = moment(date);
 		var endDate = startDate;
@@ -182,7 +203,6 @@
 		}
 		$('#date_expires').val(endDate.format('LL'));
 	  }
-    </script>
 
 </script>
 

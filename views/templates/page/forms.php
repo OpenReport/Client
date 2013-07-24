@@ -1,8 +1,7 @@
-<div class="container-fluid">
-	<div id="formContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="formContext" class="row-fluid well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
 
 <!-- Templates -->
 <script id="forms" type="text/template">
@@ -194,8 +193,8 @@
 	<!-- submit button -->
 	<div class="row-fluid">
         <div class="form-actions">
-		<label class="pull-left"><input type="checkbox" id="new_report" >Check this box to create a new report defination</label>
-            <span class="pull-right"><button id="close" class="btn">Cancel</button> <button class="btn btn-primary" id="submit">Save changes</button> </span>
+		<label class="pull-left"><input type="checkbox" id="new_report" checked >Create a new report defination</label>
+            <span class="pull-right"><button id="close" class="btn btn-mini">Cancel</button> <button class="btn btn-mini btn-primary" id="submit">Save changes</button> </span>
         </div>
 	</div>
   </div>

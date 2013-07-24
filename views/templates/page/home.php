@@ -2,27 +2,24 @@
 
 
 -->
-<div class="container-fluid">
-	<div id="dashboardContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="dashboardContext" class="well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
 
 
 <script id="details" type="text/template">
 	<div class="row-fluid">
-    <div class="span3 well">
+    <div class="span4 well">
 		<h4>Total Reports: {{= stats.formCount }}</h4>
     </div>
-    <div class="span3 well">
+    <div class="span4 well">
 		<h4>Total Records: {{= stats.recordCount }}</h4>
     </div>
-    <div class="span3 well">
+    <div class="span4 well">
 		<h4>Total Users: {{= stats.totalUsers }}</h4>
     </div>
-    <div class="span3 well">
-		<h4>Media: {{= stats.mediaCount }}GB</h4>
-    </div>
+
 	</div>
 	<div  class="row-fluid">
 	<div class="span12 well">

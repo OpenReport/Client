@@ -2,11 +2,10 @@
 
 
 -->
-<div class="container-fluid">
-	<div id="distributionContext" class="row-fluid well"></div>
-    <!-- Modals -->
-    <div id="dialog"></div>
-</div>
+
+<div id="distributionContext" class="row-fluid well well-small"></div>
+<!-- Modals -->
+<div id="dialog"></div>
 <!-- Templates -->
 <script id="distributions" type="text/template">
         <div class="span12">
@@ -71,6 +70,7 @@
 		<div class="modal-body" style="text-align:left;">
 			<div class="row-fluid">
 				<div class="span12">
+					<div class="well">
 					<div class="control-group">
 						<label>Add...</label>
 						<select id="reportForms" name="reportForms" class="span12" >
@@ -81,6 +81,7 @@
 						<label>To User Role...</label>
 						<select id="userList" class="span12" multiple="multiple" size='5'>
 						</select>
+					</div>
 					</div>
 					<div class="control-group pull-right">
 					<button id='assignSubmit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>

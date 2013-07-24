@@ -1,7 +1,5 @@
-<link rel="stylesheet" href="/assets/css/bootstrap-sortable.css">
-<div class="container-fluid">
-	<div id="reportContext" class="row-fluid well">	</div>
-</div>
+
+<div id="reportContext" class="row-fluid well well-small"></div>
 
 <script id="reportingForms" type="text/template">
 	<div class="span12">
