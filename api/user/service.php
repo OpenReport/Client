@@ -29,13 +29,13 @@ $app->get("/list/:apiKey", function($apiKey) use ($app, $response){
 
     try {
         $options = array();
-        $options['select'] = 'users.email, users.username';
+        $options['select'] = 'users.email, users.username, users.roles';
         $options['joins'] = array('LEFT JOIN accounts ON(accounts.id = users.account_id)');
         $options['conditions'] = array('accounts.api_key = ? AND users.is_active = 1', $apiKey);
         $options['order'] = 'users.username';
         $users = User::all($options);
         // package the data
-        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'email\',\'username\'));'),$users);
+        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'email\',\'username\',\'roles\'));'),$users);
         $response['count'] = count($response['data']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {
