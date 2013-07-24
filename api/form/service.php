@@ -231,6 +231,7 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         elseif($ver > 0){  // if we have report defination then update
             // update report defination
             $report = Report::first(array('conditions' => array('api_key = ? AND form_id = ? AND version = ?', $apiKey, $formId, $ver)));
+            $report->form_name = $request->meta->name;
             $report->title = $request->title;
             $report->meta = json_encode($request->meta->fieldset);    //TODO: Strip unnessary attr from meta
             $report->save();
