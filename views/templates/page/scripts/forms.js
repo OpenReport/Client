@@ -40,7 +40,7 @@ function remove_form(ctlId){
 function assignDialog(field){
 
   // assign event
-	$(field).on('click', function(){
+	$(field).on('click', function(event){
 
 		ctrl = $(this);
 		// fetch data attrb from div
@@ -247,18 +247,22 @@ app.views.FormsView = Backbone.View.extend({
    */
   detail: function(e){
 
-    var target = e.target;
+    var target = e.currentTarget;
     model = this.collection.get(target.id);
-
     var template = _.template($("#formDetail").html(), model.attributes);
     $('#dialog').html(template).modal();
     return this;
+  },
+
+  close: function(){
+    $(this.el).unbind();
+    $(this.el).empty();
   }
 
 });
 
 /**
- * View - Single Reporting Form
+ * View - Edit Reporting Form
  *
  *
  */
@@ -266,18 +270,19 @@ app.views.FormView = Backbone.View.extend({
   el: '#formContext',
   model: null,
   columns: null,
+	ctrlIndex: 1,
   initialize: function(options){
     //_.bind(this, 'render');
     //this.listenTo(this.model, 'change', this.render);
 
   },
   render: function(){
+		var base = this;
 	// build content
     var template = _.template($("#formBuilder").html(), this.model.attributes);
     $(this.el).html(template);
     // build form controls
-		var ctrlIndex = 1;
-		$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
+		$('#'+this.model.attributes.meta.name).buildForm(this.model.attributes.meta, {'ctrlClass':'field well clearfix', 'fsClass':'droppedFields','fldClass':'span12'});
 		$('#formTags').autocomplete({
 			tabDisabled: true,
 			autoSelectFirst: true,
@@ -290,10 +295,11 @@ app.views.FormView = Backbone.View.extend({
 		}).disableSelection();
 
 		// assign dialog event to existing controls
-		$('fieldset.droppedFields', '#'+this.model.attributes.meta.name).find('div.well').each(function(i,e){
-			var ctrlId = 'ctl'+ctrlIndex++;
-			$(e).prop('id', ctrlId);
-			assignDialog(e, ctrlId);
+		$('div.field').each(function(i,e){
+			var ctrlId = 'ctl'+base.ctrlIndex++;
+			$(e).attr('id', ctrlId);
+		  $(e).find('input, textarea, select').each(function(){$(this).prop('disabled', true);})
+			//assignDialog(e, ctrlId);
 			$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
 		});
 
@@ -301,27 +307,20 @@ app.views.FormView = Backbone.View.extend({
 		$.ajax({
 			url:'/api/libaray/'+apiKey,
 			dataType: "json",
+			async: false,
 			success: function(response){
 				// add items
 				$('#standards').buildForm(response.data, {'ctrlClass':'selectorField well clearfix','fldClass':'span12'});
-				// assign add events to selectorField(s)
-				$(".selectorField").each(function(i, e){
-					$(e).prop('id','fld'+i);
-					// assign event
-						$('#fld'+i).on('click', _.debounce(function(){  // have to debounce ???
-							//clone and add
-							t = $(this).clone(); console.log('cloned');
-							$(t).prop('id', 'ctl'+ctrlIndex++);
-							$(t).removeClass("selectorField");
-							// assign dialog
-							$(t).appendTo($('fieldset.droppedFields'));
-							assignDialog(t);
-							$(t).trigger('click');
-					}, 150));
-				});
+
 			}
 		});
+		// assign add events to selectorField(s)
+		$(".selectorField").each(function(i, e){
+			$(e).unbind();
+			$(e).attr('id','fld'+i);
+			$(e).find('input, textarea, select').each(function(){$(this).prop('disabled', true);})
 
+		});
 		// capture column names
 		this.columns = listNames(this.model.attributes.meta.fieldset);
 		$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity_name:this.model.attributes.identity_name}));
@@ -330,8 +329,10 @@ app.views.FormView = Backbone.View.extend({
 		},
 
 		events:{
-			"click #submit":"saveForm",
-			"click #close":"cancel"
+			"click #submit": "saveForm",
+			"click #close": "cancel",
+			"click div.selectorField": "addField",
+			"click div.field": "openDialog"
 		},
 
   saveForm:_.debounce(function() {
@@ -360,7 +361,7 @@ app.views.FormView = Backbone.View.extend({
     if (this.model.isNew()) {
         //var self = this;
         app.data.formList.create(this.model, {
-            success:function () {
+            success:function (d) {
                 app.router.navigate('/', {trigger: true});
             }
         });
@@ -381,8 +382,48 @@ app.views.FormView = Backbone.View.extend({
 						dataType: "json",
 				});
 		}
+		this.close();
     return false;
-  }, 500),
+  }, 150),
+
+	addField: function(event){
+
+		ctrl = $(event.currentTarget).clone();
+		$(ctrl).removeClass("selectorField");
+		$(ctrl).addClass("field");
+		$(ctrl).attr('id', 'ctl'+this.ctrlIndex++);
+		$(ctrl).appendTo($('fieldset.droppedFields'));
+		$(ctrl).trigger('click');
+	},
+
+	openDialog:function(event){
+
+		ctrl = $(event.currentTarget);
+		// fetch data attrb from div
+		attrb = {
+			id:ctrl.attr('id'),
+			type:ctrl.data('type'),
+			rules:ctrl.data('rules').split("|"),
+			name: ctrl.data('name'),
+			display: ctrl.find('label:first').text(),
+			options:[]
+		};
+		// build options as needed
+		if(attrb.type == 'checkbox-group' || attrb.type == 'radio-group' ){
+			attrb.options = (getOptions($(ctrl).find('ul'), 'li'));
+		}
+		else if(attrb.type == 'dropdown' || attrb.type == 'select' ){
+			attrb.options = (getOptions($(ctrl).find('select'),'option'));
+		}
+		var template = _.template($("#fieldDetail").html(), attrb);
+		$('#dialog').html(template).modal();
+
+		// SET RULES IF ANY
+		if(attrb.rules.length == 2) {
+			$('select#rules option[value="|'+attrb.rules[1]+'"]').prop('selected', true);
+		}
+
+	},
 
   cancel:function () {
     this.close();
@@ -427,36 +468,30 @@ app.controller = Backbone.Router.extend({
     index: function(tag){
 
         app.data.formList = new app.collections.Forms({key: apiKey, tag: tag});
-        new app.views.FormsView({collection: app.data.formList});
+				if(app.pageView != null) app.pageView.close();
+        app.pageView = new app.views.FormsView({collection: app.data.formList});
 				$("#infoBox").html(_.template($("#info").html(), {tags:app.data.tags, select:tag}));
 
-		//// info box
-		//$.ajax({
-		//	url:'/api/form/tags/'+apiKey,
-		//	dataType: "json",
-		//	success: function(response){
-		//		app.data.tags = response.data;
-		//		$("#infoBox").html(_.template($("#info").html(), {tags:app.data.tags, select:tag}));
-		//	}
-		//});
 	},
     /*
      * Add Form
      */
     add: function(){
-		// if called direct we need this.formList
-		if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
-		var form = new app.models.Form();
-		new app.views.FormView({model: form}).render();
+				// if called direct we need this.formList
+				if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
+				var form = new app.models.Form();
+				if(app.pageView != null) app.pageView.close();
+				app.pageView = new app.views.FormView({model: form}).render();
     },
 
     /*
      * Edit Form
      */
     edit: function(id){
-		$("#infoBox").empty();
+				$("#infoBox").empty();
         var form = app.data.formList.get(id);
-        new app.views.FormView({model:form}).render();
+				if(app.pageView != null) app.pageView.close();
+        app.pageView = new app.views.FormView({model:form}).render();
     }
 });
 
