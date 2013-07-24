@@ -201,9 +201,10 @@
     <h4>Quick Filters</h4>
     <div class="btn-group" style="margin: 9px 0 5px;">
       <button id="monthly" class="filters btn btn-mini">Monthly</button>
-      <button id="every30" class="filters btn btn-mini">30 Days</button>
-      <button id="every60" class="filters btn btn-mini">60 Days</button>
-      <button id="every90" class="filters btn btn-mini">90 Days</button>
+      <button id="every7" class="filters btn btn-mini">7 Day</button>
+      <button id="every30" class="filters btn btn-mini">30 Day</button>
+      <button id="every60" class="filters btn btn-mini">60 Day</button>
+      <button id="every90" class="filters btn btn-mini">90 Day</button>
       <button id="custom" class="filters btn btn-mini">Custom</button>
     </div>
 	<h4>Custom Filter</h4>
@@ -255,6 +256,15 @@
 		filters.navigate.on = 'months';
 		filters.navigate.index = 1;
 		resetDates($('#monthly'));
+	  });
+	  $('#every7').bind('click', function( event ){
+		filters.selected = '#every7'
+		filters.startDate = moment().subtract('days', 7);
+		filters.endDate = moment();
+		filters.navigate.on = 'days';
+		filters.navigate.index = 7;
+		resetDates($('#every7'));
+		return true;
 	  });
 	  $('#every30').bind('click', function( event ){
 		filters.selected = '#every30'
