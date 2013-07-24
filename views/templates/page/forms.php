@@ -193,7 +193,7 @@
 	<!-- submit button -->
 	<div class="row-fluid">
         <div class="form-actions">
-		<label class="pull-left"><input type="checkbox" id="new_report" checked >Create a new report defination</label>
+		<label class="pull-left"><input type="checkbox" id="new_report" {{= (is_published === 1) ? 'checked':'disabled' }} >Create a new report defination</label>
             <span class="pull-right"><button id="close" class="btn btn-mini">Cancel</button> <button class="btn btn-mini btn-primary" id="submit">Save changes</button> </span>
         </div>
 	</div>
