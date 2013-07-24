@@ -174,6 +174,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         // Add a basic report record
         $report = new Report();
         $report->api_key = $apiKey;
+        $report->form_name = $request->meta->name;
         $report->form_id = $form->id;
         $report->version = 1;
         $report->title = $request->title;
@@ -215,11 +216,12 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         $ver = Report::Count(array('conditions'=>array('form_id = ?', $formId)));
         $form = Form::find($request->id);
         // only add report defination on published forms otherwise update
-        if($request->new_report){
+        if($request->new_report && $form->is_public){
             $ver = $ver+1;
             // Add new version of report
             $report = new Report();
             $report->api_key = $apiKey;
+            $report->form_name = $request->meta->name;
             $report->form_id = $formId;
             $report->version = $ver;
             $report->title = $request->title;
