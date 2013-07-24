@@ -97,7 +97,7 @@ app.views.AssignmentForm = Backbone.View.extend({
 			// add users to drop down
 			for (var i = 0; i < response.data.length; i++) {
 			  var item = response.data[i]
-			  $('#userList').append('<option value="'+item.email+'">'+item.username+'</option>');
+			  $('#userList').append('<option value="'+item.email+'">'+item.username+' - '+item.roles+'</option>');
 			}
 		}
 
@@ -123,30 +123,30 @@ app.views.AssignmentForm = Backbone.View.extend({
     "click #close":"cancel"
   },
   save:function(){
-	var user = $('#userList').val();
-	var forms = $('#reportList').val();
-	if(user == null || forms == '') return this;
-	var schedule = $('#schedule').val();
-	var repeat_schedule = $('#repeat_schedule').val();
-	var date_assigned = $('#date_assigned').val();
-	var date_expires = $('#date_expires').val();
-	for (var i = 0; i < forms.length; i++) {
-	  var assignment = new app.models.Assignment();
-	  assignment.set({
-		schedule: schedule,
-		repeat_schedule: repeat_schedule,
-		date_assigned: date_assigned,
-		date_expires: date_expires,
-		form_id: forms[i],
-		user: user,
-		status: 'open',
-		is_active: 1
-	  });
-	  assignment.save();
-	}
-	this.close();
-	app.router.navigate('/', {trigger: true});
-	return this;
+		var user = $('#userList').val();
+		var forms = $('#reportList').val();
+		if(user == null || forms == '') return this;
+		var schedule = $('#schedule').val();
+		var repeat_schedule = $('#repeat_schedule').val();
+		var date_assigned = $('#date_assigned').val();
+		var date_expires = $('#date_expires').val();
+		for (var i = 0; i < forms.length; i++) {
+			var assignment = new app.models.Assignment();
+			assignment.set({
+			schedule: schedule,
+			repeat_schedule: repeat_schedule,
+			date_assigned: date_assigned,
+			date_expires: date_expires,
+			form_id: forms[i],
+			user: user,
+			status: 'open',
+			is_active: 1
+			});
+			assignment.save();
+		}
+		this.close();
+		app.router.navigate('/', {trigger: true});
+		return this;
   },
   cancel:function () {
     this.close();

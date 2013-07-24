@@ -26,7 +26,7 @@ CREATE TABLE `assignments` (
   `repeat_schedule` smallint(6) DEFAULT '1',
   `date_assigned` datetime DEFAULT NULL,
   `date_expires` datetime DEFAULT NULL,
-  `date_last_report` datetime DEFAULT NULL,
+  `date_last_reported` datetime DEFAULT NULL,
   `status` set('open','closed') COLLATE latin1_general_ci DEFAULT NULL,
   `is_active` varchar(45) COLLATE latin1_general_ci DEFAULT '1',
   PRIMARY KEY (`id`)

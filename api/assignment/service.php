@@ -197,6 +197,6 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'repeat_schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'repeat_schedule\',\'status\',\'date_assigned\',\'date_last_reported\',\'date_expires\',\'is_active\'));'),$data);
 
 }
