@@ -196,32 +196,40 @@ app.views.RelatedView = Backbone.View.extend({
     "click #prevPage":"nextPage"
   },
   next: function(e){
-
-	filters.startDate.add(filters.navigate.on,filters.navigate.index);
-	filters.endDate.add(filters.navigate.on,filters.navigate.index);
-	this.refresh();
+		filters.startDate.add(filters.navigate.on,filters.navigate.index);
+		if(filters.navigate.on === 'month'){
+				filters.endDate = filters.startDate.endOf('month');
+		}
+		else{
+				filters.endDate.add(filters.navigate.on,filters.navigate.index);
+		}
+		this.refresh();
   },
   prev: function(e){
-
-	filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
-	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
-	this.refresh();
+		filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
+		if(filters.navigate.on === 'month'){
+				filters.endDate = filters.startDate.endOf('month');
+		}
+		else{
+				filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
+		}
+		this.refresh();
   },
   prevPage: function(index){
-	if((this.pageIndex) < paging.items ) return;
-	this.pageIndex = this.pageIndex - paging.items;
-	this.collection.fetchRecords({pageOffset:this.pageIndex});
+			if((this.pageIndex) < paging.items ) return;
+			this.pageIndex = this.pageIndex - paging.items;
+			this.collection.fetchRecords({pageOffset:this.pageIndex});
 
   },
   nextPage:function(index){
-	if((this.pageIndex + paging.items) > this.collection.recCount) return;
-	this.pageIndex = this.pageIndex + paging.items;
-	this.collection.fetchRecords({pageOffset:this.pageIndex});
+		if((this.pageIndex + paging.items) > this.collection.recCount) return;
+		this.pageIndex = this.pageIndex + paging.items;
+		this.collection.fetchRecords({pageOffset:this.pageIndex});
 
   },
   refresh:function(){
-	this.pageIndex = 0;
-	this.collection.fetch();
+		this.pageIndex = 0;
+		this.collection.fetch();
   },
   exportRecords: function(){
 	var csv = jsonExport(this.collection.models[0].get('rows'), true, true);
@@ -277,33 +285,43 @@ app.views.RecordsView = Backbone.View.extend({
 
   },
   next: function(e){
-
-	filters.startDate.add(filters.navigate.on,filters.navigate.index);
-	filters.endDate.add(filters.navigate.on,filters.navigate.index);
-	this.refresh();
+		console.log(filters.navigate.on);
+		filters.startDate.add(filters.navigate.on,filters.navigate.index);
+		if(filters.navigate.on === 'month'){
+				filters.endDate = filters.startDate.endOf('month');
+		}
+		else{
+				filters.endDate.add(filters.navigate.on,filters.navigate.index);
+		}
+		this.refresh();
   },
   prev: function(e){
-
-	filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
-	filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
-	this.refresh();
+		console.log(filters.navigate.on);
+		filters.startDate.subtract(filters.navigate.on,filters.navigate.index);
+		if(filters.navigate.on === 'month'){
+				filters.endDate = filters.startDate.endOf('month');
+		}
+		else{
+				filters.endDate.subtract(filters.navigate.on,filters.navigate.index);
+		}
+		this.refresh();
   },
 
   prevPage: function(index){
-	if((this.pageIndex) < paging.items ) return;
-	this.pageIndex = this.pageIndex - paging.items;
-	this.collection.fetchRecords({pageOffset:this.pageIndex});
+		if((this.pageIndex) < paging.items ) return;
+		this.pageIndex = this.pageIndex - paging.items;
+		this.collection.fetchRecords({pageOffset:this.pageIndex});
 
   },
   nextPage:function(index){
-	if((this.pageIndex + paging.items) > this.collection.recCount) return;
-	this.pageIndex = this.pageIndex + paging.items;
-	this.collection.fetchRecords({pageOffset:this.pageIndex});
+			if((this.pageIndex + paging.items) > this.collection.recCount) return;
+			this.pageIndex = this.pageIndex + paging.items;
+			this.collection.fetchRecords({pageOffset:this.pageIndex});
 
   },
   refresh:function(){
-	this.pageIndex = 0;
-	this.collection.fetch();
+			this.pageIndex = 0;
+			this.collection.fetch();
   },
 
   exportRecords: function(){
@@ -393,11 +411,11 @@ app.views.RecordDetail = Backbone.View.extend({
 app.controller = Backbone.Router.extend({
 
 	routes: {
-        "" : "index",                       // initial view - View Reporting Tasks
+		"" : "index",                       // initial view - View Reporting Tasks
 		"tag/:tag" : "index",				// filter by tag
-        "records/:id" : "records",      // list report records
+		"records/:id" : "records",      // list report records
 		"related/:identity": "related",	    // list record for 'identity'
-        "details/:id" : "details"           // report details
+		"details/:id" : "details"           // report details
 	},
     /*
      * Display Reporting Forms

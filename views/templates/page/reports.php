@@ -253,7 +253,7 @@
 		filters.selected = '#monthly'
 		filters.startDate = moment().startOf('month');
 		filters.endDate = moment().endOf('month');
-		filters.navigate.on = 'months';
+		filters.navigate.on = 'month';
 		filters.navigate.index = 1;
 		resetDates($('#monthly'));
 	  });
