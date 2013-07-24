@@ -95,7 +95,11 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 //    echo json_encode($response);
 //});
 
-
+/**
+ * Add Assignment
+ *
+ *
+ */
 $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
 
 
@@ -108,6 +112,7 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment = new Assignment();
         $assignment->api_key = $apiKey;
         $assignment->form_id = $request->form_id;
+        $assignment->identity = '';
         $assignment->user = $request->user;
         $assignment->schedule = $request->schedule;
         $assignment->repeat_schedule = $request->repeat_schedule;
@@ -129,6 +134,46 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
     echo json_encode($response);
 
 });
+/**
+ * Update Assignment
+ *
+ */
+$app->put("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
+
+
+    $request = json_decode($app->request()->getBody());
+
+    // Validate account apiKey
+    if($apiKey == $request->api_key && $id == $request->id){
+
+        // update the form
+        $assignment = Assignment::find($request->id);
+        $assignment->api_key = $apiKey;
+        $assignment->form_id = $request->form_id;
+        $assignment->identity = '';
+        $assignment->user = $request->user;
+        $assignment->schedule = $request->schedule;
+        $assignment->repeat_schedule = $request->repeat_schedule;
+        $assignment->date_assigned = $request->date_assigned;
+        $assignment->date_expires = $request->date_expires;
+        $assignment->status = $request->status;
+        $assignment->is_active = true;
+        $assignment->save();
+        // package the data
+        $response['data'] = $assignment->values_for(array('id','user','form_id'));
+        $response['message'] = "Assignment saved";
+    }
+    else{
+        $response['status'] = "error";
+        $response['message'] = "error";
+    }
+
+    // send the data
+    echo json_encode($response);
+
+});
+
+
 
 $app->delete("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
 
@@ -152,6 +197,6 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'repeat_schedule\',\'status\',\'date_assigned\',\'date_last_report\',\'date_expires\',\'is_active\'));'),$data);
 
 }
