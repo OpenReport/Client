@@ -18,6 +18,12 @@
  */
 
 /*
+ *
+ * Golbals
+ *
+ */
+ var libarayFields = [];
+/*
  *   **** SUPPORT FUNCTIONS ****
  *
  *
@@ -98,6 +104,13 @@ function update_ctrl(ctlId){
 		}
 	}
 	updateList();
+	// check if standard control
+	if($('#standard').is(':checked')){
+
+		 libarayFields.push(parseField($(ctlId)));
+
+	}
+
 }
 function parseFormMeta(){
     var frm = $('fieldset.droppedFields').find('div.well');
@@ -105,35 +118,38 @@ function parseFormMeta(){
     var formFields = [];
     //
     $.each(frm, function(index, value) {
-
-        var field = {};
-
-        field.display = $(this).find('label:first').text();
-        field.type = fieldType = $(this).data('type');
-        switch(fieldType){
-            case 'text':
-            case 'comment':
-            case 'media:image':
-                field.name = $(this).data('name');
-                break;
-            case 'checkbox-group':
-            case 'radio-group':
-                field.name = $(this).data('name');
-                field.values = getOptions($(this).find('ul'), 'li');
-                break;
-            case 'dropdown':
-            case 'select':
-                field.name = $(this).data('name');
-                field.values = getOptions($(this).find('select'),'option');
-                break;
-        }
-		field.name = underscoreFormat(field.name).toLowerCase();
-        field.rules = $(this).data('rules');
-        formFields.push(field);
-
+        formFields.push(parseField($(this)));
     });
-	return formFields;
+		return formFields;
 }
+
+function parseField(ctlEl){
+		var field = {};
+
+		 field.display = ctlEl.find('label:first').text();
+		 field.type = fieldType = ctlEl.data('type');
+		 switch(fieldType){
+				 case 'text':
+				 case 'comment':
+				 case 'media:image':
+						 field.name = ctlEl.data('name');
+						 break;
+				 case 'checkbox-group':
+				 case 'radio-group':
+						 field.name = ctlEl.data('name');
+						 field.values = getOptions(ctlEl.find('ul'), 'li');
+						 break;
+				 case 'dropdown':
+				 case 'select':
+						 field.name = ctlEl.data('name');
+						 field.values = getOptions(ctlEl.find('select'),'option');
+						 break;
+		 }
+		 field.name = underscoreFormat(field.name).toLowerCase();
+		 field.rules = ctlEl.data('rules');
+		 return field;
+}
+
 function getOptions(sel, el){
 
 	opt = [];
@@ -269,8 +285,8 @@ app.views.FormView = Backbone.View.extend({
 		});
 		// make sortable
 		$( ".droppedFields" ).sortable({
-		cancel: null, // Cancel the default events on the controls
-		connectWith: ".droppedFields"
+				cancel: null, // Cancel the default events on the controls
+				connectWith: ".droppedFields"
 		}).disableSelection();
 
 		// assign dialog event to existing controls
@@ -283,34 +299,28 @@ app.views.FormView = Backbone.View.extend({
 
 		// Build Libaray Tab
 		$.ajax({
-			url:'/api/form/libaray/'+apiKey,
+			url:'/api/libaray/'+apiKey,
 			dataType: "json",
 			success: function(response){
+				// add items
 				$('#standards').buildForm(response.data, {'ctrlClass':'selectorField well clearfix','fldClass':'span12'});
-
 				// assign add events to selectorField(s)
 				$(".selectorField").each(function(i, e){
 					$(e).prop('id','fld'+i);
 					// assign event
-
-						$('#fld'+i).on('click', _.debounce(function(){
-
+						$('#fld'+i).on('click', _.debounce(function(){  // have to debounce ???
 							//clone and add
-							t = $(this).clone();
+							t = $(this).clone(); console.log('cloned');
 							$(t).prop('id', 'ctl'+ctrlIndex++);
 							$(t).removeClass("selectorField");
 							// assign dialog
-
 							$(t).appendTo($('fieldset.droppedFields'));
 							assignDialog(t);
 							$(t).trigger('click');
-
 					}, 150));
 				});
-
 			}
 		});
-
 
 		// capture column names
 		this.columns = listNames(this.model.attributes.meta.fieldset);
@@ -327,26 +337,26 @@ app.views.FormView = Backbone.View.extend({
   saveForm:_.debounce(function() {
 
     this.model.set({
-        title: $('#formTitle').val(),
-        description: $('#formDescription').val(),
-		tags: hyphenFormat($('#formTags').val()),
-		is_published: ($('#is_published').is(':checked') ? 1:0),
-		is_public: ($('#is_public').is(':checked') ? 1:0),
-		new_report: ($('#new_report').is(':checked') ? 1:0),
-		identity_name: $('#identity_name').val(),
-		meta: {name:hyphenFormat($('#formName').val()).toUpperCase(),
-			title:$('#formTitle').val(),
-			desc:$('#formDescription').val(),
-			fieldset:[{name:hyphenFormat($('#formName').val()).toUpperCase()+'-A', legend:'',fields:parseFormMeta()}]}
+				title: $('#formTitle').val(),
+				description: $('#formDescription').val(),
+				tags: hyphenFormat($('#formTags').val()),
+				is_published: ($('#is_published').is(':checked') ? 1:0),
+				is_public: ($('#is_public').is(':checked') ? 1:0),
+				new_report: ($('#new_report').is(':checked') ? 1:0),
+				identity_name: $('#identity_name').val(),
+				meta: {name:hyphenFormat($('#formName').val()).toUpperCase(),
+				title:$('#formTitle').val(),
+				desc:$('#formDescription').val(),
+				fieldset:[{name:hyphenFormat($('#formName').val()).toUpperCase()+'-A', legend:'',fields:parseFormMeta()}]}
     });
-	// validation
-	var errors = this.model.validate();
-	if(typeof(errors) !== 'undefined'){
-		var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
-		$('#dialog').html(template).modal();
-		return true;
-	}
-	// Save It
+		// validation
+		var errors = this.model.validate();
+		if(typeof(errors) !== 'undefined'){
+			var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+			$('#dialog').html(template).modal();
+			return true;
+		}
+		// Save It
     if (this.model.isNew()) {
         //var self = this;
         app.data.formList.create(this.model, {
@@ -361,11 +371,19 @@ app.views.FormView = Backbone.View.extend({
             }
         });
     }
-
-    //window.history.back();
-
+		// check for any new libaray items
+		if(libarayFields.length > 0){
+				$.ajax({
+						type: "POST",
+						url: "/api/libaray/"+apiKey+"/",
+						data: JSON.stringify(libarayFields),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+				});
+		}
     return false;
   }, 500),
+
   cancel:function () {
     this.close();
     window.history.back();
