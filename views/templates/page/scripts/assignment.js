@@ -44,11 +44,32 @@ app.views.AssignmentsView = Backbone.View.extend({
     "click button.edit":"editAssignment"
   },
   editAssignment:function(e){
-	var base = this;
-	$('#dialog').html('');
-    var template = _.template($("#scheduleDialog").html());
-    $('#dialog').html(template).modal();
-  }
+		var base = this;
+		var id = $(e.currentTarget).data('for');
+		var param = this.collection.get(id);
+
+		$('#dialog').html('');
+		var template = _.template($("#scheduleDialog").html(), param.attributes);
+		$('#dialog').html(template).modal();
+		// assign button event
+		$('#assignSubmit').on('click', function(event) {
+
+			var id = $(event.currentTarget).data('for');
+			var assignment = base.collection.get(id);
+
+			assignment.set({
+				schedule: $('#schedule').val(),
+				repeat_schedule: $('#repeat_schedule').val(),
+				date_assigned: $('#date_assigned').val(),
+				date_expires: $('#date_expires').val()
+			});
+			assignment.save();
+			// HACK - Need a better method
+			setTimeout(function(){base.collection.fetch();}, 150);
+
+		});
+
+	}
 });
 
 
