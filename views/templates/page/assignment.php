@@ -119,14 +119,14 @@
         <div class="span6">
             <legend>Report Assignment</legend>
             <div class="control-group">
-                <label>Assign User</label>
+                <label>Assign to User</label>
                 <select id="userList" name="reportForms" class="span12">
+                <option value="">Select A User</option>
                 </select>
             </div>
             <div class="control-group">
                 <label>Report Form</label>
                 <select id="reportList" class="span12" multiple="multiple" size='5'>
-                <option value="">Select Reporting Form</option>
                 </select>
             </div>
         </div>
