@@ -324,8 +324,6 @@ app.views.FormView = Backbone.View.extend({
 		// capture column names
 		this.columns = listNames(this.model.attributes.meta.fieldset);
 		$("#infoBox").html(_.template($("#formInfo").html(), {columns:this.columns, identity_name:this.model.attributes.identity_name}));
-
-		  $('#identity_name').on('change', this.showIdentities).trigger('change');
 			return this;
 		},
 
@@ -426,12 +424,6 @@ app.views.FormView = Backbone.View.extend({
 
 	},
 
-  showIdentities:function(event){
-		console.log(event.currentTarget);
-		var identities = new app.collections.Identities().fetch();
-
-		console.log(identities);
-	},
   cancel:function () {
     this.close();
     window.history.back();

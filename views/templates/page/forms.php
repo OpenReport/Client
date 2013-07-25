@@ -204,7 +204,7 @@
 <script id="formInfo" type="text/template">
 
   <div id="form-stats" class="control-group">
-    <h4>Report Fields</h4>
+  <h4>Report Fields</h4>
 	<ol id="col-list">
 	{{ for (var i = 0; i < columns.length; i++) { }}
 	<li><strong>{{= columns[i].name }}:</strong>{{= columns[i].type }}</li>
@@ -216,6 +216,7 @@
 	<option value="{{= columns[i].name }}" {{= columns[i].name === identity_name ? 'selected':'' }}>{{= columns[i].display }}</option>
 	{{ } }}
 	</select>
+
   </div>
 
 </script>
