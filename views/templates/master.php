@@ -75,6 +75,7 @@
                                 <li><a href="/distribution"><i class="icon icon-share"></i>&nbsp;Report Distribution</a></li>
                                 <li><a href="/forms"><i class="icon icon-list-alt"></i>&nbsp;Reporting Forms</a></li>
                                 <li><a href="/users"><i class="icon icon-user"></i>&nbsp;User Accounts</a></li>
+                                <li><a href="/identity"><i class="icon icon-flag"></i>&nbsp;Identity Lists</a></li>
                             </ul>
                         </li>
                     </ul>

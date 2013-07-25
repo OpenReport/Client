@@ -139,6 +139,16 @@ $app->get('/assignment', $authenticate($app), function () use ($app){
     $app->render('page/assignment.php');
 
 });
+/**
+ * Identity - Create Identities
+ *
+ */
+$app->get('/identity', $authenticate($app), function () use ($app){
+    require $_SERVER['DOCUMENT_ROOT'].'views/MasterView.php';
+    $app->view(new MasterView());
+    $app->render('page/identity.php');
+
+});
 
 /**
  * Run the Slim application
