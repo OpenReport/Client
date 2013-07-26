@@ -25,6 +25,8 @@
  */
 app.views.AssignmentsView = Backbone.View.extend({
   el: '#assignmentContext',
+  pageIndex: 0,
+  recordCount: 0,
   collection: null,
   initialize: function(options){
     _.bind(this, 'render');
@@ -34,6 +36,7 @@ app.views.AssignmentsView = Backbone.View.extend({
   },
 
   render: function(){
+
     var params = { records: this.collection.models, count:this.collection.recCount};
 
     var template = _.template($("#assignments").html(), params);
@@ -41,7 +44,9 @@ app.views.AssignmentsView = Backbone.View.extend({
 
   },
   events:{
-    "click button.edit":"editAssignment"
+    "click button.edit":"editAssignment",
+    "click #nextPage":"prevPage",
+    "click #prevPage":"nextPage"
   },
   editAssignment:function(e){
 		var base = this;
@@ -69,7 +74,19 @@ app.views.AssignmentsView = Backbone.View.extend({
 
 		});
 
-	}
+	},
+  prevPage: function(index){
+		if((this.pageIndex) < paging.items ) return;
+		this.pageIndex = this.pageIndex - paging.items;
+		this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+  nextPage:function(index){
+			if((this.pageIndex + paging.items) > this.collection.recCount) return;
+			this.pageIndex = this.pageIndex + paging.items;
+			this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
 });
 
 
@@ -88,34 +105,53 @@ app.views.AssignmentForm = Backbone.View.extend({
     var template = _.template($("#assignmentForm").html(), params);
     $(this.el).html(template);
 
-	// render user and forms controls
-	// fill in the blanks
-	$.ajax({
-		url:'/api/user/list/'+apiKey,
-		dataType: "json",
-		success: function(response){
-			// add users to drop down
-			for (var i = 0; i < response.data.length; i++) {
-			  var item = response.data[i]
-			  $('#userList').append('<option value="'+item.email+'">'+item.username+' - '+item.roles+'</option>');
+		// render user and forms controls
+		// fill in the blanks
+		$.ajax({
+			url:'/api/user/list/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				// add users to drop down
+				for (var i = 0; i < response.data.length; i++) {
+					var item = response.data[i]
+					$('#userList').append('<option value="'+item.email+'">'+item.username+' - '+item.roles+'</option>');
+				}
 			}
-		}
 
-	});
+		});
 
-	$.ajax({
-		url:'/api/form/list/'+apiKey,
-		dataType: "json",
-		success: function(response){
-			// add forms to drop down
-			for (var i = 0; i < response.data.length; i++) {
-			  var item = response.data[i]
-			  $('#reportList').append('<option value="'+item.id+'">'+item.title+' Report</option>');
+		$.ajax({
+			url:'/api/form/list/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				// add forms to drop down
+				for (var i = 0; i < response.data.length; i++) {
+					var item = response.data[i];
+					$('#reportList').append('<option data-identity="'+item.identity_name+'" value="'+item.id+'">'+item.title+' Report</option>');
+
+				}
+				// attach click event
+				$('#reportList').on('change', function(event){
+					var name = $('#reportList').children(':selected').data('identity');
+					if(name !== ''){
+						$('div.identity').show();
+						$.ajax({
+							url:'/api/identity/'+apiKey+'/'+name,
+							success: function(response){
+								for (var i = 0; i < response.data.length; i++) {
+									var item = response.data[i];
+									$('#identityList').append('<option value="'+item.identity+'">'+item.identity+' - '+item.description+'</option>');
+								}
+							}
+
+						});
+					}
+					else{
+						$('div.identity').hide()
+					}
+				});
 			}
-		}
-
-	});
-
+		});
 
   },
   events:{
@@ -124,25 +160,39 @@ app.views.AssignmentForm = Backbone.View.extend({
   },
   save:function(){
 		var user = $('#userList').val();
-		var forms = $('#reportList').val();
-		if(user == null || forms == '') return this;
+		var form = $('#reportList').val();
+		var identities = $('#identityList').val();
+		if(user == null || form == '') return this;
 		var schedule = $('#schedule').val();
 		var repeat_schedule = $('#repeat_schedule').val();
 		var date_assigned = $('#date_assigned').val();
 		var date_expires = $('#date_expires').val();
-		for (var i = 0; i < forms.length; i++) {
-			var assignment = new app.models.Assignment();
-			assignment.set({
-			schedule: schedule,
-			repeat_schedule: repeat_schedule,
-			date_assigned: date_assigned,
-			date_expires: date_expires,
-			form_id: forms[i],
-			user: user,
-			status: 'open',
-			is_active: 1
+
+		if(identities === null){
+			identities = [''];
+		}
+
+		for (var i = 0; i < identities.length; i++) {
+			// set assignments
+			this.model.set({
+				schedule: schedule,
+				repeat_schedule: repeat_schedule,
+				date_assigned: date_assigned,
+				date_expires: date_expires,
+				form_id: form,
+				identity: identities[i],
+				user: user,
+				status: 'open',
+				is_active: 1
 			});
-			assignment.save();
+
+			var errors = this.model.validate();
+			if(typeof(errors) !== 'undefined'){
+				var template = _.template($("#errorModal").html(), {'caption':'The following error(s) have occured:', 'errors':errors});
+				$('#dialog').html(template).modal();
+				return true;
+			}
+			this.model.save();
 		}
 		this.close();
 		app.router.navigate('/', {trigger: true});
@@ -168,32 +218,44 @@ app.views.AssignmentForm = Backbone.View.extend({
  */
 app.controller = Backbone.Router.extend({
 
+  initialize: function(){
+		// get lists...
+		$.ajax({
+			url:'/api/form/list/'+apiKey,
+			dataType: "json",
+			async:false,
+			success: function(response){
+				app.data.tags = response.data;
+			}
+		});
+	},
 	routes: {
-        "" : "index",
+		"" : "index",
+		"forms/:filter" : "index",
 		"add" : "add",						// add a reporting assigment
-        "remove/:id" : "remove",			// remove reporting assigment
+		"remove/:id" : "remove",			// remove reporting assigment
 		"edit/:id" : "edit"					// edit reporting assigment
 
 	},
     /*
      * Display Assignment List
      */
-    index: function(){
+    index: function(filter){
 
-	  this.assignmentList = new app.collections.Assignments({key: apiKey});
-	  new app.views.AssignmentsView({collection: this.assignmentList});
-
+			this.assignmentList = new app.collections.Assignments({key: apiKey, tag:filter});
+			new app.views.AssignmentsView({collection: this.assignmentList});
+			$("#infoBox").html(_.template($("#filters").html(), {tags:app.data.tags, select:filter}));
     },
-	add: function(){
-	  // if called direct the need this.assignmentList
-	  if(typeof this.assignmentList == 'undefined') this.assignmentList = new app.collections.Assignments({key: apiKey});
-	  var assigment = new app.models.Assignment({is_active:1});
-	  new app.views.AssignmentForm({model:assigment}).render();
-	},
-	edit: function(id){
-	  var assigment = this.assignmentList.get(id);
-	  new app.views.AssignmentForm({model:assigment}).render();
-	}
+		add: function(){
+			// if called direct the need this.assignmentList
+			if(typeof this.assignmentList == 'undefined') this.assignmentList = new app.collections.Assignments({key: apiKey});
+			var assigment = new app.models.Assignment({is_active:1});
+			new app.views.AssignmentForm({model:assigment}).render();
+		},
+		edit: function(id){
+			var assigment = this.assignmentList.get(id);
+			new app.views.AssignmentForm({model:assigment}).render();
+		}
 
 });
 

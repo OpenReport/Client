@@ -23,18 +23,22 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 /**
  * Fetch all assignment records for account
  *
- * GET: /api/assignment/{apiKey}
+ * GET: /api/assignment/{apiKey}[?l=5[,0]]
  *
  * Returns: assignment Records
  *
  */
-$app->get("/:apiKey", function ($apiKey) use ($app, $response) {
+$app->get("/:apiKey(/:formId)", function ($apiKey, $formId = 0) use ($app, $response) {
     try {
         $options = array();
         $options['joins'] = array('LEFT JOIN forms ON(assignments.form_id = forms.id)','LEFT JOIN users ON(assignments.user = users.email)');
         $options['select'] = 'assignments.*, users.username AS user_name, forms.title AS form_title';
-        $options['conditions'] = array('assignments.api_key = ?', $apiKey);
-
+        if($formId == 0){
+            $options['conditions'] = array('assignments.api_key = ?', $apiKey);
+        }
+        else{
+             $options['conditions'] = array('assignments.api_key = ? AND forms.id = ?', $apiKey, $formId);
+        }
         $recCount = Assignment::count($options);
 
         if((int)$recCount > 0){
@@ -46,7 +50,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
                 }
                 $options['limit'] = $limit[0];
             }
-            $options['order'] = 'date_expires ASC';
+            $options['order'] = 'date_assigned ASC';
         }
 
         $data = Assignment::all($options);
@@ -112,7 +116,7 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment = new Assignment();
         $assignment->api_key = $apiKey;
         $assignment->form_id = $request->form_id;
-        $assignment->identity = '';
+        $assignment->identity = $request->identity;
         $assignment->user = $request->user;
         $assignment->schedule = $request->schedule;
         $assignment->repeat_schedule = $request->repeat_schedule;
@@ -150,7 +154,7 @@ $app->put("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
         $assignment = Assignment::find($request->id);
         $assignment->api_key = $apiKey;
         $assignment->form_id = $request->form_id;
-        $assignment->identity = '';
+        $assignment->identity = $request->identity;
         $assignment->user = $request->user;
         $assignment->schedule = $request->schedule;
         $assignment->repeat_schedule = $request->repeat_schedule;
@@ -197,6 +201,6 @@ $app->run();
  */
 function assignmentArrayMap($data){
 
-   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'form_title\',\'schedule\',\'repeat_schedule\',\'status\',\'date_assigned\',\'date_last_reported\',\'date_expires\',\'is_active\'));'),$data);
+   return array_map(create_function('$m','return $m->values_for(array(\'id\',\'user\',\'user_name\',\'form_id\',\'identity\',\'form_title\',\'schedule\',\'repeat_schedule\',\'status\',\'date_assigned\',\'date_last_reported\',\'date_expires\',\'is_active\'));'),$data);
 
 }

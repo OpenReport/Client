@@ -26,7 +26,7 @@ var userView = {
                 <th>Active</th>
                 <th>Email</th>
                 <th>Roles</th>
-				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New User&nbsp;<i class="icon icon-user"></i></a></th>
+				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-user"></i></a></th>
               </tr>
             </thead>
             <tbody>
@@ -45,10 +45,10 @@ var userView = {
         </div>
 
 		<div class="btn-group btn-group pull-right">
-		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
-		<button class="btn btn-mini">Page</button>
-		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
-		</div>
+			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+			<button class="btn btn-mini">Page</button>
+			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+    </div>
 </script>
 
 <script id="info" type="text/template">

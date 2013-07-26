@@ -38,8 +38,6 @@ app.collections.Records = Backbone.Collection.extend({
     id:0,   // record id
     formId:0,
     identity:'',
-    startDate:'',   // record month
-    endDate:'',   // record year
     recCount:0,
     initialize: function(options) {
         options || (options = {});

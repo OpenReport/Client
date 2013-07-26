@@ -17,7 +17,7 @@
 				<th>Tag</th>
                 <th>Published</th>
                 <th>Public</th>
-                <th><a href="#add" class="btn btn-mini btn-primary pull-right">New Form&nbsp;<i class="icon icon-list-alt"></i></a></li></th>
+                <th><a href="#add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-list-alt"></i></a></li></th>
               </tr>
             </thead>
             <tbody>
@@ -35,10 +35,10 @@
             </tbody>
             </table>
 		<div class="btn-group btn-group pull-right">
-		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
-		<button class="btn btn-mini">Page</button>
-		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
-        </div>
+			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+			<button class="btn btn-mini">Page</button>
+			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+    </div>
 	</div>
 </script>
 <style>
@@ -212,6 +212,7 @@
 	</ol>
 	<h4>Identity Field</h4>
 	<select id="identity_name">
+	<option value="" selected>None</option>
 	{{ for (var i = 0; i < columns.length; i++) { if(columns[i].type === 'text') }}
 	<option value="{{= columns[i].name }}" {{= columns[i].name === identity_name ? 'selected':'' }}>{{= columns[i].display }}</option>
 	{{ } }}

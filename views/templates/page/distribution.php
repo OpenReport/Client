@@ -15,7 +15,7 @@
               <tr>
                 <th>Role</th>
                 <th>Forms</th>
-				<th><button id="add" class="btn btn-mini btn-primary pull-right">Add Form&nbsp;<i class="icon icon-share"></i></button></li></th>
+				<th><button id="add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-share"></i></button></li></th>
               </tr>
             </thead>
             <tbody>
@@ -30,11 +30,11 @@
             </tbody>
             </table>
         </div>
-		<div class="btn-group btn-group pull-right" style="display: none;">
-		<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
-		<button class="btn btn-mini">Page</button>
-		<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
-		</div>
+		<div class="btn-group btn-group pull-right">
+			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+			<button class="btn btn-mini">Page</button>
+			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+    </div>
 </script>
 
 <script id="tags" type="text/template">

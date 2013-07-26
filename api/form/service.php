@@ -80,7 +80,7 @@ $app->get("/list/:apiKey", function($apiKey) use ($app, $response){
         $options['order'] = 'title';
         $forms = Form::all($options);
         // package the data
-        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\'));'),$forms);
+        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\',\'identity_name\'));'),$forms);
         $response['count'] = count($response['data']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {

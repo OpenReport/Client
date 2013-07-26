@@ -27,17 +27,40 @@ app.models.Assignment = Backbone.Model.extend({
     urlRoot: '/api/assignment/'+apiKey,
     defaults:{
         id:null,
+				schedule: '',
+				repeat_schedule: 0,
+				date_assigned: null,
+				date_expires: null,
+				form_id: 0,
+				identity: '',
+				user: '',
+				status: 'open',
         api_key:apiKey
+    },
+    validate: function(attr){
+        attr || (attr = this.attributes);
+        var errors = [];
+        if(!attr.date_expires){
+            errors.push('Date Expire is requried');
+        }
+        if(!attr.date_assigned){
+            errors.push('Assign Date is requried');
+        }
+        if(errors.length !== 0){
+            return errors
+        }
     }
 });
 
 
 app.collections.Assignments = Backbone.Collection.extend({
     recCount:0,
+    tag:0,
     model:app.models.Assignment,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
+        this.tag = options.tag;
     },
     fetchRecords: function(options) {
         options || (options = {});
@@ -47,11 +70,10 @@ app.collections.Assignments = Backbone.Collection.extend({
     // override fetch url for addtional uri elements
     url:function() {
         var uri = this.key; // default
-
+        uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
         var limit = paging.items;
         // check for paging
         if('undefined' != typeof this.pageOffset){
-
             limit = limit+','+this.pageOffset;
         }
         // return new url

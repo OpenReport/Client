@@ -26,16 +26,30 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/api/config.php';
 /**
  * Fetch all Identity records for apiKey
  *
- * GET: /identity/{apiKey}
+ * GET: /identity/{apiKey}[?l={limit[,offset]}]]
  *
  */
 $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 
    try{
-      $identities = Identity::find('all', array('order'=>'identity', 'conditions'=>array('api_key = ? AND is_active = 1', $apiKey)));
+      $options = array();
+      $options['conditions'] = array('api_key = ? AND is_active = 1', $apiKey);
+      $recCount = Identity::count($options);
+      if((int)$recCount > 0){
+          $page = $app->request()->params('l');
+          if($page != null){
+              $limit = split(',',$page);
+              if(count($limit)>1){
+                   $options['offset'] = $limit[1];
+              }
+              $options['limit'] = $limit[0];
+          }
+          $options['order'] = 'identity_name, identity';
+      }
+      $identities = Identity::all($options);
       // package the data
       $response['data'] = identityArrayMap($identities);
-      $response['count'] = count($response['data']);
+      $response['count'] = $recCount;
     }
     catch (\ActiveRecord\RecordNotFound $e) {
       $response['message'] = 'No Records Found';
@@ -50,16 +64,30 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
 /**
  * Fetch all Identity records for identity_name
  *
- * GET: /identity/{apiKey}/{name}
+ * GET: /identity/{apiKey}/{name}[?l={limit[,offset]}]]
  *
  */
 $app->get("/:apiKey/:name", function ($apiKey, $name) use ($app, $response) {
 
    try{
-      $identities = Identity::find('all', array('conditions'=>array('api_key = ? AND identity_name = ? AND is_active = 1', $apiKey, $name)));
+      $options = array();
+      $options['conditions'] = array('api_key = ? AND identity_name = ? AND is_active = 1 AND is_active = 1', $apiKey, $name);
+      $recCount = Identity::count($options);
+      if((int)$recCount > 0){
+          $page = $app->request()->params('l');
+          if($page != null){
+              $limit = split(',',$page);
+              if(count($limit)>1){
+                   $options['offset'] = $limit[1];
+              }
+              $options['limit'] = $limit[0];
+          }
+          $options['order'] = 'identity_name, identity';
+      }
+      $identities = Identity::all($options);
       // package the data
       $response['data'] = identityArrayMap($identities);
-      $response['count'] = count($response['data']);
+      $response['count'] = $recCount;
     }
     catch (\ActiveRecord\RecordNotFound $e) {
       $response['message'] = 'No Records Found';
@@ -72,7 +100,7 @@ $app->get("/:apiKey/:name", function ($apiKey, $name) use ($app, $response) {
 });
 
 /**
- * Fetch all Identity names
+ * Fetch all Identity names (ie column names)
  *
  * GET: /identity/names/{apiKey}
  *
@@ -85,8 +113,13 @@ $app->get("/names/:apiKey", function ($apiKey) use ($app, $response) {
         $options['order'] = 'identity_name';
         $options['select'] = "DISTINCT identity_name";
         $identities = Identity::all($options);
+        $names = array();
+        foreach($identities as $name){
+          $names[] = $name->identity_name;
+        }
+
         // package the data
-        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'identity_name\'));'),$identities);
+        $response['data'] = $names;
         $response['count'] = count($response['data']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {

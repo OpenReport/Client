@@ -194,7 +194,7 @@ function updateList(){
 
 	select = $('select#identity_name');
 	id = select.val();
-	select.html('');
+	select.html('<option value="" selected>None</option>');
 
 	for (var i = 0; i < fieldset[0].fields.length; i++){
 		ol.append('<li><strong>'+fieldset[0].fields[i].name+':</strong>'+fieldset[0].fields[i].type+'</li>');

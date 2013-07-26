@@ -24,12 +24,26 @@
  */
 app.views.IdentitiesView = Backbone.View.extend({
   el: '#identityContext',
+	tag:'',
+	columns:[],
   collection: null,
   initialize: function(options){
+		var base = this;
+		options || (options = {});
+		this.tag = options.tag;
     _.bind(this, 'render');
     this.listenTo(this.collection, 'reset', this.render);
-    this.collection.fetch();
+    this.collection.fetchRecords();
+		// info box - column filters
+		$.ajax({
+			url:'/api/identity/names/'+apiKey,
+			dataType: "json",
+			success: function(response){
+				base.columns = response.data;
+				$("#infoBox").html(_.template($("#idenityFilters").html(), {tags:base.columns, select:base.tag}));
 
+			}
+		});
   },
 
   render: function(){
@@ -41,7 +55,10 @@ app.views.IdentitiesView = Backbone.View.extend({
   },
   events:{
     "click button.edit":"editIdentity",
-		"click button.add":"addIdentity"
+		"click button.add":"addIdentity",
+    "click #nextPage":"prevPage",
+    "click #prevPage":"nextPage"
+
   },
   editIdentity:function(e){
 		var base = this;
@@ -49,7 +66,7 @@ app.views.IdentitiesView = Backbone.View.extend({
 		var param = this.collection.get(id);
 
 		$('#dialog').html('');
-		var template = _.template($("#identityForm").html(), param.attributes);
+		var template = _.template($("#identityEditDialog").html(), param.attributes);
 		$('#dialog').html(template).modal();
 		// assign button event
 		$('#identitySubmit').on('click', function(event) {
@@ -72,10 +89,15 @@ app.views.IdentitiesView = Backbone.View.extend({
 	addIdentity: function(event){
 		var base = this;
 		var identity = new app.models.Identity();
-		$('#dialog').empty();
-		var template = _.template($("#identityForm").html(), identity.attributes);
+		$('#dialog').empty();$('#dialog').unbind();
+		var template = _.template($("#identityEditDialog").html(), identity.attributes);
 		$('#dialog').html(template).modal();
-		$('#identity_name').prop('readonly', false);
+		$('#identity, #identity_name').prop('readonly', false);
+		// add auto-complete
+		$('input#identity_name').autocomplete({
+			autoSelectFirst: true,
+			lookup: base.columns
+		});
 		// assign button event
 		$('#identitySubmit').on('click', function(event) {
 			identity.set({
@@ -88,7 +110,29 @@ app.views.IdentitiesView = Backbone.View.extend({
 			setTimeout(function(){base.collection.fetch();}, 150);
 
 		});
-	}
+
+	},
+  prevPage: function(index){
+		if((this.pageIndex) < paging.items ) return;
+		this.pageIndex = this.pageIndex - paging.items;
+		this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+  nextPage:function(index){
+		if((this.pageIndex + paging.items) > this.collection.recCount) return;
+		this.pageIndex = this.pageIndex + paging.items;
+		this.collection.fetchRecords({pageOffset:this.pageIndex});
+
+  },
+	filter:function(event){
+
+	},
+  close:function () {
+    $(this.el).unbind();
+    $(this.el).empty();
+		$("#infoBox").unbind();
+		$("#infoBox").empty();
+  }
 
 });
 
@@ -101,15 +145,17 @@ app.views.IdentitiesView = Backbone.View.extend({
 app.controller = Backbone.Router.extend({
 
 	routes: {
-    "" : "index"
+    "" : "index",
+		"filter/:tag" : "index",				// filter by tag
 	},
     /*
      * Display Identities List
      */
-    index: function(){
+    index: function(tag){
 
-      this.idenityList = new app.collections.Identities({key: apiKey});
-      new app.views.IdentitiesView({collection: this.idenityList});
+      this.idenityList = new app.collections.Identities({key: apiKey, tag: tag});
+			if(app.pageView !== null) app.pageView.close();
+      app.pageView = new app.views.IdentitiesView({collection: this.idenityList, tag: tag});
 
     }
 });

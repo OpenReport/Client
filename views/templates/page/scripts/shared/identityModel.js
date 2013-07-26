@@ -37,17 +37,32 @@ app.models.Identity = Backbone.Model.extend({
  *
  */
 app.collections.Identities = Backbone.Collection.extend({
+    tag:'',
     recCount:0,
+    pageOffset:0,
     initialize: function(options) {
         options || (options = {});
         this.key = options.key;
+        this.tag = options.tag;
+    },
+    fetchRecords: function(options) {
+        options || (options = {});
+        this.pageOffset = options.pageOffset;
+        this.fetch(options);
     },
     // override fetch url for addtional uri elements
     url:function() {
-        // fetch records (get:/api/forms/{key}/[tag])
+        // fetch records (get:/api/identity/{key}[/tag])
         var uri = this.key;
+         uri = uri + (typeof this.tag != 'undefined' ? '/'+this.tag:'');
+        var limit = paging.items;
+        // check for paging
+        if('undefined' != typeof this.pageOffset){
 
-        return "/api/identity/"+uri;
+            limit = limit+','+this.pageOffset;
+        }
+
+        return "/api/identity/"+uri+'?l='+limit;
     },
     parse:function(response){
         this.recCount = response.count;

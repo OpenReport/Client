@@ -19,7 +19,6 @@
                 <th>User</th>
                 <th>Assigned</th>
                 <th>Schedule</th>
-                <th>Status</th>
                 <th>Expires</th>
 				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-check"></i></a></li></th>
               </tr>
@@ -27,11 +26,10 @@
             <tbody>
             {{ _(records).each(function(assignment) { }}
               <tr>
-                <td>{{= assignment.get('form_title') }}</td>
+                <td>{{= assignment.get('form_title') }} {{= assignment.get('identity') }}</td>
                 <td>{{= assignment.get('user_name') }}</td>
                 <td>{{= moment(assignment.get('date_assigned').date).format('L') }}</td>
                 <td>{{= assignment.get('schedule') }}</td>
-                <td>{{= assignment.get('status') }}</td>
                 <td>{{= moment(assignment.get('date_expires').date).format('L') }}</td>
                 <td><span class="pull-right"><button data-for="{{= assignment.get('id') }}" class="edit btn btn-mini btn-info">Edit <i class="icon-edit icon-white"></i></button></span></td>
               </tr>
@@ -41,9 +39,9 @@
             </table>
 
 			<div class="btn-group btn-group pull-right">
-			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
+			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-up"></i></button>
 			<button class="btn btn-mini">Page</button>
-			<button id="nextPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
+			<button id="prevPage" class="btn btn-mini" type="button"><i class="icon-chevron-down"></i></button>
 			</div>
         </div>
 </script>
@@ -101,11 +99,11 @@
 
 			// initialize date controls
 			$('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
-				setExpire(e.date);
+				setExpire($('#date_assigned').val());
 			});
 			$('#schedule, #repeat_schedule').on('change', function(e){
-			// update date_expires
-			setExpire($('#date_assigned').val());
+				// update date_expires
+				setExpire($('#date_assigned').val());
 
 			});
 
@@ -115,9 +113,11 @@
 
 
 <script id="assignmentForm" type="text/template">
-    <div class="">
+    <div class="row-fluid">
+
+
         <div class="span6">
-            <legend>Report Assignment</legend>
+            <legend>Assignment</legend>
             <div class="control-group">
                 <label>Assign to User</label>
                 <select id="userList" name="reportForms" class="span12">
@@ -126,11 +126,19 @@
             </div>
             <div class="control-group">
                 <label>Report Form</label>
-                <select id="reportList" class="span12" multiple="multiple" size='5'>
+                <select id="reportList" class="span12">
+								<option data-identity="" value="">Select A Report Form</option>
                 </select>
             </div>
-        </div>
-        <div class="span6">
+            <div class="identity control-group" style="display:none;">
+                <label>Report For (select all that apply)</label>
+                <select id="identityList" class="span12" multiple>
+                </select>
+            </div>
+						</div>
+
+
+<div class="span6">
             <legend>Schedule</legend>
             <div class="control-group">
 			  <div class='row-fluid'>
@@ -144,23 +152,29 @@
 			  </div>
 			  <div class="span6">
 				<label>Repeat</label>
-                <input type="text" id="repeat_schedule" value="1" class="span12">
-              </div>
+            <input type="text" id="repeat_schedule" value="1" class="span12">
+        </div>
 			  </div>
 			</div>
-            <div class="control-group">
+			<div class="control-group">
+			  <div class='row-fluid'>
+            <div class="span6">
                 <label class="control-label">Start Assignment</label>
                 <div class="input-append date" data-date-format="MM d yyyy">
-                    <input id="date_assigned" class="span11" type="text" value="{{= moment().format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
+                    <input id="date_assigned" class="span10" type="text" value="{{= moment().format('LL') }}"><span class="add-on"><i class="icon-calendar"></i></span>
                 </div>
             </div>
-            <div class="control-group">
+            <div class="span6">
                 <label class="control-label">Expires</label>
                 <div class="input-append date" data-date-format="MM d yyyy">
-                    <input id="date_expires" class="span11" type="text" value="" disabled><span class="add-on"><i class="icon-calendar"></i></span>
+                    <input id="date_expires" class="span10" type="text" value="{{= moment().format('LL') }}" disabled><span class="add-on"><i class="icon-calendar"></i></span>
                 </div>
             </div>
+						</div></div>
         </div>
+
+    </div>
+    <div class="row-fluid">
         <div class="clearfix">
             <div class="control-group pull-right">
             <button id='submit' class="btn btn-mini btn-primary" data-dismiss="modal">OK<i class="icon-minus-sign icon-white"></i></button>
@@ -172,7 +186,7 @@
 
 			// initialize date controls
 			$('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
-				setExpire(e.date);
+				setExpire($('#date_assigned').val());
 			});
 			$('#schedule, #repeat_schedule').on('change', function(e){
 			// update date_expires
@@ -184,12 +198,25 @@
 
 </script>
 
+<script id="filters" type="text/template">
+
+  <div id="form-list" class="control-group">
+    <h4>Filter by Report</h4>
+	<a href="#" class="label label-important">x</a>
+	{{ for (var i = 0; i < tags.length; i++) { }}
+		<a href="#forms/{{= tags[i].id }}" class="label {{= select == tags[i].id ? 'label-info':''}}">{{= tags[i].title }}</a>
+	{{ } }}
+  </div>
+
+</script>
+
 <script type="text/javascript">
 			  // expire logic
 	  function setExpire(date){
 		var startDate = moment(date);
 		var endDate = startDate;
 		var cnt = $('#repeat_schedule').val();
+		cnt = cnt > 1 ? cnt:1;
 		switch($('#schedule').val()){
 			case 'daily':
 				endDate = startDate.add('days', cnt-1);
