@@ -60,7 +60,7 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         }
         else{
             // filter records
-            $options['conditions'] = array('api_key = ? AND form_id = ? AND record_date BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate);
+            $options['conditions'] = array('api_key = ? AND form_id = ? AND DATE(record_date) BETWEEN ? AND ?', $apiKey, $formId, $startDate, $endDate);
         }
         $recCount = Record::count($options);
         if((int)$recCount > 0){
@@ -141,7 +141,7 @@ $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app,
             $options['conditions'] = array('records.api_key = ? AND records.identity = ?', $apiKey, $identity);
         }
         else{
-           $options['conditions'] = array('records.api_key = ? AND records.identity = ? AND records.record_date BETWEEN ? AND ?', $apiKey, $identity, $startDate, $endDate);
+           $options['conditions'] = array('records.api_key = ? AND records.identity = ? AND DATE(records.record_date) BETWEEN ? AND ?', $apiKey, $identity, $startDate, $endDate);
         }
         $recCount = Record::count($options);
         if((int)$recCount > 0){
