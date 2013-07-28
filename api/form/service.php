@@ -67,7 +67,7 @@ $app->get("/:apiKey(/:tag)", function ($apiKey, $tag = '') use ($app, $response)
 
 
 /**
- * Fetch Form List (title and id)
+ * Fetch Published Form List (title and id)
  *
  * GET: /api/form/list/{apiKey}
  *
@@ -80,7 +80,7 @@ $app->get("/list/:apiKey", function($apiKey) use ($app, $response){
         $options['order'] = 'title';
         $forms = Form::all($options);
         // package the data
-        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\',\'identity_name\'));'),$forms);
+        $response['data'] = array_map(create_function('$m','return $m->values_for(array(\'id\',\'title\',\'is_public\',\'identity_name\'));'),$forms);
         $response['count'] = count($response['data']);
     }
     catch (\ActiveRecord\RecordNotFound $e) {
@@ -161,7 +161,7 @@ $app->post("/:apiKey", function ($apiKey) use ($app, $response) {
         $form = new Form();
         $form->title = $request->title;
         $form->description = $request->description;
-        $form->tags = $request->tags;
+        $form->tags = strtolower($request->tags);
         $form->report_version = ($request->is_published?1:0);
         $form->date_created = $today;
         $form->date_modified = $today;
@@ -239,7 +239,7 @@ $app->put("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         // Update Report Form
         $form->title = $request->title;
         $form->description = $request->description;
-        $form->tags = $request->tags;
+        $form->tags = strtolower($request->tags);
         $form->report_version = $ver;
         $form->date_modified = $today;
         $form->is_published = $request->is_published;

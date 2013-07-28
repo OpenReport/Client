@@ -23,7 +23,7 @@
             <tbody>
             {{ _(forms).each(function(form) { }}
               <tr>
-                <td><a class="detailBtn" id="{{= form.id }}" href="#"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.attributes.title }}</a></td>
+                <td nowrap><a class="detailBtn" id="{{= form.id }}" href="#"><i class="icon-info-sign icon-white"></i>&nbsp;{{= form.attributes.title }}</a></td>
                 <td>{{= form.attributes.description }}</td>
 				<td>{{= form.attributes.tags }}</td>
 				<td>{{= form.attributes.is_published === 1 ? 'Yes':'No' }}</td>
@@ -103,8 +103,8 @@
 		<div class="control-group">
 			<label class="control-label" style="vertical-align:top">Report Options</label>
 			<ul style="display:inline-block;" class="unstyled">
-				<li><input type="checkbox" id="is_published" {{= (is_published === 1) ? 'checked':'' }}>Publish Form</li>
-				<li><input type="checkbox" id="is_public" {{= (is_public === 1) ? 'checked':'' }}>Assign to All Users</li>
+				<li><input type="checkbox" id="is_published" {{= (is_published === 1) ? 'checked':'' }}>Publish Report Form</li>
+				<li><input type="checkbox" id="is_public" {{= (is_public === 1) ? 'checked':'' }}>Distribute to All Users</li>
 			</ul>
 		</div>
 

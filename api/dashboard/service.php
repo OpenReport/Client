@@ -110,6 +110,6 @@ function formArrayMap($data){
 
 function arrayMapRecord($data){
 
-    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'form_title\',\'form_id\',\'user\',\'lat\',\'lon\',\'record_date\'));'),$data);
+    return array_map(create_function('$m','return $m->values_for(array(\'id\',\'identity\',\'form_title\',\'form_id\',\'user\',\'lat\',\'lon\',\'record_date\'));'),$data);
 
 }

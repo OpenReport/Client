@@ -34,10 +34,10 @@ $app->get("/:apiKey(/:formId)", function ($apiKey, $formId = 0) use ($app, $resp
         $options['joins'] = array('LEFT JOIN forms ON(assignments.form_id = forms.id)','LEFT JOIN users ON(assignments.user = users.email)');
         $options['select'] = 'assignments.*, users.username AS user_name, forms.title AS form_title';
         if($formId == 0){
-            $options['conditions'] = array('assignments.api_key = ?', $apiKey);
+            $options['conditions'] = array('assignments.api_key = ? AND assignments.is_active = 1', $apiKey);
         }
         else{
-             $options['conditions'] = array('assignments.api_key = ? AND forms.id = ?', $apiKey, $formId);
+             $options['conditions'] = array('assignments.api_key = ? AND forms.id = ? AND assignments.is_active = 1', $apiKey, $formId);
         }
         $recCount = Assignment::count($options);
 
@@ -122,6 +122,7 @@ $app->post("/:apiKey/", function ($apiKey) use ($app, $response) {
         $assignment->repeat_schedule = $request->repeat_schedule;
         $assignment->date_assigned = $request->date_assigned;
         $assignment->date_expires = $request->date_expires;
+        $assignment->date_next_report = $request->date_assigned;
         $assignment->status = $request->status;
         $assignment->is_active = true;
         $assignment->save();
@@ -160,6 +161,7 @@ $app->put("/:apiKey/:id", function ($apiKey, $id) use ($app, $response) {
         $assignment->repeat_schedule = $request->repeat_schedule;
         $assignment->date_assigned = $request->date_assigned;
         $assignment->date_expires = $request->date_expires;
+        $assignment->date_next_report = $request->date_assigned;
         $assignment->status = $request->status;
         $assignment->is_active = true;
         $assignment->save();

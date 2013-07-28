@@ -117,6 +117,16 @@
 		<a href="#filter/{{= tags[i] }}" class="label {{= select == tags[i] ? 'label-info':''}}">{{= tags[i] }}</a>
 	{{ } }}
   </div>
+  <div id="import" class="control-group">
+  <h4>Import Identities</h4>
+    <label class="control-label">Identity Values</label>
+    <div class="controls">
+        <textarea class="span12" id="importData" name="importData" placeholder="Enter Values for each Identity" ></textarea>
+    </div>
+    <div class="control-group pull-right">
+      <button id='identityImport' class="btn btn-mini btn-primary" >Import<i class="icon-plus-sign icon-white"></i></button>
+    </div>
+  </div>
 </script>
 <script type="text/javascript" src="/assets/js/vendor/jquery.autocomplete.min.js"></script>
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>

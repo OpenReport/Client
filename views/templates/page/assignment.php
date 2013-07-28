@@ -16,8 +16,8 @@
             <thead>
               <tr>
                 <th>Report</th>
-                <th>User</th>
-                <th>Assigned</th>
+                <th>Assigned To</th>
+                <th>Starting</th>
                 <th>Schedule</th>
                 <th>Expires</th>
 				<th><a href="#add" class="btn btn-mini btn-primary pull-right">New&nbsp;<i class="icon icon-check"></i></a></li></th>

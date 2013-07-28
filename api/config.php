@@ -79,7 +79,7 @@ $response = array('status'=>'ok', 'message'=>'', 'count'=>0, 'data'=>array());
 /**
  * Status Page
  *
- * get: /[account|assignments|dashboard|form|report|user]/
+ * get: /api/[account|assignments|dashboard|form|report|user]/
  *
  */
 $app->get('/', function () use($app, $response)  {

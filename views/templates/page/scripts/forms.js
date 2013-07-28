@@ -112,6 +112,12 @@ function update_ctrl(ctlId){
 	}
 
 }
+
+function delete_ctrl(ctlId){
+		$(ctlId).remove();
+		updateList();
+}
+
 function parseFormMeta(){
     var frm = $('fieldset.droppedFields').find('div.well');
 

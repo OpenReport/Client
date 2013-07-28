@@ -127,7 +127,9 @@ app.views.AssignmentForm = Backbone.View.extend({
 				// add forms to drop down
 				for (var i = 0; i < response.data.length; i++) {
 					var item = response.data[i];
-					$('#reportList').append('<option data-identity="'+item.identity_name+'" value="'+item.id+'">'+item.title+' Report</option>');
+					if(item.identity_name !== '' && !item.is_public){
+						$('#reportList').append('<option data-identity="'+item.identity_name+'" value="'+item.id+'">'+item.title+' Report</option>');
+					}
 
 				}
 				// attach click event
@@ -162,7 +164,7 @@ app.views.AssignmentForm = Backbone.View.extend({
 		var user = $('#userList').val();
 		var form = $('#reportList').val();
 		var identities = $('#identityList').val();
-		if(user == null || form == '') return this;
+		if(user == '' || form == '') return this;
 		var schedule = $('#schedule').val();
 		var repeat_schedule = $('#repeat_schedule').val();
 		var date_assigned = $('#date_assigned').val();

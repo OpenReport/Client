@@ -29,6 +29,9 @@ app.models.Identity = Backbone.Model.extend({
         identity_name: '',
         description: '',
         api_key: apiKey
+    },
+    url: function(){
+        return this.urlRoot;
     }
 });
 

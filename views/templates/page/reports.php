@@ -312,6 +312,14 @@
 
 <!-- need async load here -->
 <script type="text/javascript">
-	document.write('<script src="http://maps.google.com/maps/api/js?&sensor=false">');
-	document.write('</script'+'>')
+	$(document).ready(function() {
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initMaps';
+		document.body.appendChild(script);
+	});
+	function initMaps(){
+		app.maps = google.maps;
+	}
+
 </script>

@@ -374,20 +374,21 @@ app.views.RecordDetail = Backbone.View.extend({
 
 			var Latlng = new google.maps.LatLng(this.model.attributes.data.record.lat,this.model.attributes.data.record.lon);
 			var mapOptions = {
-				zoom: 20,
+				zoom: 17,
 				center: Latlng,
-				mapTypeId: google.maps.MapTypeId.HYBRID
+				//mapTypeId: google.maps.MapTypeId.HYBRID
 			}
-		    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+		  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-			var marker = new google.maps.Marker({
-				  position: Latlng,
-				  map: map,
-				  title: this.model.attributes.data.record.identity
-			  });
+			//var marker = new google.maps.Marker({
+			//	  position: Latlng,
+			//	  map: map,
+			//	  title: this.model.attributes.data.record.identity
+			//  });
 		}
 		catch(e){
 			$('div#map').html('<p>Maps Offline</p>');
+			console.log(e);
 		    return;
 		}
 	}
@@ -472,6 +473,7 @@ app.init(new app.controller());
  *
  */
 $(document).ready(function(){
+
 	Backbone.history.start({pushstate:false});
 
 });

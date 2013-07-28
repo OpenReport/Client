@@ -19,6 +19,7 @@
 
 
 var app = {
+    maps: null,
     config: {},
     views: {},
     models: {},

@@ -24,6 +24,7 @@
  */
 app.views.IdentitiesView = Backbone.View.extend({
   el: '#identityContext',
+	pageIndex:0,
 	tag:'',
 	columns:[],
   collection: null,
@@ -41,7 +42,7 @@ app.views.IdentitiesView = Backbone.View.extend({
 			success: function(response){
 				base.columns = response.data;
 				$("#infoBox").html(_.template($("#idenityFilters").html(), {tags:base.columns, select:base.tag}));
-
+				$('#identityImport').on('click', function(event){base.identityImport(event, base);});
 			}
 		});
   },
@@ -57,8 +58,8 @@ app.views.IdentitiesView = Backbone.View.extend({
     "click button.edit":"editIdentity",
 		"click button.add":"addIdentity",
     "click #nextPage":"prevPage",
-    "click #prevPage":"nextPage"
-
+    "click #prevPage":"nextPage",
+		//"click #identityImport": "identityImport"
   },
   editIdentity:function(e){
 		var base = this;
@@ -124,7 +125,18 @@ app.views.IdentitiesView = Backbone.View.extend({
 		this.collection.fetchRecords({pageOffset:this.pageIndex});
 
   },
-	filter:function(event){
+	identityImport:function(event, base){
+
+		var identityList = $("#importData").val().split(/\r|\n/);
+		$.each(identityList, function (i, name) {
+				 // empty string check
+				 if(name != ""){
+					cols = name.split(',');
+					base.collection.create(new app.models.Identity({identity_name:cols[0], identity:cols[1], description:cols[2]}));
+
+				 }
+		 });
+		base.collection.fetchRecords({pageOffset:0});
 
 	},
   close:function () {
@@ -137,6 +149,14 @@ app.views.IdentitiesView = Backbone.View.extend({
 });
 
 
+//app.views.IdentityImport = Backbone.View.extend({
+//  el: '#identityContext',
+//  collection: null,
+//  initialize: function(options){	}
+//
+//});
+
+
 /**
  * Routes
  *
@@ -147,6 +167,7 @@ app.controller = Backbone.Router.extend({
 	routes: {
     "" : "index",
 		"filter/:tag" : "index",				// filter by tag
+		"import": "importIDs"
 	},
     /*
      * Display Identities List
@@ -157,7 +178,10 @@ app.controller = Backbone.Router.extend({
 			if(app.pageView !== null) app.pageView.close();
       app.pageView = new app.views.IdentitiesView({collection: this.idenityList, tag: tag});
 
-    }
+    },
+		importIDs: function(){
+
+		}
 });
 
 /**
