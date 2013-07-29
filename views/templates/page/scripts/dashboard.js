@@ -41,13 +41,13 @@ app.views.DashboardView = Backbone.View.extend({
   },
 
   render: function(){
-	var params = { stats: this.model.attributes.data};
-	var template = _.template($("#details").html(), params);
-	$(this.el).html(template);
+    var params = { stats: this.model.attributes.data};
+    var template = _.template($("#details").html(), params);
+    $(this.el).html(template);
 
-	var template = _.template($("#info").html(), params);
-	$('#infoBox').html(template);
-	return this;
+    var template = _.template($("#info").html(), params);
+    $('#infoBox').html(template);
+    return this;
   },
 
 });
