@@ -1,21 +1,5 @@
 delimiter $$
 
-CREATE TABLE `accounts` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `api_key` varchar(32) DEFAULT NULL,
-  `name` varchar(96) DEFAULT NULL,
-  `admin_email` varchar(45) DEFAULT NULL,
-  `map_api_key` varchar(64) DEFAULT NULL,
-  `date_created` date DEFAULT NULL,
-  `account_limits` varchar(1024) DEFAULT '{"users":0, "records":0, "forms":0, "media":0}',
-  `is_active` tinyint(4) DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `KEY` (`api_key`) USING BTREE,
-  UNIQUE KEY `EMAIL_UNIQUE` (`admin_email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1$$
-
-delimiter $$
-
 CREATE TABLE `assignments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `api_key` varchar(32) COLLATE latin1_general_ci DEFAULT NULL,
@@ -24,13 +8,15 @@ CREATE TABLE `assignments` (
   `identity` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
   `schedule` set('daily','weekly','monthly','yearly') COLLATE latin1_general_ci DEFAULT NULL,
   `repeat_schedule` smallint(6) DEFAULT '1',
-  `date_assigned` datetime DEFAULT NULL,
-  `date_expires` datetime DEFAULT NULL,
-  `date_last_reported` datetime DEFAULT NULL,
+  `date_assigned` date DEFAULT NULL,
+  `date_expires` date DEFAULT NULL,
+  `date_last_reported` date DEFAULT NULL,
+  `date_next_report` date DEFAULT NULL,
+  `report_count` smallint(6) DEFAULT NULL,
   `status` set('open','closed') COLLATE latin1_general_ci DEFAULT NULL,
-  `is_active` varchar(45) COLLATE latin1_general_ci DEFAULT '1',
+  `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -41,7 +27,7 @@ CREATE TABLE `distributions` (
   `form_tag` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -60,7 +46,19 @@ CREATE TABLE `forms` (
   `is_published` tinyint(4) DEFAULT '0',
   `is_deleted` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Open Report Form'$$
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Open Report Form'$$
+
+delimiter $$
+
+CREATE TABLE `identity` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `api_key` varchar(32) COLLATE latin1_general_ci DEFAULT NULL,
+  `identity_name` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `identity` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
+  `description` text COLLATE latin1_general_ci,
+  `is_active` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -71,7 +69,7 @@ CREATE TABLE `libaray` (
   `role` set('field','fieldset') COLLATE latin1_general_ci DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Libaray of Standard Controls'$$
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='Libaray of Standard Controls'$$
 
 delimiter $$
 
@@ -89,7 +87,7 @@ CREATE TABLE `records` (
   `score` mediumint(9) DEFAULT NULL,
   `identity` varchar(128) COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -103,7 +101,7 @@ CREATE TABLE `reports` (
   `meta` text COLLATE latin1_general_ci,
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -113,7 +111,7 @@ CREATE TABLE `tags` (
   `scope` set('roles','reports') COLLATE latin1_general_ci DEFAULT NULL,
   `name` varchar(45) COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
 
 delimiter $$
 
@@ -130,4 +128,4 @@ CREATE TABLE `users` (
   `is_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `EMAIL` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8$$
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci$$
