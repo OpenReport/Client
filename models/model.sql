@@ -1,5 +1,21 @@
 delimiter $$
 
+CREATE TABLE `accounts` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `api_key` varchar(32) DEFAULT NULL,
+  `name` varchar(96) DEFAULT NULL,
+  `admin_email` varchar(45) DEFAULT NULL,
+  `map_api_key` varchar(64) DEFAULT NULL,
+  `date_created` date DEFAULT NULL,
+  `account_limits` varchar(1024) DEFAULT '{"users":0, "records":0, "forms":0, "media":0}',
+  `is_active` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `KEY` (`api_key`) USING BTREE,
+  UNIQUE KEY `EMAIL_UNIQUE` (`admin_email`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1$$
+
+delimiter $$
+
 CREATE TABLE `assignments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `api_key` varchar(32) COLLATE latin1_general_ci DEFAULT NULL,
