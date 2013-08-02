@@ -231,10 +231,10 @@
 	  $(filters.selected).addClass('btn-info');
 	  // initialize filter control
 	  $('.input-append.date').datepicker({todayBtn: true, autoclose: true, forceParse: true}).on('changeDate', function(e){
-		// set filter dates
-		filters.endDate = moment($('#endDate').val());
-		filters.startDate = moment($('#startDate').val());
-		if(filters.navigate.on="custom") filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
+			// set filter dates
+			filters.endDate = moment($('#endDate').val());
+			filters.startDate = moment($('#startDate').val());
+			if(filters.navigate.on="custom") filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
 
 	  });
 	  // assign btn events
@@ -243,62 +243,64 @@
 		filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
 		resetDates($('#custom'));
 	  });
-	  $('#custom').bind('click', function( event ){
-		filters.selected = '#custom'
-		filters.navigate.on = 'days';
-		filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
-		resetDates($('#custom'));
+			$('#custom').bind('click', function( event ){
+			filters.selected = '#custom'
+			filters.navigate.on = 'days';
+			filters.navigate.index = filters.endDate.diff(filters.startDate, 'days');
+			resetDates($('#custom'));
 	  });
 	  $('#monthly').bind('click', function( event ){
-		filters.selected = '#monthly'
-		filters.startDate = moment().startOf('month');
-		filters.endDate = moment().endOf('month');
-		filters.navigate.on = 'month';
-		filters.navigate.index = 1;
-		resetDates($('#monthly'));
+			filters.selected = '#monthly'
+			filters.startDate = moment().startOf('month');
+			filters.endDate = moment().endOf('month');
+			filters.navigate.on = 'months';
+			filters.navigate.index = 1;
+			resetDates($('#monthly'));
 	  });
 	  $('#every7').bind('click', function( event ){
-		filters.selected = '#every7'
-		filters.startDate = moment().subtract('days', 7);
-		filters.endDate = moment();
-		filters.navigate.on = 'days';
-		filters.navigate.index = 7;
-		resetDates($('#every7'));
-		return true;
+			filters.selected = '#every7'
+			filters.startDate = moment().subtract('days', 7);
+			filters.endDate = moment();
+			filters.navigate.on = 'days';
+			filters.navigate.index = 7;
+			resetDates($('#every7'));
+			return true;
 	  });
 	  $('#every30').bind('click', function( event ){
-		filters.selected = '#every30'
-		filters.startDate = moment().subtract('days', 30);
-		filters.endDate = moment();
-		filters.navigate.on = 'days';
-		filters.navigate.index = 30;
-		resetDates($('#every30'));
+			filters.selected = '#every30'
+			filters.startDate = moment().subtract('days', 30);
+			filters.endDate = moment();
+			filters.navigate.on = 'days';
+			filters.navigate.index = 30;
+			resetDates($('#every30'));
 		return true;
 	  });
 	  $('#every60').bind('click', function( event ){
-		filters.selected = '#every60'
-		filters.startDate = moment().subtract('days', 60);
-		filters.endDate = moment();
-		filters.navigate.on = 'days';
-		filters.navigate.index = 60;
-		resetDates($('#every60'));
+			filters.selected = '#every60'
+			filters.startDate = moment().subtract('days', 60);
+			filters.endDate = moment();
+			filters.navigate.on = 'days';
+			filters.navigate.index = 60;
+			resetDates($('#every60'));
 	  });
 	  $('#every90').bind('click', function( event ){
-		filters.selected = '#every90'
-		filters.startDate = moment().subtract('days', 90);
-		filters.endDate = moment();
-		filters.navigate.on = 'days';
-		filters.navigate.index = 90;
-		resetDates($('#every90'));
+			filters.selected = '#every90'
+			filters.startDate = moment().subtract('days', 90);
+			filters.endDate = moment();
+			filters.navigate.on = 'days';
+			filters.navigate.index = 90;
+			resetDates($('#every90'));
 	  });
 
 	  function resetDates(sel){
-		$('.filters').removeClass('btn-info');
-		$('#startDate').val(filters.startDate.format('LL'));
-		$('#endDate').val(filters.endDate.format('LL'));
-		sel.addClass('btn-info');
-		return true;
+			$('.filters').removeClass('btn-info');
+			$('#startDate').val(filters.startDate.format('LL'));
+			$('#endDate').val(filters.endDate.format('LL'));
+			sel.addClass('btn-info');
+			return true;
 	  }
+
+		$('#monthly').trigger('click');
 
 	</script>
 
