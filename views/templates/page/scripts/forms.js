@@ -379,13 +379,14 @@ app.views.FormView = Backbone.View.extend({
     }
 		// check for any new libaray items
 		if(libarayFields.length > 0){
-				$.ajax({
-						type: "POST",
-						url: "/api/libaray/"+apiKey+"/",
-						data: JSON.stringify(libarayFields),
-						contentType: "application/json; charset=utf-8",
-						dataType: "json",
-				});
+			$.ajax({
+					type: "POST",
+					url: "/api/libaray/"+apiKey+"/",
+					data: JSON.stringify(libarayFields),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+			});
+			libarayFields = []; // CLEAR IT
 		}
 		this.close();
     return false;
