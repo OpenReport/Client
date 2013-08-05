@@ -38,7 +38,10 @@ app.views.AccountFormView = Backbone.View.extend({
   saveAccount:function () {
 
 	this.model.save({
-        name: $('#acctname').val()
+        name: $('#acctname').val(),
+        admin_email: $('#admin_email').val(),
+				mobile_url: $('#mobile_url').val(),
+				map_api_key: $('#map_api_key').val()
 	  },
 	  {
 		success:function () {

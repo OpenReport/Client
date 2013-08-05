@@ -72,6 +72,9 @@
 	{{ }); }}
 	</ol>
 	</ul>
+	<ul class="nav nav-pills nav-stacked">
+	<li class="active"><a href="<?php echo $account['mobile_url'] ?>" target="top"><i class="icon icon-mobile-phone"></i>&nbsp;View Mobile</a></li>
+	</ul>
 </script>
 
 <script type="text/javascript" src="/views/templates/page/scripts/shared/app.js"></script>

@@ -43,7 +43,7 @@ class MasterView extends \Slim\View
         // Grab User Account info....
         $accountData = Account::find('first',array('conditions'=>array('id = ?', $this->accountId())));
         // grab only what we need
-        $this->setData('account', $accountData->values_for(array('id','name','api_key','map_api_key')));
+        $this->setData('account', $accountData->values_for(array('id','name','api_key','map_api_key', 'mobile_url')));
     }
 
     /** Render Page

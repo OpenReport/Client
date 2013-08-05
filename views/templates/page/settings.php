@@ -15,19 +15,25 @@
         <div class="control-group">
             <label class="control-label">Account Name</label>
             <div class="controls">
-                <input type="text" value="{{= name }}"class="span12" id="acctname" name="acctname" placeholder="Enter a title for your task" >
+                <input type="text" value="{{= name }}"class="span12" id="acctname" name="acctname" placeholder="" >
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Admin Email</label>
             <div class="controls">
-                <input type="text" value="{{= admin_email }}"class="span12" id="admin_email" name="admin_email" placeholder="Enter a title for your task" >
+                <input type="text" value="{{= admin_email }}"class="span12" id="admin_email" name="admin_email" placeholder="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Mobile Access URL</label>
+            <div class="controls">
+                <input type="text" value="{{= mobile_url }}"class="span12" id="mobile_url" name="mobile_url" placeholder="" >
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">Map Api Key</label>
             <div class="controls">
-                <input type="text" value="{{= map_api_key }}"class="span12" id="map_api_key" name="map_api_key" placeholder="Enter a title for your task" >
+                <input type="text" value="{{= map_api_key }}"class="span12" id="map_api_key" name="map_api_key" placeholder="" >
             </div>
         </div>
         <div class="form-actions">
