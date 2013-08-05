@@ -58,7 +58,7 @@
 <body>
 
 <div class="container">
-    <h2 class="brand" style="color: rgb(42, 35, 231);"><i class="icon-bar-chart icon-black" style="font-size: 24px;color: rgb(238, 126, 23);"></i>&nbsp;OpenReport&nbsp;&nbsp;</h2>
+    <h2 class="brand" style="color: rgb(42, 35, 231);"><i class="icon-signal icon-black" style="font-size: 24px;color: rgb(238, 126, 23);"></i>&nbsp;OpenReport&nbsp;&nbsp;</h2>
     <form class="form-signin" method="post">
 
         <h2 class="form-signin-heading">Please sign in</h2>
