@@ -112,17 +112,17 @@
 
 	  <div class="tab-pane well" id="frmCtrls">
 	  <h4>Report Form Controls</br><small>Click to add</small></h4>
-		<div class="selectorField well clearfix" data-rules="required" data-name="input" data-type="text" id="ctrl-A">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="text" id="ctrl-A">
 			<label class="control-label">Text Input</label>
 			<input type="text" class="ctrl-textbox span12">
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="comment" data-type="comment">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="comment">
 			<label class="control-label">Comments</label>
 			<textarea class="span12"></textarea>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="options" data-type="checkbox-group">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="checkbox-group">
 			<label class="control-label" style="vertical-align:top">Checkboxes</label>
 			<ul class="ctrl-checkboxgroup ">
 				<li><input type="checkbox" name="checkboxField" value="option1">Option 1</li>
@@ -131,7 +131,7 @@
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="option" data-type="radio-group">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="radio-group">
 			<label class="control-label" style="vertical-align:top">Radio buttons</label>
 			<ul>
 				<li><input type="radio" name="radioField" value="option1">Option 1</li>
@@ -140,7 +140,7 @@
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="optional" data-type="media:image" data-name="photos">
+		<div class="selectorField well clearfix" data-rules="optional" data-type="media:image" data-name="">
 			<label for="photos">Attach Photo</label>
 			<input name="imageCapture-photos" id="photo-files" type="file" accept="video/*;capture=camera" style="display: none;" class="imageCapture">
 			<input name="photos" id="photos" value="" type="hidden">
@@ -149,7 +149,7 @@
 			</ul>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="option" data-type="dropdown">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="dropdown">
 			<label class="control-label">Combobox</label>
 			<select class="ctrl-combobox span12">
 				<option value="0">Select an Option</option>
@@ -158,7 +158,7 @@
 			</select>
 			<span class="error"></span>
 		</div>
-		<div class="selectorField well clearfix" data-rules="required" data-name="options" data-type="select">
+		<div class="selectorField well clearfix" data-rules="required" data-name="" data-type="select">
 			<label class="control-label" style="vertical-align:top">Select multiple</label>
 			<div>
 				<select multiple="multiple" class="ctrl-selectmultiplelist span12">
@@ -237,8 +237,8 @@
 			<div class="row-fluid">
 				<div class="span12">
 					<fieldset class="well">
-						<div class="control-group"><label>Display:&nbsp;<small>This is displayed on the report form</small></label><input class="span12" id="fieldDisplay" type="text" placeholder="Display Text Here..." value="{{= display }}"></div>
-						<div class="control-group"><label>Label:&nbsp;<small>Name of Datapoint (column name).</small></label><input class="span12" id="fieldName" type="text" placeholder="Data label Here..." value="{{= name }}"></div>
+						<div class="control-group"><label>Display:&nbsp;<small>This is displayed on the report form</small></label><input class="span12" id="fieldDisplay" type="text" placeholder="Enter display text Here..." value="{{= display }}"></div>
+						<div class="control-group"><label>Label:&nbsp;<small>Name of Datapoint (column name).</small></label><input class="span12" id="fieldName" type="text" placeholder="Enter column name here..." value="{{= name }}"></div>
 						{{ if(options.length > 0){ }}
 							<div class="control-group"><label>Options:&nbsp;<small>Set Options for the field (display=value)</small></label><textarea id="options" class="span12" rows="3">{{ options.forEach(function (item) { }}{{= item.label }}={{= item.value + '\n'}}{{ }) }}</textarea></div>
 						{{ } }}
@@ -274,6 +274,20 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript">
+
+	  if($('#fieldName').val() === ''){
+				$('#fieldDisplay').on('keyup, blur', function(){
+						$('#fieldName').val($('#fieldDisplay').val().replace(/[\s]+/g, '_').toLowerCase());
+				});
+	  }
+    $('#fieldName').on('change', function(){
+				$('#fieldName').val(underscoreFormat($('#fieldName').val()));
+    });
+
+
+	</script>
+
 </script>
 
 

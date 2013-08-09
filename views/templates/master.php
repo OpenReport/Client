@@ -63,11 +63,11 @@
                   <li><a onclick="window.history.back();"><i class="icon-large icon-arrow-left"></i></a></li>
                   <li class="divider-vertical"></li>
                 </ul>
-                <span class="brand" style="color: rgb(42, 35, 231);"><i class="icon-bar-chart icon-black" style="font-size: 20px;color: rgb(238, 126, 23);"></i>&nbsp;OpenReport</span>
+                <span class="brand" style="color: rgb(42, 35, 231);"><i class="icon-signal icon-black" style="font-size: 20px;color: rgb(238, 126, 23);"></i>&nbsp;OpenReport</span>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li class=""><a href="/"><i class="icon-home icon-black"></i> Dashboard</a></li>
-                        <li class=""><a href="/reports"><i class="icon-signal icon-black"></i> Reports</a></li>
+                        <li class=""><a href="/reports"><i class="icon-bar-chart icon-black"></i> Reports</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-edit icon-black"></i>&nbsp;Manage&nbsp;<b class="caret"></b></a>
                             <ul class="dropdown-menu">

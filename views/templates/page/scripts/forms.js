@@ -305,7 +305,6 @@ app.views.FormView = Backbone.View.extend({
 			var ctrlId = 'ctl'+base.ctrlIndex++;
 			$(e).attr('id', ctrlId);
 		  $(e).find('input, textarea, select').each(function(){$(this).prop('disabled', true);})
-			//assignDialog(e, ctrlId);
 			$('div#'+ctrlId).find('span').text(rulesToString($('div#'+ctrlId).data('rules')));
 		});
 
@@ -428,7 +427,12 @@ app.views.FormView = Backbone.View.extend({
 		if(attrb.rules.length == 2) {
 			$('select#rules option[value="|'+attrb.rules[1]+'"]').prop('selected', true);
 		}
-
+		//be sure to un-bind and distroy on hidden
+		$("#fieldDetail").on('hidden', function(){
+				$("#dialog").unbind();
+				$("#dialog").empty();
+		});
+		$('#fieldDisplay').focus();
 	},
 
   cancel:function () {
@@ -494,6 +498,8 @@ app.controller = Backbone.Router.extend({
      * Edit Form
      */
     edit: function(id){
+				// if called direct we need this.formList
+				if(typeof app.data.formList == 'undefined') app.data.formList = new app.collections.Forms({key: apiKey});
 				$("#infoBox").empty();
         var form = app.data.formList.get(id);
 				if(app.pageView != null) app.pageView.close();
