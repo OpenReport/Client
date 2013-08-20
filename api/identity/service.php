@@ -38,7 +38,7 @@ $app->get("/:apiKey", function ($apiKey) use ($app, $response) {
       if((int)$recCount > 0){
           $page = $app->request()->params('l');
           if($page != null){
-              $limit = split(',',$page);
+              $limit = explode(',',$page);
               if(count($limit)>1){
                    $options['offset'] = $limit[1];
               }
@@ -76,7 +76,7 @@ $app->get("/:apiKey/:name", function ($apiKey, $name) use ($app, $response) {
       if((int)$recCount > 0){
           $page = $app->request()->params('l');
           if($page != null){
-              $limit = split(',',$page);
+              $limit = explode(',',$page);
               if(count($limit)>1){
                    $options['offset'] = $limit[1];
               }

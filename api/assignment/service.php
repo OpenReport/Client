@@ -44,7 +44,7 @@ $app->get("/:apiKey(/:formId)", function ($apiKey, $formId = 0) use ($app, $resp
         if((int)$recCount > 0){
             $page = $app->request()->params('l');
             if($page != null){
-                $limit = split(',',$page);
+                $limit = explode(',',$page);
                 if(count($limit)>1){
                      $options['offset'] = $limit[1];
                 }

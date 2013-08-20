@@ -66,7 +66,7 @@ $app->get("/:apiKey/:formId", function ($apiKey, $formId) use ($app, $response) 
         if((int)$recCount > 0){
             $page = $app->request()->params('l');
             if($page != null){
-                $limit = split(',',$page);
+                $limit = explode(',',$page);
                 if(count($limit)>1){
                      $options['offset'] = $limit[1];
                 }
@@ -148,7 +148,7 @@ $app->get("/records/:apiKey/:identity", function ($apiKey, $identity) use ($app,
             // paging
             $page = $app->request()->params('l');
             if($page != null){
-                $limit = split(',',$page);
+                $limit = explode(',',$page);
                 if(count($limit)>1){
                      $options['offset'] = $limit[1];
                 }
