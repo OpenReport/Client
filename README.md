@@ -11,7 +11,7 @@ Form designer for OpenReport.
  -- Datepicker for Bootstrap http://eternicode.github.io/bootstrap-datepicker/
  -- Backbone Pagination https://github.com/backbone-paginator/backbone.paginator
 
-visit: http://companygateways.github.io/OpenReport
+visit: http://companygateways.github.io/OpenReport-Documents
 
 ## License
 Copyright (c) 2013 The Austin Conner Group
